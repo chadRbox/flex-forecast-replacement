@@ -13,244 +13,168 @@
       theme: {
         extend: {
           colors: {
-            brand: {
-              50: '#fdf4ff',
-              100: '#fae8ff',
-              200: '#f5d0fe',
-              300: '#f0abfc',
-              400: '#e879f9',
-              500: '#d946ef',
-              600: '#c026d3',
-              700: '#a21caf',
-              800: '#86198f',
-              900: '#701a75',
-            }
+            // Professional financial palette
+            navy: {
+              50: '#f0f4f8',
+              100: '#d9e2ec',
+              200: '#bcccdc',
+              300: '#9fb3c8',
+              400: '#829ab1',
+              500: '#627d98',
+              600: '#486581',
+              700: '#334e68',
+              800: '#243b53',
+              900: '#102a43',
+              950: '#0a1929',
+            },
+            // Accent colors - professional greens and ambers
+            profit: {
+              light: '#10b981',
+              DEFAULT: '#059669',
+              dark: '#047857',
+            },
+            loss: {
+              light: '#f87171',
+              DEFAULT: '#dc2626',
+              dark: '#b91c1c',
+            },
+            warning: {
+              light: '#fbbf24',
+              DEFAULT: '#f59e0b',
+              dark: '#d97706',
+            },
           },
-          animation: {
-            'slide-up': 'slideUp 0.3s ease-out',
-            'slide-down': 'slideDown 0.3s ease-out',
-            'fade-in': 'fadeIn 0.3s ease-out',
-            'pulse-once': 'pulseOnce 0.6s ease-out',
-            'celebrate': 'celebrate 0.5s ease-out',
-            'glow': 'glow 2s ease-in-out infinite',
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'SF Mono', 'Monaco', 'monospace'],
           },
-          keyframes: {
-            slideUp: {
-              '0%': { transform: 'translateY(10px)', opacity: '0' },
-              '100%': { transform: 'translateY(0)', opacity: '1' },
-            },
-            slideDown: {
-              '0%': { transform: 'translateY(-10px)', opacity: '0' },
-              '100%': { transform: 'translateY(0)', opacity: '1' },
-            },
-            fadeIn: {
-              '0%': { opacity: '0' },
-              '100%': { opacity: '1' },
-            },
-            pulseOnce: {
-              '0%, 100%': { transform: 'scale(1)' },
-              '50%': { transform: 'scale(1.02)' },
-            },
-            celebrate: {
-              '0%': { transform: 'scale(0.95)', opacity: '0' },
-              '50%': { transform: 'scale(1.02)' },
-              '100%': { transform: 'scale(1)', opacity: '1' },
-            },
-            glow: {
-              '0%, 100%': { boxShadow: '0 0 20px rgba(217, 70, 239, 0.2)' },
-              '50%': { boxShadow: '0 0 30px rgba(217, 70, 239, 0.4)' },
-            },
-          }
         }
       }
     }
   </script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-    body { font-family: 'Inter', system-ui, sans-serif; }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
-    /* Custom scrollbar */
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    }
+
+    /* Minimal scrollbar - Bloomberg style */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #102a43; }
+    ::-webkit-scrollbar-thumb { background: #334e68; border-radius: 0; }
+    ::-webkit-scrollbar-thumb:hover { background: #486581; }
 
     /* Remove number input spinners */
     input[type="number"]::-webkit-inner-spin-button,
     input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
     input[type="number"] { -moz-appearance: textfield; }
 
-    /* Smooth transitions */
-    * { transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
+    /* Dense, professional tables */
+    table { border-collapse: collapse; }
 
-    /* Focus styles */
-    input:focus, select:focus, button:focus { outline: none; }
+    /* Focus states - subtle but visible */
+    input:focus, select:focus { outline: none; }
 
-    /* Glass effect */
-    .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); }
+    /* Monospace numbers for alignment */
+    .tabular-nums { font-variant-numeric: tabular-nums; }
 
-    /* Gradient text */
-    .gradient-text { background: linear-gradient(135deg, #d946ef 0%, #8b5cf6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    /* Status indicator pulse */
+    @keyframes statusPulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    .status-pulse { animation: statusPulse 2s ease-in-out infinite; }
 
-    /* Subtle grid pattern */
-    .grid-pattern { background-image: radial-gradient(rgba(148, 163, 184, 0.1) 1px, transparent 1px); background-size: 20px 20px; }
+    /* Subtle fade in */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .fade-in { animation: fadeIn 0.2s ease-out; }
 
-    /* Row highlight animation */
-    @keyframes rowHighlight {
-      0% { background-color: rgba(217, 70, 239, 0.2); }
+    /* Row highlight for new items */
+    @keyframes rowFlash {
+      0% { background-color: rgba(16, 185, 129, 0.2); }
       100% { background-color: transparent; }
     }
-    .row-highlight { animation: rowHighlight 1s ease-out; }
-
-    /* Toast animation */
-    .toast-enter { animation: slideUp 0.3s ease-out; }
-
-    /* Tooltip */
-    .tooltip { position: relative; }
-    .tooltip::after { content: attr(data-tooltip); position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%) translateY(-4px); padding: 6px 10px; background: #1e293b; color: #e2e8f0; font-size: 12px; border-radius: 6px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s; z-index: 50; }
-    .tooltip:hover::after { opacity: 1; transform: translateX(-50%) translateY(-8px); }
+    .row-flash { animation: rowFlash 1s ease-out; }
   </style>
 </head>
-<body class="bg-slate-950 grid-pattern">
+<body class="bg-navy-950">
   <div id="root"></div>
 
   <script type="text/babel">
     const { useState, useEffect, useRef, useCallback } = React;
 
     // ============================================
-    // ICONS
+    // ICONS - Simple, professional line icons
     // ============================================
     const Icons = {
-      Logo: () => (
-        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-          <rect width="28" height="28" rx="8" fill="url(#logoGrad)"/>
-          <path d="M8 10h12M8 14h8M8 18h10" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-          <defs>
-            <linearGradient id="logoGrad" x1="0" y1="0" x2="28" y2="28">
-              <stop stopColor="#d946ef"/>
-              <stop offset="1" stopColor="#8b5cf6"/>
-            </linearGradient>
-          </defs>
-        </svg>
-      ),
-      FileText: () => (
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/>
-        </svg>
-      ),
-      Calculator: () => (
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M16 10h.01M12 10h.01M8 10h.01M12 14h.01M8 14h.01M12 18h.01M8 18h.01"/>
-        </svg>
-      ),
-      Calendar: () => (
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/>
-        </svg>
-      ),
-      TrendingUp: () => (
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>
-        </svg>
-      ),
-      Search: () => (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      Search: ({ size = 14 }) => (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
         </svg>
       ),
-      Plus: () => (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      Plus: ({ size = 14 }) => (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M5 12h14M12 5v14"/>
         </svg>
       ),
-      Trash2: () => (
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      Trash: ({ size = 14 }) => (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
         </svg>
       ),
-      Lock: () => (
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      Lock: ({ size = 12 }) => (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
         </svg>
       ),
-      AlertTriangle: () => (
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/>
-        </svg>
-      ),
-      X: () => (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M18 6 6 18M6 6l12 12"/>
-        </svg>
-      ),
-      Check: () => (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      Check: ({ size = 14 }) => (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           <polyline points="20 6 9 17 4 12"/>
         </svg>
       ),
-      CheckCircle: () => (
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>
+      AlertTriangle: ({ size = 14 }) => (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/>
         </svg>
       ),
-      Building2: () => (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/>
+      X: ({ size = 14 }) => (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M18 6 6 18M6 6l12 12"/>
         </svg>
       ),
-      Users: () => (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
-        </svg>
-      ),
-      DollarSign: () => (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <line x1="12" x2="12" y1="2" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-        </svg>
-      ),
-      Target: () => (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>
-        </svg>
-      ),
-      Sparkles: () => (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
-        </svg>
-      ),
-      Zap: () => (
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-        </svg>
-      ),
-      ArrowRight: () => (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M5 12h14M12 5l7 7-7 7"/>
-        </svg>
-      ),
-      Globe: () => (
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-        </svg>
-      ),
-      ChevronRight: () => (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      ChevronRight: ({ size = 14 }) => (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="m9 18 6-6-6-6"/>
         </svg>
       ),
-      Command: () => (
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M18 3a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3H6a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3V6a3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3h12a3 3 0 0 0 3-3 3 3 0 0 0-3-3z"/>
+      Globe: ({ size = 12 }) => (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
         </svg>
       ),
-      Loader: () => (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="animate-spin">
+      Loader: ({ size = 14 }) => (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="animate-spin">
           <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
         </svg>
       ),
-      RefreshCw: () => (
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      Sync: ({ size = 14 }) => (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>
+        </svg>
+      ),
+      TrendUp: ({ size = 14 }) => (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>
+        </svg>
+      ),
+      TrendDown: ({ size = 14 }) => (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/>
         </svg>
       ),
     };
@@ -274,185 +198,78 @@
     // UTILITIES
     // ============================================
     const formatCurrency = (amount) => {
-      return new Intl.NumberFormat("en-US", {
+      const formatted = new Intl.NumberFormat("en-US", {
         style: "currency",
         currency: "USD",
         minimumFractionDigits: 0,
         maximumFractionDigits: 0,
-      }).format(amount);
+      }).format(Math.abs(amount));
+      return amount < 0 ? `(${formatted})` : formatted;
     };
 
+    const formatNumber = (num) => new Intl.NumberFormat("en-US").format(num);
     const formatPercent = (value) => `${value.toFixed(1)}%`;
 
-    const getWeekDates = (startOffset = 0) => {
+    const getWeekDates = () => {
       const today = new Date();
       const weeks = [];
       for (let i = 0; i < 4; i++) {
         const weekStart = new Date(today);
-        weekStart.setDate(today.getDate() + (i + startOffset) * 7);
-        const month = weekStart.toLocaleString('default', { month: 'short' });
-        const day = weekStart.getDate();
-        weeks.push(`${month} ${day}`);
+        weekStart.setDate(today.getDate() + i * 7 - today.getDay() + 1);
+        weeks.push(weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
       }
       return weeks;
     };
 
     // ============================================
-    // COMPONENTS: Toast Notification
+    // COMPONENTS
     // ============================================
+
+    // Toast notification
     function Toast({ message, type = "success", onClose }) {
       useEffect(() => {
         const timer = setTimeout(onClose, 3000);
         return () => clearTimeout(timer);
       }, [onClose]);
 
-      const colors = {
-        success: "bg-emerald-500/20 border-emerald-500/30 text-emerald-300",
-        warning: "bg-amber-500/20 border-amber-500/30 text-amber-300",
-        info: "bg-brand-500/20 border-brand-500/30 text-brand-300",
+      const styles = {
+        success: "bg-profit-dark border-profit text-profit-light",
+        warning: "bg-warning-dark/20 border-warning text-warning-light",
+        error: "bg-loss-dark/20 border-loss text-loss-light",
       };
 
       return (
-        <div className={`fixed bottom-6 right-6 z-50 toast-enter ${colors[type]} border rounded-lg px-4 py-3 flex items-center gap-3 shadow-xl`}>
-          {type === "success" && <Icons.CheckCircle />}
-          {type === "warning" && <Icons.AlertTriangle />}
-          {type === "info" && <Icons.Sparkles />}
-          <span className="text-sm font-medium">{message}</span>
+        <div className={`fixed bottom-4 right-4 z-50 px-4 py-2 border-l-4 ${styles[type]} bg-navy-900 text-sm font-medium fade-in`}>
+          {message}
         </div>
       );
     }
 
-    // ============================================
-    // COMPONENTS: Step Progress
-    // ============================================
-    function StepProgress({ steps, currentStep, onStepClick, completedSteps }) {
-      return (
-        <div className="flex items-center gap-1">
-          {steps.map((step, idx) => {
-            const isActive = currentStep === step.id;
-            const isCompleted = completedSteps.includes(step.id);
-            const isClickable = isCompleted || idx === 0 || completedSteps.includes(steps[idx - 1]?.id);
-
-            return (
-              <React.Fragment key={step.id}>
-                <button
-                  onClick={() => isClickable && onStepClick(step.id)}
-                  disabled={!isClickable}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all ${
-                    isActive
-                      ? "bg-brand-500/20 text-brand-300 ring-1 ring-brand-500/50"
-                      : isCompleted
-                      ? "bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20"
-                      : isClickable
-                      ? "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"
-                      : "text-slate-600 cursor-not-allowed"
-                  }`}
-                >
-                  <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                    isActive
-                      ? "bg-brand-500 text-white"
-                      : isCompleted
-                      ? "bg-emerald-500 text-white"
-                      : "bg-slate-700 text-slate-400"
-                  }`}>
-                    {isCompleted ? <Icons.Check /> : idx + 1}
-                  </span>
-                  <span className="text-sm font-medium hidden lg:block">{step.label}</span>
-                </button>
-                {idx < steps.length - 1 && (
-                  <div className={`w-8 h-0.5 ${isCompleted ? "bg-emerald-500/50" : "bg-slate-700"}`} />
-                )}
-              </React.Fragment>
-            );
-          })}
-        </div>
-      );
-    }
-
-    // ============================================
-    // COMPONENTS: Metric Card
-    // ============================================
-    function MetricCard({ icon, label, value, subtext, variant = "default", size = "normal", action, actionLabel, pulse }) {
-      const variants = {
-        default: "bg-slate-800/50 border-slate-700/50",
-        success: "bg-emerald-500/10 border-emerald-500/30",
-        danger: "bg-red-500/10 border-red-500/30",
-        brand: "bg-brand-500/10 border-brand-500/30",
-        highlight: "bg-gradient-to-br from-brand-500/20 to-violet-500/20 border-brand-500/30",
+    // Status badge component
+    function StatusBadge({ status, children }) {
+      const styles = {
+        success: "bg-profit/20 text-profit-light border-profit/30",
+        warning: "bg-warning/20 text-warning-light border-warning/30",
+        error: "bg-loss/20 text-loss-light border-loss/30",
+        info: "bg-navy-700 text-navy-200 border-navy-600",
+        neutral: "bg-navy-800 text-navy-300 border-navy-700",
       };
-
-      const textColors = {
-        default: "text-slate-100",
-        success: "text-emerald-400",
-        danger: "text-red-400",
-        brand: "text-brand-400",
-        highlight: "text-white",
-      };
-
       return (
-        <div className={`rounded-xl border p-4 ${variants[variant]} ${pulse ? "animate-pulse-once" : ""}`}>
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-2">
-              <span className={textColors[variant]}>{icon}</span>
-              <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">{label}</span>
-            </div>
-            {action && (
-              <button
-                onClick={action}
-                className="text-xs text-brand-400 hover:text-brand-300 font-medium flex items-center gap-1"
-              >
-                {actionLabel} <Icons.ArrowRight />
-              </button>
-            )}
-          </div>
-          <div className={`${size === "large" ? "text-4xl" : "text-2xl"} font-bold ${textColors[variant]}`}>
-            {value}
-          </div>
-          {subtext && <div className="text-xs text-slate-500 mt-1">{subtext}</div>}
-        </div>
+        <span className={`inline-flex items-center px-2 py-0.5 text-xs font-medium border ${styles[status]}`}>
+          {children}
+        </span>
       );
-    }
-
-    // ============================================
-    // COMPONENTS: Empty State
-    // ============================================
-    function EmptyState({ icon, title, description, action, actionLabel }) {
-      return (
-        <div className="flex flex-col items-center justify-center py-16 px-8 text-center">
-          <div className="w-16 h-16 rounded-2xl bg-slate-800/50 flex items-center justify-center mb-4 text-slate-500">
-            {icon}
-          </div>
-          <h3 className="text-lg font-semibold text-slate-200 mb-2">{title}</h3>
-          <p className="text-sm text-slate-400 max-w-md mb-6">{description}</p>
-          {action && (
-            <button
-              onClick={action}
-              className="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white rounded-lg text-sm font-medium flex items-center gap-2 transition-colors"
-            >
-              {actionLabel} <Icons.ArrowRight />
-            </button>
-          )}
-        </div>
-      );
-    }
-
-    // ============================================
-    // COMPONENTS: Loading Skeleton
-    // ============================================
-    function Skeleton({ className }) {
-      return <div className={`animate-pulse bg-slate-700/50 rounded ${className}`} />;
     }
 
     // ============================================
     // MAIN APP
     // ============================================
     function FlexForecastApp() {
-      // Navigation State
+      // Navigation
       const [activeView, setActiveView] = useState("initiation");
-      const [completedSteps, setCompletedSteps] = useState([]);
       const [toast, setToast] = useState(null);
 
-      // View 1 - Engagement Initiation State
+      // View 1 - Initiation
       const [opportunityId, setOpportunityId] = useState("");
       const [isSearching, setIsSearching] = useState(false);
       const [dealLoaded, setDealLoaded] = useState(false);
@@ -462,7 +279,7 @@
       const [workLocation, setWorkLocation] = useState("US");
       const [riskApproved, setRiskApproved] = useState(false);
 
-      // View 2 - Budgeting State
+      // View 2 - Budgeting
       const [pricingStructure, setPricingStructure] = useState("Fixed Fee");
       const [useRateCard, setUseRateCard] = useState(false);
       const [targetFee, setTargetFee] = useState(0);
@@ -470,16 +287,16 @@
       const [nextStaffId, setNextStaffId] = useState(1);
       const [newRowId, setNewRowId] = useState(null);
 
-      // View 2.5 - Scheduling State
+      // View 3 - Scheduling
       const [scheduleData, setScheduleData] = useState([]);
       const SPREAD_TYPES = [
-        { id: "even", label: "Even", icon: "═" },
-        { id: "frontLoaded", label: "Front Loaded", icon: "▓░" },
-        { id: "backLoaded", label: "Back Loaded", icon: "░▓" },
-        { id: "custom", label: "Custom", icon: "✎" },
+        { id: "even", label: "Even" },
+        { id: "frontLoaded", label: "Front" },
+        { id: "backLoaded", label: "Back" },
+        { id: "custom", label: "Custom" },
       ];
 
-      // View 3 - Forecasting State
+      // View 4 - Forecasting
       const [alertVisible, setAlertVisible] = useState(true);
       const [highlightedResource, setHighlightedResource] = useState(null);
       const [actuals, setActuals] = useState([
@@ -487,25 +304,24 @@
         { id: 2, name: "A. Lee", level: "Senior Associate", rate: 250, budgetHours: 120, actualHours: 95, etcHours: 20 },
         { id: 3, name: "M. Chen", level: "Associate", rate: 175, budgetHours: 0, actualHours: 12, etcHours: 0 },
       ]);
-
       const etcInputRef = useRef(null);
 
-      // Derived Calculations
+      // Calculations
       const totalBudgetCost = staffing.reduce((sum, s) => sum + s.rate * s.hours, 0);
       const totalBudgetHours = staffing.reduce((sum, s) => sum + s.hours, 0);
       const recommendedFee = Math.ceil(totalBudgetCost / (1 - TARGET_MARGIN / 100));
       const projectedMargin = targetFee > 0 ? ((targetFee - totalBudgetCost) / targetFee) * 100 : 0;
       const marginIsHealthy = projectedMargin >= TARGET_MARGIN;
+      const marginVariance = projectedMargin - TARGET_MARGIN;
 
       const totalActualCost = actuals.reduce((sum, a) => sum + a.rate * a.actualHours, 0);
       const totalActualHours = actuals.reduce((sum, a) => sum + a.actualHours, 0);
       const totalProjectedCost = actuals.reduce((sum, a) => sum + a.rate * (a.actualHours + a.etcHours), 0);
       const totalProjectedHours = actuals.reduce((sum, a) => sum + a.actualHours + a.etcHours, 0);
       const projectedProfit = targetFee - totalProjectedCost;
-      const profitIsPositive = projectedProfit >= 0;
-      const unbudgetedResources = actuals.filter((a) => a.budgetHours === 0 && a.actualHours > 0);
+      const unbudgetedResources = actuals.filter(a => a.budgetHours === 0 && a.actualHours > 0);
 
-      // Sync budget to schedule
+      // Sync staffing to schedule
       useEffect(() => {
         if (staffing.length > 0) {
           setScheduleData(staffing.map(s => ({
@@ -519,14 +335,6 @@
         }
       }, [staffing]);
 
-      // Navigation steps
-      const steps = [
-        { id: "initiation", label: "Code Create", icon: Icons.FileText },
-        { id: "budgeting", label: "Flex Plan", icon: Icons.Calculator },
-        { id: "scheduling", label: "Schedule", icon: Icons.Calendar },
-        { id: "forecasting", label: "Forecasting", icon: Icons.TrendingUp },
-      ];
-
       // Opportunity lookup
       useEffect(() => {
         if (opportunityId.length >= 3) {
@@ -535,32 +343,17 @@
             if (opportunityId.toUpperCase() === "OPP-1024") {
               setDealLoaded(true);
               setDealDetails({ client: "Acme Corp", product: "Tax Compliance", stage: "Interact" });
-              setToast({ message: "Opportunity loaded successfully", type: "success" });
             } else {
               setDealLoaded(false);
-              setDealDetails({ client: "", product: "", stage: "" });
             }
             setIsSearching(false);
-          }, 800);
+          }, 600);
           return () => clearTimeout(timer);
         } else {
           setDealLoaded(false);
           setIsSearching(false);
         }
       }, [opportunityId]);
-
-      // Mark step complete when conditions met
-      useEffect(() => {
-        if (dealLoaded && riskApproved && !completedSteps.includes("initiation")) {
-          setCompletedSteps(prev => [...prev, "initiation"]);
-        }
-      }, [dealLoaded, riskApproved]);
-
-      useEffect(() => {
-        if (staffing.length > 0 && targetFee > 0 && !completedSteps.includes("budgeting")) {
-          setCompletedSteps(prev => [...prev, "budgeting"]);
-        }
-      }, [staffing, targetFee]);
 
       // Handlers
       const updateStaffRow = (id, field, value) => {
@@ -576,18 +369,17 @@
 
       const addStaffRow = () => {
         const newId = nextStaffId;
-        setStaffing(prev => [
-          ...prev,
-          { id: newId, name: "TBD", level: "Associate", rate: RATE_CARD["Associate"], hours: 0, region: "Northeast", los: "Tax" },
-        ]);
+        setStaffing(prev => [...prev, {
+          id: newId, name: "TBD", level: "Associate",
+          rate: RATE_CARD["Associate"], hours: 0,
+          region: "Northeast", los: "Tax"
+        }]);
         setNextStaffId(prev => prev + 1);
         setNewRowId(newId);
         setTimeout(() => setNewRowId(null), 1000);
       };
 
-      const deleteStaffRow = (id) => {
-        setStaffing(prev => prev.filter(row => row.id !== id));
-      };
+      const deleteStaffRow = (id) => setStaffing(prev => prev.filter(row => row.id !== id));
 
       const handleRateCardToggle = () => {
         if (!useRateCard) {
@@ -598,7 +390,7 @@
 
       const applyRecommendedFee = () => {
         setTargetFee(recommendedFee);
-        setToast({ message: `Target fee set to ${formatCurrency(recommendedFee)}`, type: "success" });
+        setToast({ message: `Fee set to ${formatCurrency(recommendedFee)}`, type: "success" });
       };
 
       const updateScheduleSpread = (id, spreadType) => {
@@ -607,15 +399,9 @@
           const total = row.totalHours;
           let weeks;
           switch (spreadType) {
-            case "frontLoaded":
-              weeks = [Math.round(total * 0.4), Math.round(total * 0.3), Math.round(total * 0.2), Math.round(total * 0.1)];
-              break;
-            case "backLoaded":
-              weeks = [Math.round(total * 0.1), Math.round(total * 0.2), Math.round(total * 0.3), Math.round(total * 0.4)];
-              break;
-            default:
-              const perWeek = Math.floor(total / 4);
-              weeks = [perWeek, perWeek, perWeek, total - 3 * perWeek];
+            case "frontLoaded": weeks = [Math.round(total * 0.4), Math.round(total * 0.3), Math.round(total * 0.2), Math.round(total * 0.1)]; break;
+            case "backLoaded": weeks = [Math.round(total * 0.1), Math.round(total * 0.2), Math.round(total * 0.3), Math.round(total * 0.4)]; break;
+            default: const perWeek = Math.floor(total / 4); weeks = [perWeek, perWeek, perWeek, total - 3 * perWeek];
           }
           return { ...row, spreadType, weeks };
         }));
@@ -633,8 +419,7 @@
       const updateEtc = (id, value) => {
         const numValue = parseInt(value) || 0;
         setActuals(prev => prev.map(a => (a.id === id ? { ...a, etcHours: numValue } : a)));
-        const resource = actuals.find(a => a.id === id);
-        if (resource?.budgetHours === 0 && numValue >= 0) {
+        if (actuals.find(a => a.id === id)?.budgetHours === 0 && numValue >= 0) {
           setAlertVisible(false);
           setHighlightedResource(null);
         }
@@ -651,7 +436,7 @@
       // Keyboard shortcuts
       useEffect(() => {
         const handleKeyDown = (e) => {
-          if (e.metaKey || e.ctrlKey) {
+          if ((e.metaKey || e.ctrlKey) && !e.shiftKey) {
             if (e.key === "1") { e.preventDefault(); setActiveView("initiation"); }
             if (e.key === "2") { e.preventDefault(); setActiveView("budgeting"); }
             if (e.key === "3") { e.preventDefault(); setActiveView("scheduling"); }
@@ -663,110 +448,80 @@
         return () => window.removeEventListener("keydown", handleKeyDown);
       }, [activeView]);
 
+      const navItems = [
+        { id: "initiation", label: "Code Create", num: "1" },
+        { id: "budgeting", label: "Flex Plan", num: "2" },
+        { id: "scheduling", label: "Schedule", num: "3" },
+        { id: "forecasting", label: "Forecast", num: "4" },
+      ];
+
+      const canProceedFromInitiation = dealLoaded && riskApproved;
+      const hasBudget = staffing.length > 0 && targetFee > 0;
+
       return (
-        <div className="flex h-screen bg-slate-950 text-slate-100 text-sm overflow-hidden">
-          {/* Sidebar */}
-          <aside className="w-64 bg-slate-900/50 border-r border-slate-800/50 flex flex-col">
-            {/* Logo */}
-            <div className="p-5 border-b border-slate-800/50">
-              <div className="flex items-center gap-3">
-                <Icons.Logo />
-                <div>
-                  <div className="font-bold text-lg gradient-text">Flex Forecast</div>
-                  <div className="text-[10px] text-slate-500 uppercase tracking-widest">by PwC</div>
-                </div>
-              </div>
+        <div className="flex h-screen bg-navy-950 text-navy-100 text-sm">
+          {/* Sidebar - Dense, functional */}
+          <aside className="w-48 bg-navy-900 border-r border-navy-800 flex flex-col">
+            {/* Header */}
+            <div className="px-4 py-3 border-b border-navy-800">
+              <div className="text-base font-semibold text-white">Flex Forecast</div>
+              <div className="text-[10px] text-navy-500 uppercase tracking-wider">Practice Management</div>
             </div>
 
-            {/* Navigation */}
-            <nav className="flex-1 p-3 space-y-1">
-              {steps.map((item, idx) => {
-                const Icon = item.icon;
-                const isActive = activeView === item.id;
-                const isCompleted = completedSteps.includes(item.id);
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => setActiveView(item.id)}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all group ${
-                      isActive
-                        ? "bg-brand-500/20 text-brand-300 shadow-lg shadow-brand-500/10"
-                        : "text-slate-400 hover:bg-slate-800/50 hover:text-slate-200"
-                    }`}
-                  >
-                    <span className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                      isActive ? "bg-brand-500 text-white" : isCompleted ? "bg-emerald-500/20 text-emerald-400" : "bg-slate-800 text-slate-500"
-                    }`}>
-                      {isCompleted && !isActive ? <Icons.Check /> : <Icon />}
-                    </span>
-                    <div className="flex-1">
-                      <span className="font-medium">{item.label}</span>
-                      <div className="text-[10px] text-slate-500 flex items-center gap-1">
-                        <Icons.Command /> + {idx + 1}
-                      </div>
-                    </div>
-                    {isActive && <Icons.ChevronRight />}
-                  </button>
-                );
-              })}
+            {/* Nav */}
+            <nav className="flex-1 py-2">
+              {navItems.map(item => (
+                <button
+                  key={item.id}
+                  onClick={() => setActiveView(item.id)}
+                  className={`w-full flex items-center justify-between px-4 py-2 text-left text-sm transition-colors ${
+                    activeView === item.id
+                      ? "bg-navy-800 text-white border-r-2 border-profit"
+                      : "text-navy-400 hover:bg-navy-800/50 hover:text-navy-200"
+                  }`}
+                >
+                  <span>{item.label}</span>
+                  <span className="text-[10px] text-navy-600">⌘{item.num}</span>
+                </button>
+              ))}
             </nav>
 
-            {/* Context Footer */}
+            {/* Status Footer */}
             {dealLoaded && (
-              <div className="p-4 border-t border-slate-800/50 bg-slate-900/30">
-                <div className="text-[10px] text-slate-500 uppercase tracking-wider mb-2">Active Engagement</div>
-                <div className="text-sm font-semibold text-slate-200">{dealDetails.client}</div>
-                <div className="text-xs text-slate-400">{dealDetails.product}</div>
-                <div className="mt-3 flex items-center gap-2">
-                  <span className="px-2 py-1 bg-emerald-500/20 text-emerald-400 rounded text-[10px] font-medium">
-                    {dealDetails.stage}
-                  </span>
-                  {riskApproved && (
-                    <span className="px-2 py-1 bg-blue-500/20 text-blue-400 rounded text-[10px] font-medium">
-                      Risk ✓
-                    </span>
-                  )}
+              <div className="px-4 py-3 border-t border-navy-800 bg-navy-900/50">
+                <div className="text-[10px] text-navy-500 uppercase tracking-wider mb-1">Engagement</div>
+                <div className="text-sm font-medium text-white truncate">{dealDetails.client}</div>
+                <div className="text-xs text-navy-400 truncate">{dealDetails.product}</div>
+                <div className="flex gap-1 mt-2">
+                  <StatusBadge status="success">{dealDetails.stage}</StatusBadge>
+                  {riskApproved && <StatusBadge status="info">Risk ✓</StatusBadge>}
                 </div>
               </div>
             )}
-
-            {/* Keyboard hint */}
-            <div className="p-4 border-t border-slate-800/50">
-              <div className="text-[10px] text-slate-600 flex items-center gap-2">
-                <span className="px-1.5 py-0.5 bg-slate-800 rounded text-slate-400">⌘K</span>
-                <span>Command palette</span>
-              </div>
-            </div>
           </aside>
 
-          {/* Main Content */}
+          {/* Main */}
           <main className="flex-1 flex flex-col overflow-hidden">
-            {/* Header */}
-            <header className="glass border-b border-slate-800/50 px-6 py-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-6">
-                  <div>
-                    <h1 className="text-xl font-bold text-slate-100">
-                      {steps.find(n => n.id === activeView)?.label}
-                    </h1>
-                    {dealLoaded && (
-                      <p className="text-xs text-slate-500 mt-0.5">
-                        {dealDetails.client} • {dealDetails.product}
-                      </p>
-                    )}
-                  </div>
-                </div>
-                <StepProgress
-                  steps={steps}
-                  currentStep={activeView}
-                  onStepClick={setActiveView}
-                  completedSteps={completedSteps}
-                />
+            {/* Header Bar */}
+            <header className="bg-navy-900 border-b border-navy-800 px-4 py-2 flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <h1 className="text-base font-semibold text-white">
+                  {navItems.find(n => n.id === activeView)?.label}
+                </h1>
+                {dealLoaded && (
+                  <span className="text-xs text-navy-500">
+                    {dealDetails.client} / {dealDetails.product}
+                  </span>
+                )}
+              </div>
+              <div className="flex items-center gap-4 text-xs">
+                <span className="text-navy-500">Target Margin:</span>
+                <span className="font-mono font-medium text-white">{TARGET_MARGIN}%</span>
               </div>
             </header>
 
-            {/* View Content */}
-            <div className="flex-1 overflow-auto p-6">
+            {/* Content */}
+            <div className="flex-1 overflow-auto p-4">
               {activeView === "initiation" && (
                 <ViewInitiation
                   opportunityId={opportunityId}
@@ -782,9 +537,10 @@
                   setWorkLocation={setWorkLocation}
                   riskApproved={riskApproved}
                   setRiskApproved={setRiskApproved}
+                  canProceed={canProceedFromInitiation}
                   onComplete={() => {
                     setActiveView("budgeting");
-                    setToast({ message: "SAP codes created successfully!", type: "success" });
+                    setToast({ message: "SAP codes created", type: "success" });
                   }}
                 />
               )}
@@ -807,19 +563,21 @@
                   applyRecommendedFee={applyRecommendedFee}
                   projectedMargin={projectedMargin}
                   marginIsHealthy={marginIsHealthy}
+                  marginVariance={marginVariance}
                   newRowId={newRowId}
-                  onNavigateToInitiation={() => setActiveView("initiation")}
+                  onNavigate={() => setActiveView("initiation")}
                 />
               )}
               {activeView === "scheduling" && (
                 <ViewScheduling
                   dealLoaded={dealLoaded}
+                  hasBudget={hasBudget}
                   scheduleData={scheduleData}
                   spreadTypes={SPREAD_TYPES}
                   updateScheduleSpread={updateScheduleSpread}
                   updateWeekHours={updateWeekHours}
                   setToast={setToast}
-                  onNavigateToBudgeting={() => setActiveView("budgeting")}
+                  onNavigate={() => setActiveView("budgeting")}
                 />
               )}
               {activeView === "forecasting" && (
@@ -840,138 +598,107 @@
                   totalProjectedCost={totalProjectedCost}
                   totalProjectedHours={totalProjectedHours}
                   projectedProfit={projectedProfit}
-                  profitIsPositive={profitIsPositive}
                 />
               )}
             </div>
           </main>
 
-          {/* Toast */}
           {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
         </div>
       );
     }
 
     // ============================================
-    // VIEW 1: ENGAGEMENT INITIATION
+    // VIEW 1: INITIATION
     // ============================================
     function ViewInitiation({
       opportunityId, setOpportunityId, isSearching, dealLoaded, dealDetails,
       interTerritory, setInterTerritory, approver, setApprover,
-      workLocation, setWorkLocation, riskApproved, setRiskApproved, onComplete,
+      workLocation, setWorkLocation, riskApproved, setRiskApproved,
+      canProceed, onComplete,
     }) {
       const sapCodes = [
-        { type: "Master Contract", code: "MC-2024-001", status: "ready" },
-        { type: "WBS Element - Labor", code: "WBS-L-001", status: "ready" },
-        { type: "WBS Element - Expenses", code: "WBS-E-001", status: "ready" },
-        { type: "Cost Center Link", code: interTerritory ? "CC-INT-001" : null, status: interTerritory ? "ready" : "optional" },
-      ].filter(c => c.code || c.status === "optional");
-
-      const canProceed = dealLoaded && riskApproved;
+        { type: "Master Contract", code: "MC-2024-001", status: dealLoaded ? "Ready" : "Pending" },
+        { type: "WBS Element - Labor", code: "WBS-L-001", status: dealLoaded ? "Ready" : "Pending" },
+        { type: "WBS Element - Expenses", code: "WBS-E-001", status: dealLoaded ? "Ready" : "Pending" },
+        { type: "Cost Center Link", code: interTerritory ? "CC-INT-001" : "—", status: interTerritory ? "Required" : "Optional" },
+      ];
 
       return (
-        <div className="max-w-4xl mx-auto space-y-6 animate-fade-in">
+        <div className="max-w-4xl space-y-4 fade-in">
           {/* Salesforce Lookup */}
-          <section className="bg-slate-800/30 rounded-2xl border border-slate-700/50 overflow-hidden">
-            <div className="px-6 py-4 border-b border-slate-700/50 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400">
-                  <Icons.Search />
-                </div>
-                <div>
-                  <h2 className="font-semibold text-slate-200">Salesforce Lookup</h2>
-                  <p className="text-xs text-slate-500">Enter opportunity ID to auto-populate details</p>
-                </div>
-              </div>
-              {dealLoaded && (
-                <span className="flex items-center gap-2 text-emerald-400 text-sm font-medium animate-fade-in">
-                  <Icons.CheckCircle /> Connected
-                </span>
-              )}
+          <section className="bg-navy-900 border border-navy-800">
+            <div className="px-4 py-2 border-b border-navy-800 flex items-center justify-between bg-navy-800/50">
+              <span className="text-xs font-medium text-navy-300 uppercase tracking-wider">Salesforce Lookup</span>
+              {dealLoaded && <StatusBadge status="success">Connected</StatusBadge>}
             </div>
-            <div className="p-6">
+            <div className="p-4">
               <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-navy-500">
                   {isSearching ? <Icons.Loader /> : <Icons.Search />}
                 </span>
                 <input
                   type="text"
                   value={opportunityId}
                   onChange={(e) => setOpportunityId(e.target.value)}
-                  placeholder="Enter Opportunity ID (try OPP-1024)"
-                  className="w-full pl-12 pr-4 py-4 bg-slate-900/50 border border-slate-700 rounded-xl text-base text-slate-100 placeholder-slate-500 focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500"
+                  placeholder="Enter Opportunity ID (e.g., OPP-1024)"
+                  className="w-full pl-9 pr-4 py-2 bg-navy-950 border border-navy-700 text-sm text-white placeholder-navy-500 focus:border-navy-500 focus:ring-1 focus:ring-navy-500"
                 />
               </div>
-              {opportunityId && !dealLoaded && !isSearching && (
-                <p className="mt-3 text-sm text-slate-500">No opportunity found. Try "OPP-1024"</p>
-              )}
             </div>
           </section>
 
           {/* Deal Details */}
           {dealLoaded && (
-            <section className="bg-slate-800/30 rounded-2xl border border-emerald-500/30 overflow-hidden animate-slide-up">
-              <div className="px-6 py-4 border-b border-slate-700/50 flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400">
-                  <Icons.CheckCircle />
+            <section className="bg-navy-900 border border-navy-800 fade-in">
+              <div className="px-4 py-2 border-b border-navy-800 bg-navy-800/50">
+                <span className="text-xs font-medium text-navy-300 uppercase tracking-wider">Deal Details</span>
+              </div>
+              <div className="p-4 grid grid-cols-4 gap-4">
+                <div>
+                  <div className="text-[10px] text-navy-500 uppercase tracking-wider mb-1">Client</div>
+                  <div className="text-sm font-medium text-white">{dealDetails.client}</div>
                 </div>
                 <div>
-                  <h2 className="font-semibold text-slate-200">Deal Details</h2>
-                  <p className="text-xs text-slate-500">Retrieved from Salesforce</p>
+                  <div className="text-[10px] text-navy-500 uppercase tracking-wider mb-1">Product</div>
+                  <div className="text-sm font-medium text-white">{dealDetails.product}</div>
                 </div>
-              </div>
-              <div className="p-6 grid grid-cols-3 gap-6">
-                <div className="space-y-1">
-                  <div className="text-xs text-slate-500 uppercase tracking-wider">Client</div>
-                  <div className="flex items-center gap-2 text-lg font-semibold text-slate-100">
-                    <Icons.Building2 />
-                    {dealDetails.client}
-                  </div>
+                <div>
+                  <div className="text-[10px] text-navy-500 uppercase tracking-wider mb-1">Stage</div>
+                  <StatusBadge status="success">{dealDetails.stage}</StatusBadge>
                 </div>
-                <div className="space-y-1">
-                  <div className="text-xs text-slate-500 uppercase tracking-wider">Product</div>
-                  <div className="text-lg font-semibold text-slate-100">{dealDetails.product}</div>
-                </div>
-                <div className="space-y-1">
-                  <div className="text-xs text-slate-500 uppercase tracking-wider">Stage</div>
-                  <span className="inline-flex items-center gap-1 px-3 py-1 bg-emerald-500/20 text-emerald-400 rounded-lg text-sm font-medium">
-                    <Icons.CheckCircle /> {dealDetails.stage}
-                  </span>
+                <div>
+                  <div className="text-[10px] text-navy-500 uppercase tracking-wider mb-1">Validation</div>
+                  <StatusBadge status="success">Stage Validated</StatusBadge>
                 </div>
               </div>
             </section>
           )}
 
-          {/* Smart Questionnaire */}
-          <section className="bg-slate-800/30 rounded-2xl border border-slate-700/50 overflow-hidden">
-            <div className="px-6 py-4 border-b border-slate-700/50 flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-brand-500/20 flex items-center justify-center text-brand-400">
-                <Icons.Sparkles />
-              </div>
-              <div>
-                <h2 className="font-semibold text-slate-200">Smart Questionnaire</h2>
-                <p className="text-xs text-slate-500">Configure code requirements</p>
-              </div>
+          {/* Questionnaire */}
+          <section className="bg-navy-900 border border-navy-800">
+            <div className="px-4 py-2 border-b border-navy-800 bg-navy-800/50">
+              <span className="text-xs font-medium text-navy-300 uppercase tracking-wider">Configuration</span>
             </div>
-            <div className="p-6 space-y-6">
+            <div className="divide-y divide-navy-800">
               {/* Inter-territory */}
-              <div className="flex items-center justify-between p-4 bg-slate-900/30 rounded-xl">
+              <div className="px-4 py-3 flex items-center justify-between">
                 <div>
-                  <div className="font-medium text-slate-200">Inter-territory work?</div>
-                  <div className="text-xs text-slate-500 mt-0.5">Requires additional approver for cross-territory engagements</div>
+                  <div className="text-sm text-white">Inter-territory Work</div>
+                  <div className="text-xs text-navy-500">Requires territory approver assignment</div>
                 </div>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3">
                   <button
                     onClick={() => setInterTerritory(!interTerritory)}
-                    className={`relative w-12 h-6 rounded-full transition-colors ${interTerritory ? "bg-brand-500" : "bg-slate-600"}`}
+                    className={`relative w-10 h-5 transition-colors ${interTerritory ? "bg-profit" : "bg-navy-700"}`}
                   >
-                    <span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform shadow-lg ${interTerritory ? "translate-x-7" : "translate-x-1"}`} />
+                    <span className={`absolute top-0.5 w-4 h-4 bg-white transition-transform ${interTerritory ? "translate-x-5" : "translate-x-0.5"}`} />
                   </button>
                   {interTerritory && (
                     <select
                       value={approver}
                       onChange={(e) => setApprover(e.target.value)}
-                      className="px-4 py-2 bg-slate-800 border border-slate-600 rounded-lg text-sm text-slate-100 focus:ring-2 focus:ring-brand-500/50"
+                      className="px-3 py-1.5 bg-navy-950 border border-navy-700 text-sm text-white focus:border-navy-500"
                     >
                       <option value="">Select Approver</option>
                       <option value="R. Johnson">R. Johnson (EMEA)</option>
@@ -982,44 +709,45 @@
                 </div>
               </div>
 
-              {/* Work Location */}
-              <div className="flex items-center justify-between p-4 bg-slate-900/30 rounded-xl">
+              {/* Location */}
+              <div className="px-4 py-3 flex items-center justify-between">
                 <div>
-                  <div className="font-medium text-slate-200">Work Location</div>
-                  <div className="text-xs text-slate-500 mt-0.5">Primary jurisdiction for tax purposes</div>
+                  <div className="text-sm text-white">Work Location</div>
+                  <div className="text-xs text-navy-500">Primary jurisdiction for engagement</div>
                 </div>
                 <div className="flex items-center gap-3">
                   <select
                     value={workLocation}
                     onChange={(e) => setWorkLocation(e.target.value)}
-                    className="px-4 py-2 bg-slate-800 border border-slate-600 rounded-lg text-sm text-slate-100 focus:ring-2 focus:ring-brand-500/50"
+                    className="px-3 py-1.5 bg-navy-950 border border-navy-700 text-sm text-white focus:border-navy-500"
                   >
                     <option value="US">United States</option>
                     <option value="UK">United Kingdom</option>
                     <option value="CA">Canada</option>
                   </select>
                   {workLocation !== "US" && (
-                    <span className="flex items-center gap-1.5 px-3 py-2 bg-purple-500/20 text-purple-400 rounded-lg text-xs font-medium animate-fade-in">
-                      <Icons.Globe /> Int'l Tax Required
-                    </span>
+                    <StatusBadge status="warning">
+                      <Icons.Globe size={10} />
+                      <span className="ml-1">Int'l Tax</span>
+                    </StatusBadge>
                   )}
                 </div>
               </div>
 
-              {/* Risk Approval */}
-              <div className={`flex items-center justify-between p-4 rounded-xl transition-colors ${riskApproved ? "bg-emerald-500/10 border border-emerald-500/30" : "bg-slate-900/30"}`}>
+              {/* Risk */}
+              <div className={`px-4 py-3 flex items-center justify-between ${riskApproved ? "bg-profit/5" : ""}`}>
                 <div>
-                  <div className="font-medium text-slate-200">Risk Profile Approved</div>
-                  <div className="text-xs text-slate-500 mt-0.5">Required before code creation</div>
+                  <div className="text-sm text-white">Risk Profile Approved</div>
+                  <div className="text-xs text-navy-500">Required before code creation</div>
                 </div>
-                <label className="flex items-center gap-3 cursor-pointer">
+                <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={riskApproved}
                     onChange={(e) => setRiskApproved(e.target.checked)}
-                    className="w-5 h-5 rounded border-slate-600 bg-slate-800 text-brand-500 focus:ring-brand-500/50"
+                    className="w-4 h-4 border-navy-600 bg-navy-950 text-profit focus:ring-profit/50 focus:ring-offset-navy-900"
                   />
-                  <span className={`text-sm font-medium ${riskApproved ? "text-emerald-400" : "text-slate-400"}`}>
+                  <span className={`text-sm ${riskApproved ? "text-profit-light font-medium" : "text-navy-400"}`}>
                     {riskApproved ? "Approved" : "Pending"}
                   </span>
                 </label>
@@ -1027,54 +755,51 @@
             </div>
           </section>
 
-          {/* SAP Codes Preview */}
-          <section className="bg-slate-800/30 rounded-2xl border border-slate-700/50 overflow-hidden">
-            <div className="px-6 py-4 border-b border-slate-700/50 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-400">
-                  <Icons.FileText />
-                </div>
-                <div>
-                  <h2 className="font-semibold text-slate-200">SAP Codes to Create</h2>
-                  <p className="text-xs text-slate-500">{sapCodes.filter(c => c.status === "ready").length} codes will be generated</p>
-                </div>
-              </div>
+          {/* SAP Codes */}
+          <section className="bg-navy-900 border border-navy-800">
+            <div className="px-4 py-2 border-b border-navy-800 bg-navy-800/50 flex items-center justify-between">
+              <span className="text-xs font-medium text-navy-300 uppercase tracking-wider">SAP Codes</span>
+              <span className="text-xs text-navy-500">{sapCodes.filter(c => c.status === "Ready").length} codes ready</span>
             </div>
-            <div className="divide-y divide-slate-700/50">
-              {sapCodes.map((code, idx) => (
-                <div key={idx} className="px-6 py-4 flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <span className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold ${code.status === "ready" ? "bg-emerald-500/20 text-emerald-400" : "bg-slate-700/50 text-slate-500"}`}>
-                      {code.status === "ready" ? <Icons.Check /> : "—"}
-                    </span>
-                    <div>
-                      <div className="font-medium text-slate-200">{code.type}</div>
-                      {code.code && <div className="text-xs text-slate-500 font-mono">{code.code}</div>}
-                    </div>
-                  </div>
-                  <span className={`px-2 py-1 rounded text-xs font-medium ${code.status === "ready" ? "bg-emerald-500/20 text-emerald-400" : "bg-slate-700/50 text-slate-500"}`}>
-                    {code.status === "ready" ? "Ready" : "Optional"}
-                  </span>
-                </div>
-              ))}
-            </div>
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-[10px] text-navy-500 uppercase tracking-wider border-b border-navy-800">
+                  <th className="text-left px-4 py-2 font-medium">Type</th>
+                  <th className="text-left px-4 py-2 font-medium">Code</th>
+                  <th className="text-right px-4 py-2 font-medium">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sapCodes.map((code, idx) => (
+                  <tr key={idx} className="border-b border-navy-800/50 last:border-0">
+                    <td className="px-4 py-2 text-navy-200">{code.type}</td>
+                    <td className="px-4 py-2 font-mono text-xs text-navy-400">{code.code}</td>
+                    <td className="px-4 py-2 text-right">
+                      <StatusBadge status={code.status === "Ready" ? "success" : code.status === "Required" ? "warning" : "neutral"}>
+                        {code.status}
+                      </StatusBadge>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </section>
 
-          {/* Action Button */}
-          <div className="flex justify-end gap-4">
+          {/* Actions */}
+          <div className="flex justify-between items-center pt-2">
+            <div className="text-xs text-navy-500">
+              {!canProceed && "Complete all required fields to proceed"}
+            </div>
             <button
               onClick={onComplete}
               disabled={!canProceed}
-              className={`group px-6 py-3 rounded-xl text-sm font-semibold flex items-center gap-2 transition-all ${
+              className={`px-4 py-2 text-sm font-medium transition-colors ${
                 canProceed
-                  ? "bg-gradient-to-r from-brand-500 to-violet-500 text-white hover:shadow-lg hover:shadow-brand-500/25 hover:-translate-y-0.5"
-                  : "bg-slate-800 text-slate-500 cursor-not-allowed"
+                  ? "bg-profit hover:bg-profit-dark text-white"
+                  : "bg-navy-800 text-navy-500 cursor-not-allowed"
               }`}
-              data-tooltip={!canProceed ? "Load opportunity and approve risk profile first" : ""}
             >
-              <Icons.Zap />
-              Create SAP Codes
-              <Icons.ArrowRight className="group-hover:translate-x-1 transition-transform" />
+              Create SAP Codes →
             </button>
           </div>
         </div>
@@ -1088,88 +813,77 @@
       dealLoaded, pricingStructure, setPricingStructure, useRateCard, handleRateCardToggle,
       staffing, updateStaffRow, addStaffRow, deleteStaffRow,
       targetFee, setTargetFee, totalBudgetCost, totalBudgetHours,
-      recommendedFee, applyRecommendedFee, projectedMargin, marginIsHealthy, newRowId,
-      onNavigateToInitiation,
+      recommendedFee, applyRecommendedFee, projectedMargin, marginIsHealthy, marginVariance, newRowId, onNavigate,
     }) {
       const [hoveredRow, setHoveredRow] = useState(null);
 
       if (!dealLoaded) {
         return (
-          <EmptyState
-            icon={<Icons.FileText />}
-            title="No Active Engagement"
-            description="Start by loading an opportunity from Salesforce in the Code Create step."
-            action={onNavigateToInitiation}
-            actionLabel="Go to Code Create"
-          />
+          <div className="flex flex-col items-center justify-center h-64 text-center">
+            <div className="text-navy-500 mb-4">No engagement loaded</div>
+            <button onClick={onNavigate} className="text-sm text-profit hover:text-profit-light">
+              ← Go to Code Create
+            </button>
+          </div>
         );
       }
 
       return (
-        <div className="flex gap-6 animate-fade-in">
-          {/* Left: Staffing Grid */}
-          <div className="flex-1 space-y-4">
+        <div className="flex gap-4 fade-in">
+          {/* Main Table */}
+          <div className="flex-1 space-y-3">
             {/* Controls */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-slate-500">Pricing:</span>
+                  <span className="text-xs text-navy-500">Pricing:</span>
                   <select
                     value={pricingStructure}
                     onChange={(e) => setPricingStructure(e.target.value)}
-                    className="px-3 py-2 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-slate-100 focus:ring-2 focus:ring-brand-500/50"
+                    className="px-2 py-1 bg-navy-900 border border-navy-700 text-sm text-white focus:border-navy-500"
                   >
                     <option>Fixed Fee</option>
                     <option>T&M</option>
                     <option>Capped Fee</option>
                     <option>Contingent</option>
-                    <option>Expense Only</option>
                   </select>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                <span className="text-xs text-slate-500">Lock to Rate Card</span>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <span className="text-xs text-navy-500">Rate Card Lock</span>
                 <button
                   onClick={handleRateCardToggle}
-                  className={`relative w-12 h-6 rounded-full transition-colors ${useRateCard ? "bg-brand-500" : "bg-slate-600"}`}
+                  className={`relative w-8 h-4 transition-colors ${useRateCard ? "bg-profit" : "bg-navy-700"}`}
                 >
-                  <span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform shadow-lg ${useRateCard ? "translate-x-7" : "translate-x-1"}`} />
+                  <span className={`absolute top-0.5 w-3 h-3 bg-white transition-transform ${useRateCard ? "translate-x-4" : "translate-x-0.5"}`} />
                 </button>
-              </div>
+              </label>
             </div>
 
             {/* Staffing Table */}
-            <div className="bg-slate-800/30 rounded-2xl border border-slate-700/50 overflow-hidden">
-              {staffing.length === 0 ? (
-                <div className="p-12 text-center">
-                  <div className="w-16 h-16 rounded-2xl bg-slate-800/50 flex items-center justify-center mx-auto mb-4 text-slate-500">
-                    <Icons.Users />
-                  </div>
-                  <h3 className="text-lg font-semibold text-slate-200 mb-2">Build Your Team</h3>
-                  <p className="text-sm text-slate-400 mb-6">Add resources to see costs and recommended pricing</p>
-                  <button
-                    onClick={addStaffRow}
-                    className="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white rounded-lg text-sm font-medium inline-flex items-center gap-2"
-                  >
-                    <Icons.Plus /> Add First Resource
-                  </button>
-                </div>
-              ) : (
-                <table className="w-full">
-                  <thead>
-                    <tr className="text-xs text-slate-500 uppercase tracking-wider bg-slate-900/30">
-                      <th className="w-10"></th>
-                      <th className="text-left px-4 py-3 font-medium">Name</th>
-                      <th className="text-left px-4 py-3 font-medium">Level</th>
-                      <th className="text-left px-4 py-3 font-medium">Region</th>
-                      <th className="text-left px-4 py-3 font-medium">LoS</th>
-                      <th className="text-right px-4 py-3 font-medium">Rate</th>
-                      <th className="text-right px-4 py-3 font-medium">Hours</th>
-                      <th className="text-right px-4 py-3 font-medium">Total</th>
+            <div className="bg-navy-900 border border-navy-800">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-[10px] text-navy-500 uppercase tracking-wider border-b border-navy-800 bg-navy-800/50">
+                    <th className="w-8"></th>
+                    <th className="text-left px-3 py-2 font-medium">Name</th>
+                    <th className="text-left px-3 py-2 font-medium">Level</th>
+                    <th className="text-left px-3 py-2 font-medium">Region</th>
+                    <th className="text-left px-3 py-2 font-medium">LoS</th>
+                    <th className="text-right px-3 py-2 font-medium">Rate</th>
+                    <th className="text-right px-3 py-2 font-medium">Hours</th>
+                    <th className="text-right px-3 py-2 font-medium">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {staffing.length === 0 ? (
+                    <tr>
+                      <td colSpan={8} className="px-4 py-8 text-center text-navy-500">
+                        No resources added. <button onClick={addStaffRow} className="text-profit hover:text-profit-light">Add first resource</button>
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {staffing.map((row) => {
+                  ) : (
+                    staffing.map(row => {
                       const isTBD = row.name === "TBD" || row.name.startsWith("TBD");
                       const isNew = row.id === newRowId;
                       return (
@@ -1177,165 +891,149 @@
                           key={row.id}
                           onMouseEnter={() => setHoveredRow(row.id)}
                           onMouseLeave={() => setHoveredRow(null)}
-                          className={`border-t border-slate-700/30 hover:bg-slate-700/20 ${isNew ? "row-highlight" : ""}`}
+                          className={`border-b border-navy-800/50 hover:bg-navy-800/30 ${isNew ? "row-flash" : ""}`}
                         >
-                          <td className="px-2 py-2">
+                          <td className="px-2 py-1.5 text-center">
                             {hoveredRow === row.id && (
-                              <button onClick={() => deleteStaffRow(row.id)} className="p-1 text-slate-500 hover:text-red-400 rounded">
-                                <Icons.Trash2 />
+                              <button onClick={() => deleteStaffRow(row.id)} className="text-navy-600 hover:text-loss-light">
+                                <Icons.Trash />
                               </button>
                             )}
                           </td>
-                          <td className="px-4 py-2">
+                          <td className="px-3 py-1.5">
                             <input
                               type="text"
                               value={row.name}
                               onChange={(e) => updateStaffRow(row.id, "name", e.target.value)}
-                              className={`w-full px-2 py-1.5 bg-transparent border-0 rounded focus:ring-2 focus:ring-brand-500/50 ${isTBD ? "text-amber-400 italic" : "text-slate-100"}`}
+                              className={`w-full px-1 py-0.5 bg-transparent border-0 focus:ring-1 focus:ring-navy-500 ${isTBD ? "text-warning-light italic" : "text-white"}`}
                             />
                           </td>
-                          <td className="px-4 py-2">
+                          <td className="px-3 py-1.5">
                             <select
                               value={row.level}
                               onChange={(e) => updateStaffRow(row.id, "level", e.target.value)}
-                              className="w-full px-2 py-1.5 bg-transparent border-0 text-slate-100 rounded focus:ring-2 focus:ring-brand-500/50"
+                              className="w-full px-1 py-0.5 bg-transparent border-0 text-white focus:ring-1 focus:ring-navy-500"
                             >
-                              {LEVELS.map(level => <option key={level} value={level} className="bg-slate-800">{level}</option>)}
+                              {LEVELS.map(l => <option key={l} value={l} className="bg-navy-900">{l}</option>)}
                             </select>
                           </td>
-                          <td className="px-4 py-2">
+                          <td className="px-3 py-1.5">
                             <select
-                              value={row.region || "Northeast"}
+                              value={row.region}
                               onChange={(e) => updateStaffRow(row.id, "region", e.target.value)}
-                              className={`w-full px-2 py-1.5 bg-transparent border-0 rounded focus:ring-2 focus:ring-brand-500/50 ${isTBD ? "text-amber-400" : "text-slate-100"}`}
+                              className={`w-full px-1 py-0.5 bg-transparent border-0 focus:ring-1 focus:ring-navy-500 ${isTBD ? "text-warning-light" : "text-white"}`}
                             >
-                              {REGIONS.map(r => <option key={r} value={r} className="bg-slate-800">{r}</option>)}
+                              {REGIONS.map(r => <option key={r} value={r} className="bg-navy-900">{r}</option>)}
                             </select>
                           </td>
-                          <td className="px-4 py-2">
+                          <td className="px-3 py-1.5">
                             <select
-                              value={row.los || "Tax"}
+                              value={row.los}
                               onChange={(e) => updateStaffRow(row.id, "los", e.target.value)}
-                              className={`w-full px-2 py-1.5 bg-transparent border-0 rounded focus:ring-2 focus:ring-brand-500/50 ${isTBD ? "text-amber-400" : "text-slate-100"}`}
+                              className={`w-full px-1 py-0.5 bg-transparent border-0 focus:ring-1 focus:ring-navy-500 ${isTBD ? "text-warning-light" : "text-white"}`}
                             >
-                              {LINE_OF_SERVICE.map(l => <option key={l} value={l} className="bg-slate-800">{l}</option>)}
+                              {LINE_OF_SERVICE.map(l => <option key={l} value={l} className="bg-navy-900">{l}</option>)}
                             </select>
                           </td>
-                          <td className="px-4 py-2 text-right">
+                          <td className="px-3 py-1.5 text-right">
                             <div className="flex items-center justify-end gap-1">
-                              {useRateCard && <Icons.Lock />}
-                              <span className="text-slate-500">$</span>
+                              {useRateCard && <Icons.Lock size={10} />}
+                              <span className="text-navy-500">$</span>
                               <input
                                 type="number"
                                 value={row.rate}
                                 onChange={(e) => updateStaffRow(row.id, "rate", parseInt(e.target.value) || 0)}
                                 disabled={useRateCard}
-                                className={`w-16 px-2 py-1.5 text-right border-0 rounded focus:ring-2 focus:ring-brand-500/50 ${useRateCard ? "bg-slate-700/30 text-slate-500" : "bg-transparent text-slate-100"}`}
+                                className={`w-14 px-1 py-0.5 text-right bg-transparent border-0 tabular-nums focus:ring-1 focus:ring-navy-500 ${useRateCard ? "text-navy-500" : "text-white"}`}
                               />
                             </div>
                           </td>
-                          <td className="px-4 py-2 text-right">
+                          <td className="px-3 py-1.5 text-right">
                             <input
                               type="number"
                               value={row.hours}
                               onChange={(e) => updateStaffRow(row.id, "hours", parseInt(e.target.value) || 0)}
-                              className="w-16 px-2 py-1.5 bg-transparent border-0 text-slate-100 text-right rounded focus:ring-2 focus:ring-brand-500/50"
+                              className="w-14 px-1 py-0.5 text-right bg-transparent border-0 text-white tabular-nums focus:ring-1 focus:ring-navy-500"
                             />
                           </td>
-                          <td className="px-4 py-2 text-right font-semibold text-slate-100">
+                          <td className="px-3 py-1.5 text-right font-medium text-white tabular-nums">
                             {formatCurrency(row.rate * row.hours)}
                           </td>
                         </tr>
                       );
-                    })}
-                  </tbody>
-                  <tfoot>
-                    <tr className="border-t border-slate-600 bg-slate-900/30">
-                      <td colSpan={6} className="px-4 py-3">
-                        <button
-                          onClick={addStaffRow}
-                          className="flex items-center gap-2 px-3 py-1.5 text-sm text-brand-400 hover:text-brand-300 hover:bg-brand-500/10 rounded-lg transition-colors"
-                        >
-                          <Icons.Plus /> Add Resource
-                          <span className="text-xs text-slate-600 ml-2">⌘N</span>
-                        </button>
-                      </td>
-                      <td className="px-4 py-3 text-right text-sm text-slate-400">{totalBudgetHours} hrs</td>
-                      <td className="px-4 py-3 text-right font-bold text-lg text-slate-100">{formatCurrency(totalBudgetCost)}</td>
-                    </tr>
-                  </tfoot>
-                </table>
-              )}
+                    })
+                  )}
+                </tbody>
+                <tfoot>
+                  <tr className="border-t border-navy-700 bg-navy-800/30">
+                    <td colSpan={6} className="px-3 py-2">
+                      <button onClick={addStaffRow} className="flex items-center gap-1 text-xs text-profit hover:text-profit-light">
+                        <Icons.Plus size={12} /> Add Resource <span className="text-navy-600 ml-1">⌘N</span>
+                      </button>
+                    </td>
+                    <td className="px-3 py-2 text-right text-xs text-navy-400 tabular-nums">{formatNumber(totalBudgetHours)} hrs</td>
+                    <td className="px-3 py-2 text-right font-semibold text-white tabular-nums">{formatCurrency(totalBudgetCost)}</td>
+                  </tr>
+                </tfoot>
+              </table>
             </div>
           </div>
 
-          {/* Right: Financial Sidebar */}
-          <div className="w-80 space-y-4">
-            {/* Target Fee Input */}
-            <div className="bg-slate-800/30 rounded-2xl border border-slate-700/50 p-5">
-              <div className="flex items-center gap-2 mb-4">
-                <Icons.Target />
-                <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">Target Fee</span>
-              </div>
+          {/* Sidebar - Financial Summary */}
+          <div className="w-64 space-y-3">
+            {/* Target Fee */}
+            <div className="bg-navy-900 border border-navy-800 p-3">
+              <div className="text-[10px] text-navy-500 uppercase tracking-wider mb-2">Target Fee</div>
               <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-lg">$</span>
+                <span className="absolute left-2 top-1/2 -translate-y-1/2 text-navy-500">$</span>
                 <input
                   type="number"
                   value={targetFee || ""}
                   onChange={(e) => setTargetFee(parseInt(e.target.value) || 0)}
-                  placeholder="Enter fee"
-                  className="w-full pl-8 pr-4 py-3 bg-slate-900/50 border border-slate-700 rounded-xl text-2xl font-bold text-slate-100 focus:ring-2 focus:ring-brand-500/50"
+                  placeholder="0"
+                  className="w-full pl-6 pr-2 py-2 bg-navy-950 border border-navy-700 text-lg font-semibold text-white tabular-nums focus:border-navy-500"
                 />
               </div>
             </div>
 
             {/* Recommended Fee */}
             {totalBudgetCost > 0 && (
-              <div className="bg-brand-500/10 rounded-2xl border border-brand-500/30 p-5 animate-fade-in">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <Icons.Sparkles />
-                    <span className="text-xs font-medium text-brand-400 uppercase tracking-wider">Recommended Fee</span>
-                  </div>
+              <div className="bg-navy-900 border border-profit/30 p-3 fade-in">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-[10px] text-navy-500 uppercase tracking-wider">Recommended Fee</span>
                 </div>
-                <div className="text-3xl font-bold text-brand-300">{formatCurrency(recommendedFee)}</div>
-                <p className="text-xs text-slate-500 mt-1">To achieve {TARGET_MARGIN}% target margin</p>
+                <div className="text-xl font-semibold text-profit-light tabular-nums">{formatCurrency(recommendedFee)}</div>
+                <div className="text-[10px] text-navy-500 mt-1">For {TARGET_MARGIN}% margin</div>
                 <button
                   onClick={applyRecommendedFee}
-                  className="mt-4 w-full px-4 py-2 bg-brand-500/20 hover:bg-brand-500/30 text-brand-300 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-colors"
+                  className="w-full mt-2 px-3 py-1.5 bg-profit/20 hover:bg-profit/30 text-profit-light text-xs font-medium border border-profit/30 transition-colors"
                 >
-                  <Icons.Zap /> Apply This Fee
+                  Apply Fee
                 </button>
               </div>
             )}
 
-            {/* Total Cost */}
-            <MetricCard
-              icon={<Icons.Users />}
-              label="Total Cost"
-              value={formatCurrency(totalBudgetCost)}
-              subtext={`${staffing.length} resources • ${totalBudgetHours} hours`}
-            />
+            {/* Cost Summary */}
+            <div className="bg-navy-900 border border-navy-800 p-3">
+              <div className="text-[10px] text-navy-500 uppercase tracking-wider mb-2">Total Cost</div>
+              <div className="text-xl font-semibold text-white tabular-nums">{formatCurrency(totalBudgetCost)}</div>
+              <div className="text-xs text-navy-500 mt-1">{staffing.length} resources • {formatNumber(totalBudgetHours)} hours</div>
+            </div>
 
-            {/* Target Margin */}
-            <MetricCard
-              icon={<Icons.Target />}
-              label="Target Margin"
-              value={`${TARGET_MARGIN}%`}
-              subtext="Firm standard for this product"
-            />
-
-            {/* Projected Margin */}
+            {/* Margin */}
             {targetFee > 0 && (
-              <MetricCard
-                icon={<Icons.TrendingUp />}
-                label="Projected Margin"
-                value={formatPercent(projectedMargin)}
-                subtext={marginIsHealthy ? "Above target ✓" : `${(TARGET_MARGIN - projectedMargin).toFixed(1)}% below target`}
-                variant={marginIsHealthy ? "success" : "danger"}
-                size="large"
-                pulse
-              />
+              <div className={`border p-3 fade-in ${marginIsHealthy ? "bg-profit/10 border-profit/30" : "bg-loss/10 border-loss/30"}`}>
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-[10px] text-navy-500 uppercase tracking-wider">Projected Margin</span>
+                  {marginIsHealthy ? <Icons.TrendUp size={12} className="text-profit-light" /> : <Icons.TrendDown size={12} className="text-loss-light" />}
+                </div>
+                <div className={`text-2xl font-bold tabular-nums ${marginIsHealthy ? "text-profit-light" : "text-loss-light"}`}>
+                  {formatPercent(projectedMargin)}
+                </div>
+                <div className={`text-xs mt-1 ${marginIsHealthy ? "text-profit" : "text-loss"}`}>
+                  {marginVariance >= 0 ? "+" : ""}{marginVariance.toFixed(1)}% vs target
+                </div>
+              </div>
             )}
           </div>
         </div>
@@ -1343,21 +1041,21 @@
     }
 
     // ============================================
-    // VIEW 2.5: SCHEDULING
+    // VIEW 3: SCHEDULING
     // ============================================
-    function ViewScheduling({ dealLoaded, scheduleData, spreadTypes, updateScheduleSpread, updateWeekHours, setToast, onNavigateToBudgeting }) {
+    function ViewScheduling({ dealLoaded, hasBudget, scheduleData, spreadTypes, updateScheduleSpread, updateWeekHours, setToast, onNavigate }) {
       const weekDates = getWeekDates();
       const [syncing, setSyncing] = useState(false);
+      const MAX_WEEKLY = 40;
 
-      if (!dealLoaded || scheduleData.length === 0) {
+      if (!dealLoaded || !hasBudget || scheduleData.length === 0) {
         return (
-          <EmptyState
-            icon={<Icons.Calendar />}
-            title="No Resources to Schedule"
-            description="Add resources to your staffing plan first, then come back to spread their hours."
-            action={onNavigateToBudgeting}
-            actionLabel="Go to Flex Plan"
-          />
+          <div className="flex flex-col items-center justify-center h-64 text-center">
+            <div className="text-navy-500 mb-4">No staffing plan to schedule</div>
+            <button onClick={onNavigate} className="text-sm text-profit hover:text-profit-light">
+              ← Go to Flex Plan
+            </button>
+          </div>
         );
       }
 
@@ -1365,135 +1063,105 @@
         setSyncing(true);
         setTimeout(() => {
           setSyncing(false);
-          setToast({ message: "Schedule synced to Team Builder", type: "success" });
-        }, 1500);
+          setToast({ message: "Synced to Team Builder", type: "success" });
+        }, 1200);
       };
 
-      const maxWeeklyHours = 40;
-
       return (
-        <div className="space-y-6 animate-fade-in">
-          {/* Header */}
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-xl font-bold text-slate-100">Resource Schedule</h2>
-              <p className="text-sm text-slate-400 mt-1">Spread hours across the engagement timeline</p>
+        <div className="space-y-4 fade-in">
+          {/* Schedule Table */}
+          <div className="bg-navy-900 border border-navy-800">
+            <div className="px-4 py-2 border-b border-navy-800 bg-navy-800/50 flex items-center justify-between">
+              <span className="text-xs font-medium text-navy-300 uppercase tracking-wider">Resource Schedule</span>
+              <span className="text-xs text-navy-500">{weekDates[0]} — {weekDates[3]}</span>
             </div>
-            <div className="flex items-center gap-3">
-              <span className="px-3 py-1.5 bg-slate-800/50 text-slate-400 rounded-lg text-xs">
-                {weekDates[0]} — {weekDates[3]}
-              </span>
-            </div>
-          </div>
-
-          {/* Schedule Grid */}
-          <div className="bg-slate-800/30 rounded-2xl border border-slate-700/50 overflow-hidden">
-            <table className="w-full">
+            <table className="w-full text-sm">
               <thead>
-                <tr className="text-xs text-slate-500 uppercase tracking-wider bg-slate-900/30">
-                  <th className="text-left px-5 py-4 font-medium">Resource</th>
-                  <th className="text-center px-4 py-4 font-medium">Total</th>
-                  <th className="text-left px-4 py-4 font-medium">Distribution</th>
-                  {weekDates.map((date, idx) => (
-                    <th key={idx} className="text-center px-3 py-4 font-medium w-24">
-                      <div>{date}</div>
-                      <div className="text-[10px] text-slate-600 normal-case">Week {idx + 1}</div>
-                    </th>
+                <tr className="text-[10px] text-navy-500 uppercase tracking-wider border-b border-navy-800">
+                  <th className="text-left px-4 py-2 font-medium">Resource</th>
+                  <th className="text-center px-2 py-2 font-medium">Total</th>
+                  <th className="text-left px-2 py-2 font-medium">Spread</th>
+                  {weekDates.map((d, i) => (
+                    <th key={i} className="text-center px-2 py-2 font-medium w-20">{d}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
-                {scheduleData.map((resource) => {
-                  const weeklyMax = Math.max(...resource.weeks);
-                  return (
-                    <tr key={resource.id} className="border-t border-slate-700/30 hover:bg-slate-700/20">
-                      <td className="px-5 py-4">
-                        <div className="font-medium text-slate-100">{resource.name}</div>
-                        <div className="text-xs text-slate-500">{resource.level}</div>
-                      </td>
-                      <td className="px-4 py-4 text-center">
-                        <span className="px-3 py-1.5 bg-slate-700/50 rounded-lg text-slate-200 font-semibold">
-                          {resource.totalHours}h
-                        </span>
-                      </td>
-                      <td className="px-4 py-4">
-                        <div className="flex gap-1">
-                          {spreadTypes.map((type) => (
-                            <button
-                              key={type.id}
-                              onClick={() => updateScheduleSpread(resource.id, type.id)}
-                              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-                                resource.spreadType === type.id
-                                  ? "bg-brand-500/20 text-brand-300 ring-1 ring-brand-500/50"
-                                  : "bg-slate-800/50 text-slate-400 hover:bg-slate-700/50"
-                              }`}
-                            >
-                              {type.label}
-                            </button>
-                          ))}
-                        </div>
-                      </td>
-                      {resource.weeks.map((hours, idx) => {
-                        const isOverCapacity = hours > maxWeeklyHours;
-                        return (
-                          <td key={idx} className="px-3 py-4 text-center">
-                            <div className="relative">
-                              <input
-                                type="number"
-                                value={hours}
-                                onChange={(e) => updateWeekHours(resource.id, idx, e.target.value)}
-                                className={`w-16 px-2 py-2 bg-slate-900/50 border rounded-lg text-center text-slate-100 font-medium focus:ring-2 focus:ring-brand-500/50 ${
-                                  isOverCapacity ? "border-red-500/50 text-red-400" : "border-slate-700"
-                                }`}
-                              />
-                              {/* Mini bar chart */}
-                              <div className="mt-2 h-1 bg-slate-700 rounded-full overflow-hidden">
-                                <div
-                                  className={`h-full rounded-full transition-all ${isOverCapacity ? "bg-red-500" : "bg-brand-500"}`}
-                                  style={{ width: `${Math.min((hours / maxWeeklyHours) * 100, 100)}%` }}
-                                />
-                              </div>
-                            </div>
-                          </td>
-                        );
-                      })}
-                    </tr>
-                  );
-                })}
+                {scheduleData.map(resource => (
+                  <tr key={resource.id} className="border-b border-navy-800/50 hover:bg-navy-800/30">
+                    <td className="px-4 py-2">
+                      <div className="text-white font-medium">{resource.name}</div>
+                      <div className="text-[10px] text-navy-500">{resource.level}</div>
+                    </td>
+                    <td className="px-2 py-2 text-center">
+                      <span className="px-2 py-0.5 bg-navy-800 text-white text-xs font-medium tabular-nums">
+                        {resource.totalHours}h
+                      </span>
+                    </td>
+                    <td className="px-2 py-2">
+                      <div className="flex gap-1">
+                        {spreadTypes.map(type => (
+                          <button
+                            key={type.id}
+                            onClick={() => updateScheduleSpread(resource.id, type.id)}
+                            className={`px-2 py-0.5 text-[10px] font-medium transition-colors ${
+                              resource.spreadType === type.id
+                                ? "bg-profit/20 text-profit-light border border-profit/30"
+                                : "bg-navy-800 text-navy-400 border border-navy-700 hover:border-navy-600"
+                            }`}
+                          >
+                            {type.label}
+                          </button>
+                        ))}
+                      </div>
+                    </td>
+                    {resource.weeks.map((hours, idx) => {
+                      const isOver = hours > MAX_WEEKLY;
+                      const pct = Math.min((hours / MAX_WEEKLY) * 100, 100);
+                      return (
+                        <td key={idx} className="px-2 py-2 text-center">
+                          <input
+                            type="number"
+                            value={hours}
+                            onChange={(e) => updateWeekHours(resource.id, idx, e.target.value)}
+                            className={`w-14 px-2 py-1 text-center text-sm font-medium tabular-nums bg-navy-950 border focus:ring-1 focus:ring-navy-500 ${
+                              isOver ? "border-loss/50 text-loss-light" : "border-navy-700 text-white"
+                            }`}
+                          />
+                          <div className="mt-1 h-1 bg-navy-800">
+                            <div
+                              className={`h-full transition-all ${isOver ? "bg-loss" : "bg-profit"}`}
+                              style={{ width: `${pct}%` }}
+                            />
+                          </div>
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
 
-          {/* Capacity Legend */}
-          <div className="flex items-center gap-6 text-xs text-slate-500">
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded bg-brand-500" />
-              <span>Within capacity (≤40h/week)</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded bg-red-500" />
-              <span>Over capacity (&gt;40h/week)</span>
-            </div>
-          </div>
-
-          {/* Sync Status */}
-          <div className="flex items-center justify-between p-5 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400">
-                {syncing ? <Icons.Loader /> : <Icons.CheckCircle />}
+          {/* Legend & Sync */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4 text-[10px] text-navy-500">
+              <div className="flex items-center gap-1">
+                <div className="w-3 h-1 bg-profit" />
+                <span>≤40h/week</span>
               </div>
-              <div>
-                <div className="font-semibold text-emerald-300">Team Builder Integration</div>
-                <div className="text-sm text-emerald-400/70">Push schedule to Resource Management</div>
+              <div className="flex items-center gap-1">
+                <div className="w-3 h-1 bg-loss" />
+                <span>&gt;40h/week (over capacity)</span>
               </div>
             </div>
             <button
               onClick={handleSync}
               disabled={syncing}
-              className="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-500/50 text-white rounded-xl font-medium flex items-center gap-2 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-profit hover:bg-profit-dark disabled:bg-navy-700 text-white text-sm font-medium transition-colors"
             >
-              {syncing ? <Icons.Loader /> : <Icons.RefreshCw />}
-              {syncing ? "Syncing..." : "Sync Now"}
+              {syncing ? <Icons.Loader /> : <Icons.Sync />}
+              {syncing ? "Syncing..." : "Sync to Team Builder"}
             </button>
           </div>
         </div>
@@ -1501,197 +1169,182 @@
     }
 
     // ============================================
-    // VIEW 3: FORECASTING
+    // VIEW 4: FORECASTING
     // ============================================
     function ViewForecasting({
       alertVisible, setAlertVisible, unbudgetedResources, handleAssignEtc, highlightedResource,
       actuals, updateEtc, etcInputRef,
       targetFee, totalBudgetCost, totalBudgetHours,
-      totalActualCost, totalActualHours, totalProjectedCost, totalProjectedHours,
-      projectedProfit, profitIsPositive,
+      totalActualCost, totalActualHours, totalProjectedCost, totalProjectedHours, projectedProfit,
     }) {
       const projectedMargin = targetFee > 0 ? ((targetFee - totalProjectedCost) / targetFee) * 100 : 0;
+      const hoursVariance = totalProjectedHours - totalBudgetHours;
+      const costVariance = totalProjectedCost - totalBudgetCost;
 
       return (
-        <div className="space-y-6 animate-fade-in">
-          {/* Alert Banner */}
+        <div className="space-y-4 fade-in">
+          {/* Alert */}
           {alertVisible && unbudgetedResources.length > 0 && (
-            <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-5 animate-slide-down">
-              <div className="flex items-start justify-between">
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-400 flex-shrink-0">
-                    <Icons.AlertTriangle />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-amber-300">
-                      Unbudgeted Time Detected
-                    </h3>
-                    <p className="text-sm text-amber-400/70 mt-1">
-                      <strong>{unbudgetedResources[0].name}</strong> ({unbudgetedResources[0].level}) has logged{" "}
-                      <strong>{unbudgetedResources[0].actualHours} hours</strong> without a budget allocation.
-                    </p>
-                  </div>
+            <div className="bg-warning/10 border border-warning/30 px-4 py-3 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Icons.AlertTriangle className="text-warning-light" />
+                <div>
+                  <span className="text-sm font-medium text-warning-light">Unbudgeted Time: </span>
+                  <span className="text-sm text-navy-200">
+                    {unbudgetedResources[0].name} logged {unbudgetedResources[0].actualHours}h without budget allocation
+                  </span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={handleAssignEtc}
-                    className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-sm font-medium transition-colors"
-                  >
-                    Assign ETC
-                  </button>
-                  <button
-                    onClick={() => setAlertVisible(false)}
-                    className="p-2 text-amber-400/70 hover:text-amber-300 hover:bg-amber-500/10 rounded-lg transition-colors"
-                  >
-                    <Icons.X />
-                  </button>
-                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <button onClick={handleAssignEtc} className="px-3 py-1 bg-warning/20 hover:bg-warning/30 text-warning-light text-xs font-medium border border-warning/30">
+                  Assign ETC
+                </button>
+                <button onClick={() => setAlertVisible(false)} className="p-1 text-navy-500 hover:text-navy-300">
+                  <Icons.X />
+                </button>
               </div>
             </div>
           )}
 
-          {/* Hero Metrics */}
-          <div className="grid grid-cols-3 gap-4">
-            <MetricCard
-              icon={<Icons.DollarSign />}
-              label="Projected Profit"
-              value={`${profitIsPositive ? "+" : ""}${formatCurrency(projectedProfit)}`}
-              subtext={`Fee: ${formatCurrency(targetFee)} • Cost: ${formatCurrency(totalProjectedCost)}`}
-              variant={profitIsPositive ? "success" : "danger"}
-              size="large"
-            />
-            <MetricCard
-              icon={<Icons.TrendingUp />}
-              label="Projected Margin"
-              value={formatPercent(projectedMargin)}
-              subtext={projectedMargin >= TARGET_MARGIN ? "On target" : `${(TARGET_MARGIN - projectedMargin).toFixed(1)}% below target`}
-              variant={projectedMargin >= TARGET_MARGIN ? "success" : "danger"}
-              size="large"
-            />
-            <MetricCard
-              icon={<Icons.Users />}
-              label="Hours Variance"
-              value={`${totalProjectedHours - totalBudgetHours >= 0 ? "+" : ""}${totalProjectedHours - totalBudgetHours}h`}
-              subtext={`Budget: ${totalBudgetHours}h • Projected: ${totalProjectedHours}h`}
-              variant={totalProjectedHours <= totalBudgetHours ? "success" : "danger"}
-              size="large"
-            />
+          {/* Summary Cards */}
+          <div className="grid grid-cols-4 gap-3">
+            <div className={`border p-3 ${projectedProfit >= 0 ? "bg-profit/10 border-profit/30" : "bg-loss/10 border-loss/30"}`}>
+              <div className="text-[10px] text-navy-500 uppercase tracking-wider mb-1">Projected Profit</div>
+              <div className={`text-xl font-bold tabular-nums ${projectedProfit >= 0 ? "text-profit-light" : "text-loss-light"}`}>
+                {formatCurrency(projectedProfit)}
+              </div>
+            </div>
+            <div className={`border p-3 ${projectedMargin >= TARGET_MARGIN ? "bg-profit/10 border-profit/30" : "bg-loss/10 border-loss/30"}`}>
+              <div className="text-[10px] text-navy-500 uppercase tracking-wider mb-1">Projected Margin</div>
+              <div className={`text-xl font-bold tabular-nums ${projectedMargin >= TARGET_MARGIN ? "text-profit-light" : "text-loss-light"}`}>
+                {formatPercent(projectedMargin)}
+              </div>
+            </div>
+            <div className={`border p-3 ${hoursVariance <= 0 ? "bg-profit/10 border-profit/30" : "bg-loss/10 border-loss/30"}`}>
+              <div className="text-[10px] text-navy-500 uppercase tracking-wider mb-1">Hours Variance</div>
+              <div className={`text-xl font-bold tabular-nums ${hoursVariance <= 0 ? "text-profit-light" : "text-loss-light"}`}>
+                {hoursVariance >= 0 ? "+" : ""}{hoursVariance}h
+              </div>
+            </div>
+            <div className={`border p-3 ${costVariance <= 0 ? "bg-profit/10 border-profit/30" : "bg-loss/10 border-loss/30"}`}>
+              <div className="text-[10px] text-navy-500 uppercase tracking-wider mb-1">Cost Variance</div>
+              <div className={`text-xl font-bold tabular-nums ${costVariance <= 0 ? "text-profit-light" : "text-loss-light"}`}>
+                {formatCurrency(costVariance)}
+              </div>
+            </div>
           </div>
 
-          {/* Comparison Table */}
-          <div className="bg-slate-800/30 rounded-2xl border border-slate-700/50 overflow-hidden">
-            <div className="px-6 py-4 border-b border-slate-700/50">
-              <h2 className="font-semibold text-slate-200">Budget vs Actuals vs Projected</h2>
+          {/* Budget vs Actuals */}
+          <div className="bg-navy-900 border border-navy-800">
+            <div className="px-4 py-2 border-b border-navy-800 bg-navy-800/50">
+              <span className="text-xs font-medium text-navy-300 uppercase tracking-wider">Budget vs Actuals vs Projected</span>
             </div>
-            <table className="w-full">
+            <table className="w-full text-sm">
               <thead>
-                <tr className="text-xs text-slate-500 uppercase tracking-wider bg-slate-900/30">
-                  <th className="text-left px-6 py-3 font-medium">Metric</th>
-                  <th className="text-right px-6 py-3 font-medium">Budget</th>
-                  <th className="text-right px-6 py-3 font-medium">Actuals</th>
-                  <th className="text-right px-6 py-3 font-medium">Projected</th>
-                  <th className="text-right px-6 py-3 font-medium">Variance</th>
+                <tr className="text-[10px] text-navy-500 uppercase tracking-wider border-b border-navy-800">
+                  <th className="text-left px-4 py-2 font-medium">Metric</th>
+                  <th className="text-right px-4 py-2 font-medium">Budget</th>
+                  <th className="text-right px-4 py-2 font-medium">Actuals</th>
+                  <th className="text-right px-4 py-2 font-medium">Projected</th>
+                  <th className="text-right px-4 py-2 font-medium">Variance</th>
                 </tr>
               </thead>
               <tbody>
-                <tr className="border-t border-slate-700/30">
-                  <td className="px-6 py-4 text-slate-300 font-medium">Hours</td>
-                  <td className="px-6 py-4 text-right text-slate-200">{totalBudgetHours}</td>
-                  <td className="px-6 py-4 text-right text-slate-200">{totalActualHours}</td>
-                  <td className="px-6 py-4 text-right font-semibold text-slate-100">{totalProjectedHours}</td>
-                  <td className={`px-6 py-4 text-right font-semibold ${totalProjectedHours <= totalBudgetHours ? "text-emerald-400" : "text-red-400"}`}>
-                    {totalProjectedHours - totalBudgetHours >= 0 ? "+" : ""}{totalProjectedHours - totalBudgetHours}
+                <tr className="border-b border-navy-800/50">
+                  <td className="px-4 py-2 text-navy-300">Hours</td>
+                  <td className="px-4 py-2 text-right text-white tabular-nums">{formatNumber(totalBudgetHours)}</td>
+                  <td className="px-4 py-2 text-right text-white tabular-nums">{formatNumber(totalActualHours)}</td>
+                  <td className="px-4 py-2 text-right text-white font-medium tabular-nums">{formatNumber(totalProjectedHours)}</td>
+                  <td className={`px-4 py-2 text-right font-medium tabular-nums ${hoursVariance <= 0 ? "text-profit-light" : "text-loss-light"}`}>
+                    {hoursVariance >= 0 ? "+" : ""}{hoursVariance}
                   </td>
                 </tr>
-                <tr className="border-t border-slate-700/30">
-                  <td className="px-6 py-4 text-slate-300 font-medium">Cost</td>
-                  <td className="px-6 py-4 text-right text-slate-200">{formatCurrency(totalBudgetCost)}</td>
-                  <td className="px-6 py-4 text-right text-slate-200">{formatCurrency(totalActualCost)}</td>
-                  <td className="px-6 py-4 text-right font-semibold text-slate-100">{formatCurrency(totalProjectedCost)}</td>
-                  <td className={`px-6 py-4 text-right font-semibold ${totalProjectedCost <= totalBudgetCost ? "text-emerald-400" : "text-red-400"}`}>
-                    {totalProjectedCost - totalBudgetCost >= 0 ? "+" : ""}{formatCurrency(totalProjectedCost - totalBudgetCost)}
+                <tr className="border-b border-navy-800/50">
+                  <td className="px-4 py-2 text-navy-300">Cost</td>
+                  <td className="px-4 py-2 text-right text-white tabular-nums">{formatCurrency(totalBudgetCost)}</td>
+                  <td className="px-4 py-2 text-right text-white tabular-nums">{formatCurrency(totalActualCost)}</td>
+                  <td className="px-4 py-2 text-right text-white font-medium tabular-nums">{formatCurrency(totalProjectedCost)}</td>
+                  <td className={`px-4 py-2 text-right font-medium tabular-nums ${costVariance <= 0 ? "text-profit-light" : "text-loss-light"}`}>
+                    {formatCurrency(costVariance)}
                   </td>
                 </tr>
-                <tr className="border-t border-slate-700/30 bg-slate-900/20">
-                  <td className="px-6 py-4 text-slate-300 font-medium">Revenue</td>
-                  <td className="px-6 py-4 text-right text-slate-200">{formatCurrency(targetFee)}</td>
-                  <td className="px-6 py-4 text-right text-slate-500">—</td>
-                  <td className="px-6 py-4 text-right font-semibold text-slate-100">{formatCurrency(targetFee)}</td>
-                  <td className="px-6 py-4 text-right text-slate-500">—</td>
+                <tr className="bg-navy-800/30">
+                  <td className="px-4 py-2 text-navy-300">Revenue</td>
+                  <td className="px-4 py-2 text-right text-white tabular-nums">{formatCurrency(targetFee)}</td>
+                  <td className="px-4 py-2 text-right text-navy-500">—</td>
+                  <td className="px-4 py-2 text-right text-white font-medium tabular-nums">{formatCurrency(targetFee)}</td>
+                  <td className="px-4 py-2 text-right text-navy-500">—</td>
                 </tr>
               </tbody>
             </table>
           </div>
 
-          {/* ETC by Resource */}
-          <div className="bg-slate-800/30 rounded-2xl border border-slate-700/50 overflow-hidden">
-            <div className="px-6 py-4 border-b border-slate-700/50 flex items-center justify-between">
-              <h2 className="font-semibold text-slate-200">Estimate to Complete (ETC)</h2>
-              <span className="text-xs text-slate-500">{actuals.length} resources</span>
+          {/* ETC Table */}
+          <div className="bg-navy-900 border border-navy-800">
+            <div className="px-4 py-2 border-b border-navy-800 bg-navy-800/50 flex items-center justify-between">
+              <span className="text-xs font-medium text-navy-300 uppercase tracking-wider">ETC by Resource</span>
+              <span className="text-xs text-navy-500">{actuals.length} resources</span>
             </div>
-            <table className="w-full">
+            <table className="w-full text-sm">
               <thead>
-                <tr className="text-xs text-slate-500 uppercase tracking-wider bg-slate-900/30">
-                  <th className="text-left px-6 py-3 font-medium">Resource</th>
-                  <th className="text-right px-6 py-3 font-medium">Budget</th>
-                  <th className="text-right px-6 py-3 font-medium">Charged</th>
-                  <th className="text-right px-6 py-3 font-medium">ETC</th>
-                  <th className="text-right px-6 py-3 font-medium">Projected</th>
-                  <th className="text-right px-6 py-3 font-medium">Variance</th>
+                <tr className="text-[10px] text-navy-500 uppercase tracking-wider border-b border-navy-800">
+                  <th className="text-left px-4 py-2 font-medium">Resource</th>
+                  <th className="text-right px-4 py-2 font-medium">Budget</th>
+                  <th className="text-right px-4 py-2 font-medium">Charged</th>
+                  <th className="text-right px-4 py-2 font-medium">ETC</th>
+                  <th className="text-right px-4 py-2 font-medium">Projected</th>
+                  <th className="text-right px-4 py-2 font-medium">Var</th>
                 </tr>
               </thead>
               <tbody>
-                {actuals.map((resource) => {
+                {actuals.map(resource => {
                   const isHighlighted = highlightedResource === resource.id;
                   const isUnbudgeted = resource.budgetHours === 0 && resource.actualHours > 0;
                   const projected = resource.actualHours + resource.etcHours;
-                  const variance = projected - resource.budgetHours;
+                  const variance = resource.budgetHours > 0 ? projected - resource.budgetHours : null;
                   return (
-                    <tr
-                      key={resource.id}
-                      className={`border-t border-slate-700/30 transition-all ${isHighlighted ? "bg-amber-500/10 ring-2 ring-inset ring-amber-500/50" : "hover:bg-slate-700/20"}`}
-                    >
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          {isUnbudgeted && (
-                            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-                          )}
+                    <tr key={resource.id} className={`border-b border-navy-800/50 ${isHighlighted ? "bg-warning/10" : "hover:bg-navy-800/30"}`}>
+                      <td className="px-4 py-2">
+                        <div className="flex items-center gap-2">
+                          {isUnbudgeted && <span className="w-1.5 h-1.5 bg-warning status-pulse" />}
                           <div>
-                            <div className="font-medium text-slate-200">{resource.name}</div>
-                            <div className="text-xs text-slate-500">{resource.level}</div>
+                            <div className="text-white font-medium">{resource.name}</div>
+                            <div className="text-[10px] text-navy-500">{resource.level}</div>
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-right text-slate-200">
-                        {resource.budgetHours || <span className="text-slate-500">—</span>}
-                      </td>
-                      <td className="px-6 py-4 text-right text-slate-200">{resource.actualHours}</td>
-                      <td className="px-6 py-4 text-right">
+                      <td className="px-4 py-2 text-right text-white tabular-nums">{resource.budgetHours || "—"}</td>
+                      <td className="px-4 py-2 text-right text-white tabular-nums">{resource.actualHours}</td>
+                      <td className="px-4 py-2 text-right">
                         <input
                           ref={isHighlighted ? etcInputRef : null}
                           type="number"
                           value={resource.etcHours}
                           onChange={(e) => updateEtc(resource.id, e.target.value)}
-                          className={`w-20 px-3 py-2 bg-slate-900/50 border rounded-lg text-right text-slate-100 font-medium focus:ring-2 focus:ring-brand-500/50 ${isHighlighted ? "border-amber-500 ring-2 ring-amber-500/30" : "border-slate-700"}`}
+                          className={`w-16 px-2 py-1 text-right text-sm font-medium tabular-nums bg-navy-950 border focus:ring-1 focus:ring-navy-500 ${
+                            isHighlighted ? "border-warning ring-1 ring-warning/30" : "border-navy-700"
+                          } text-white`}
                         />
                       </td>
-                      <td className="px-6 py-4 text-right font-semibold text-slate-100">{projected}</td>
-                      <td className={`px-6 py-4 text-right font-semibold ${resource.budgetHours === 0 ? "text-slate-500" : variance <= 0 ? "text-emerald-400" : "text-red-400"}`}>
-                        {resource.budgetHours === 0 ? "—" : `${variance >= 0 ? "+" : ""}${variance}`}
+                      <td className="px-4 py-2 text-right text-white font-medium tabular-nums">{projected}</td>
+                      <td className={`px-4 py-2 text-right font-medium tabular-nums ${
+                        variance === null ? "text-navy-500" : variance <= 0 ? "text-profit-light" : "text-loss-light"
+                      }`}>
+                        {variance === null ? "—" : `${variance >= 0 ? "+" : ""}${variance}`}
                       </td>
                     </tr>
                   );
                 })}
               </tbody>
               <tfoot>
-                <tr className="border-t border-slate-600 bg-slate-900/30">
-                  <td className="px-6 py-4 font-medium text-slate-400">Total</td>
-                  <td className="px-6 py-4 text-right text-slate-400">{totalBudgetHours}</td>
-                  <td className="px-6 py-4 text-right text-slate-400">{totalActualHours}</td>
-                  <td className="px-6 py-4 text-right text-slate-400">{actuals.reduce((sum, a) => sum + a.etcHours, 0)}</td>
-                  <td className="px-6 py-4 text-right font-bold text-slate-100">{totalProjectedHours}</td>
-                  <td className={`px-6 py-4 text-right font-bold ${totalProjectedHours <= totalBudgetHours ? "text-emerald-400" : "text-red-400"}`}>
-                    {totalProjectedHours - totalBudgetHours >= 0 ? "+" : ""}{totalProjectedHours - totalBudgetHours}
+                <tr className="border-t border-navy-700 bg-navy-800/30">
+                  <td className="px-4 py-2 text-navy-400 font-medium">Total</td>
+                  <td className="px-4 py-2 text-right text-navy-400 tabular-nums">{totalBudgetHours}</td>
+                  <td className="px-4 py-2 text-right text-navy-400 tabular-nums">{totalActualHours}</td>
+                  <td className="px-4 py-2 text-right text-navy-400 tabular-nums">{actuals.reduce((s, a) => s + a.etcHours, 0)}</td>
+                  <td className="px-4 py-2 text-right text-white font-semibold tabular-nums">{totalProjectedHours}</td>
+                  <td className={`px-4 py-2 text-right font-semibold tabular-nums ${hoursVariance <= 0 ? "text-profit-light" : "text-loss-light"}`}>
+                    {hoursVariance >= 0 ? "+" : ""}{hoursVariance}
                   </td>
                 </tr>
               </tfoot>
@@ -1701,7 +1354,6 @@
       );
     }
 
-    // Mount the app
     ReactDOM.render(<FlexForecastApp />, document.getElementById('root'));
   </script>
 </body>
