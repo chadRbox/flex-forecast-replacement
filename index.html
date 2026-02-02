@@ -13,36 +13,14 @@
       theme: {
         extend: {
           colors: {
-            // Professional financial palette
             navy: {
-              50: '#f0f4f8',
-              100: '#d9e2ec',
-              200: '#bcccdc',
-              300: '#9fb3c8',
-              400: '#829ab1',
-              500: '#627d98',
-              600: '#486581',
-              700: '#334e68',
-              800: '#243b53',
-              900: '#102a43',
-              950: '#0a1929',
+              50: '#f0f4f8', 100: '#d9e2ec', 200: '#bcccdc', 300: '#9fb3c8',
+              400: '#829ab1', 500: '#627d98', 600: '#486581', 700: '#334e68',
+              800: '#243b53', 900: '#102a43', 950: '#0a1929',
             },
-            // Accent colors - professional greens and ambers
-            profit: {
-              light: '#10b981',
-              DEFAULT: '#059669',
-              dark: '#047857',
-            },
-            loss: {
-              light: '#f87171',
-              DEFAULT: '#dc2626',
-              dark: '#b91c1c',
-            },
-            warning: {
-              light: '#fbbf24',
-              DEFAULT: '#f59e0b',
-              dark: '#d97706',
-            },
+            profit: { light: '#10b981', DEFAULT: '#059669', dark: '#047857' },
+            loss: { light: '#f87171', DEFAULT: '#dc2626', dark: '#b91c1c' },
+            warning: { light: '#fbbf24', DEFAULT: '#f59e0b', dark: '#d97706' },
           },
           fontFamily: {
             sans: ['Inter', 'system-ui', 'sans-serif'],
@@ -54,51 +32,22 @@
   </script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
-
-    body {
-      font-family: 'Inter', system-ui, sans-serif;
-      font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
-    }
-
-    /* Minimal scrollbar - Bloomberg style */
+    body { font-family: 'Inter', system-ui, sans-serif; font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11'; }
     ::-webkit-scrollbar { width: 8px; height: 8px; }
     ::-webkit-scrollbar-track { background: #102a43; }
     ::-webkit-scrollbar-thumb { background: #334e68; border-radius: 0; }
     ::-webkit-scrollbar-thumb:hover { background: #486581; }
-
-    /* Remove number input spinners */
     input[type="number"]::-webkit-inner-spin-button,
     input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
     input[type="number"] { -moz-appearance: textfield; }
-
-    /* Dense, professional tables */
     table { border-collapse: collapse; }
-
-    /* Focus states - subtle but visible */
     input:focus, select:focus { outline: none; }
-
-    /* Monospace numbers for alignment */
     .tabular-nums { font-variant-numeric: tabular-nums; }
-
-    /* Status indicator pulse */
-    @keyframes statusPulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
+    @keyframes statusPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
     .status-pulse { animation: statusPulse 2s ease-in-out infinite; }
-
-    /* Subtle fade in */
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     .fade-in { animation: fadeIn 0.2s ease-out; }
-
-    /* Row highlight for new items */
-    @keyframes rowFlash {
-      0% { background-color: rgba(16, 185, 129, 0.2); }
-      100% { background-color: transparent; }
-    }
+    @keyframes rowFlash { 0% { background-color: rgba(16, 185, 129, 0.2); } 100% { background-color: transparent; } }
     .row-flash { animation: rowFlash 1s ease-out; }
   </style>
 </head>
@@ -106,172 +55,66 @@
   <div id="root"></div>
 
   <script type="text/babel">
-    const { useState, useEffect, useRef, useCallback } = React;
+    const { useState, useEffect, useRef, useCallback, useMemo } = React;
 
     // ============================================
-    // ICONS - Simple, professional line icons
+    // ICONS
     // ============================================
     const Icons = {
-      Search: ({ size = 14 }) => (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
-        </svg>
-      ),
-      Plus: ({ size = 14 }) => (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M5 12h14M12 5v14"/>
-        </svg>
-      ),
-      Trash: ({ size = 14 }) => (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
-        </svg>
-      ),
-      Lock: ({ size = 12 }) => (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-        </svg>
-      ),
-      Check: ({ size = 14 }) => (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-          <polyline points="20 6 9 17 4 12"/>
-        </svg>
-      ),
-      AlertTriangle: ({ size = 14 }) => (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/>
-        </svg>
-      ),
-      X: ({ size = 14 }) => (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M18 6 6 18M6 6l12 12"/>
-        </svg>
-      ),
-      ChevronRight: ({ size = 14 }) => (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="m9 18 6-6-6-6"/>
-        </svg>
-      ),
-      Globe: ({ size = 12 }) => (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-        </svg>
-      ),
-      Loader: ({ size = 14 }) => (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="animate-spin">
-          <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
-        </svg>
-      ),
-      Sync: ({ size = 14 }) => (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>
-        </svg>
-      ),
-      TrendUp: ({ size = 14 }) => (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>
-        </svg>
-      ),
-      TrendDown: ({ size = 14 }) => (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/>
-        </svg>
-      ),
-      Sparkle: ({ size = 14 }) => (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M12 3l1.5 5.5L19 10l-5.5 1.5L12 17l-1.5-5.5L5 10l5.5-1.5z"/><path d="M19 15l.5 2 2 .5-2 .5-.5 2-.5-2-2-.5 2-.5z"/>
-        </svg>
-      ),
-      ChevronDown: ({ size = 14 }) => (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="m6 9 6 6 6-6"/>
-        </svg>
-      ),
-      Send: ({ size = 14 }) => (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/>
-        </svg>
-      ),
-      FrontLoad: ({ size = 14 }) => (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-          <path d="M6 18L18 6"/>
-        </svg>
-      ),
-      EvenSpread: ({ size = 14 }) => (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-          <path d="M5 12h14"/>
-        </svg>
-      ),
-      BackLoad: ({ size = 14 }) => (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-          <path d="M6 6L18 18"/>
-        </svg>
-      ),
-      Receipt: ({ size = 14 }) => (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1z"/><path d="M8 10h8M8 14h4"/>
-        </svg>
-      ),
-      DollarSign: ({ size = 14 }) => (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-        </svg>
-      ),
-      MessageCircle: ({ size = 14 }) => (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
-        </svg>
-      ),
+      Search: ({ size = 14 }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>,
+      Plus: ({ size = 14 }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5v14"/></svg>,
+      Trash: ({ size = 14 }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>,
+      Lock: ({ size = 12 }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>,
+      Check: ({ size = 14 }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>,
+      AlertTriangle: ({ size = 14 }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg>,
+      X: ({ size = 14 }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>,
+      ChevronRight: ({ size = 14 }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>,
+      ChevronDown: ({ size = 14 }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>,
+      Folder: ({ size = 14 }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>,
+      File: ({ size = 14 }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>,
+      Tag: ({ size = 14 }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>,
+      Loader: ({ size = 14 }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="animate-spin"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>,
+      Sync: ({ size = 14 }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>,
+      TrendUp: ({ size = 14 }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>,
+      TrendDown: ({ size = 14 }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg>,
+      Sparkle: ({ size = 14 }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3l1.5 5.5L19 10l-5.5 1.5L12 17l-1.5-5.5L5 10l5.5-1.5z"/><path d="M19 15l.5 2 2 .5-2 .5-.5 2-.5-2-2-.5 2-.5z"/></svg>,
+      Send: ({ size = 14 }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg>,
+      FrontLoad: ({ size = 14 }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M6 18L18 6"/></svg>,
+      EvenSpread: ({ size = 14 }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M5 12h14"/></svg>,
+      BackLoad: ({ size = 14 }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M6 6L18 18"/></svg>,
+      Receipt: ({ size = 14 }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1z"/><path d="M8 10h8M8 14h4"/></svg>,
+      DollarSign: ({ size = 14 }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>,
     };
 
     // ============================================
     // CONSTANTS
     // ============================================
-    const RATE_CARD = {
-      Partner: 450,
-      "Senior Manager": 350,
-      Manager: 300,
-      "Senior Associate": 250,
-      Associate: 175,
-    };
+    const RATE_CARD = { Partner: 450, "Senior Manager": 350, Manager: 300, "Senior Associate": 250, Associate: 175 };
     const LEVELS = Object.keys(RATE_CARD);
-    const REGIONS = ["Northeast", "Southeast", "Midwest", "West", "International"];
-    const LINE_OF_SERVICE = ["Tax", "Audit", "Advisory", "Consulting"];
     const TARGET_MARGIN = 42;
-
-    // Mock client data for Combobox
-    const MOCK_CLIENTS = [
-      { id: "acme", name: "Acme Corp", service: "Tax", product: "Tax Compliance", code: "418", margin: 42, stage: "Interact" },
-      { id: "globex", name: "Globex", service: "Audit", product: "Financial Statement Audit", code: "512", margin: 38, stage: "Propose" },
-      { id: "soylent", name: "Soylent Corp", service: "Advisory", product: "Strategy Consulting", code: "625", margin: 45, stage: "Interact" },
-    ];
-
-    const DELIVERY_PHASES = ["Discovery", "Planning", "Execution", "Closeout"];
-    const ENABLING_TECH = ["None", "Alteryx", "Power BI", "Tableau", "Custom ML"];
     const EXPENSE_TYPES = ["Travel - Air", "Travel - Hotel", "Travel - Ground", "Meals & Entertainment", "Software/Subscriptions", "Contractor", "Filing Fees", "Other"];
 
-    // Initial demo data for scenarios
-    const INITIAL_ACTUALS = [
-      { id: 1, name: "J. Smith", level: "Partner", rate: 450, budgetHours: 40, actualHours: 35, etcHours: 5, pspRate: 450 },
-      { id: 2, name: "A. Lee", level: "Senior Associate", rate: 250, budgetHours: 120, actualHours: 95, etcHours: 20, pspRate: 250 },
-      { id: 3, name: "M. Chen", level: "Associate", rate: 175, budgetHours: 0, actualHours: 12, etcHours: 0, pspRate: 175 },
+    const MOCK_CLIENTS = [
+      { id: "acme", name: "Acme Corp", service: "Tax", contractName: "Global Framework", contractValue: 500000, margin: 42 },
+      { id: "globex", name: "Globex", service: "Audit", contractName: "Annual Audit", contractValue: 750000, margin: 38 },
+      { id: "soylent", name: "Soylent Corp", service: "Advisory", contractName: "Digital Transformation", contractValue: 1200000, margin: 45 },
+    ];
+
+    const DEFAULT_WORK_PACKAGES = [
+      { name: "Tax Compliance", productCode: "418" },
+      { name: "Advisory Services", productCode: "999" },
     ];
 
     // ============================================
     // UTILITIES
     // ============================================
     const formatCurrency = (amount) => {
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-      }).format(Math.abs(amount));
+      const formatted = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(Math.abs(amount));
       return amount < 0 ? `(${formatted})` : formatted;
     };
-
     const formatNumber = (num) => new Intl.NumberFormat("en-US").format(num);
     const formatPercent = (value) => `${value.toFixed(1)}%`;
+    const generateId = () => `id-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
     const getWeekDates = () => {
       const today = new Date();
@@ -287,408 +130,329 @@
     // ============================================
     // COMPONENTS
     // ============================================
-
-    // Toast notification
     function Toast({ message, type = "success", onClose }) {
-      useEffect(() => {
-        const timer = setTimeout(onClose, 3000);
-        return () => clearTimeout(timer);
-      }, [onClose]);
-
-      const styles = {
-        success: "bg-profit-dark border-profit text-profit-light",
-        warning: "bg-warning-dark/20 border-warning text-warning-light",
-        error: "bg-loss-dark/20 border-loss text-loss-light",
-      };
-
-      return (
-        <div className={`fixed bottom-4 right-4 z-50 px-4 py-2 border-l-4 ${styles[type]} bg-navy-900 text-sm font-medium fade-in`}>
-          {message}
-        </div>
-      );
+      useEffect(() => { const timer = setTimeout(onClose, 3000); return () => clearTimeout(timer); }, [onClose]);
+      const styles = { success: "bg-profit-dark border-profit text-profit-light", warning: "bg-warning-dark/20 border-warning text-warning-light", error: "bg-loss-dark/20 border-loss text-loss-light" };
+      return <div className={`fixed bottom-4 right-4 z-50 px-4 py-2 border-l-4 ${styles[type]} bg-navy-900 text-sm font-medium fade-in`}>{message}</div>;
     }
 
-    // Status badge component
     function StatusBadge({ status, children }) {
-      const styles = {
-        success: "bg-profit/20 text-profit-light border-profit/30",
-        warning: "bg-warning/20 text-warning-light border-warning/30",
-        error: "bg-loss/20 text-loss-light border-loss/30",
-        info: "bg-navy-700 text-navy-200 border-navy-600",
-        neutral: "bg-navy-800 text-navy-300 border-navy-700",
-      };
-      return (
-        <span className={`inline-flex items-center px-2 py-0.5 text-xs font-medium border ${styles[status]}`}>
-          {children}
-        </span>
-      );
+      const styles = { success: "bg-profit/20 text-profit-light border-profit/30", warning: "bg-warning/20 text-warning-light border-warning/30", error: "bg-loss/20 text-loss-light border-loss/30", info: "bg-navy-700 text-navy-200 border-navy-600", neutral: "bg-navy-800 text-navy-300 border-navy-700" };
+      return <span className={`inline-flex items-center px-2 py-0.5 text-xs font-medium border ${styles[status]}`}>{children}</span>;
     }
 
     // ============================================
     // MAIN APP
     // ============================================
     function PwCPlanApp() {
-      // Navigation
-      const [activeView, setActiveView] = useState("initiation");
       const [toast, setToast] = useState(null);
-
-      // Scenario Management
+      const [activeView, setActiveView] = useState("initiation");
       const [activeScenario, setActiveScenario] = useState("baseline");
-      const [scenarioData, setScenarioData] = useState({
-        baseline: {
-          staffing: [],
-          expenses: [],
-          scheduleData: [],
-          targetFee: 0,
-          changeOrders: [],
-          actuals: [...INITIAL_ACTUALS]
-        },
-        scenarioA: {
-          staffing: [],
-          expenses: [],
-          scheduleData: [],
-          targetFee: 0,
-          changeOrders: [],
-          actuals: []
-        },
-        scenarioB: {
-          staffing: [],
-          expenses: [],
-          scheduleData: [],
-          targetFee: 0,
-          changeOrders: [],
-          actuals: []
-        }
-      });
-
-      // Helper to get/set scenario data
-      const getField = (field) => scenarioData[activeScenario][field];
-      const setField = (field, value) => {
-        setScenarioData(prev => ({
-          ...prev,
-          [activeScenario]: {
-            ...prev[activeScenario],
-            [field]: typeof value === 'function' ? value(prev[activeScenario][field]) : value
-          }
-        }));
-      };
-
-      // Aliased accessors for scenario data
-      const staffing = getField('staffing');
-      const setStaffing = (v) => setField('staffing', v);
-      const expenses = getField('expenses');
-      const setExpenses = (v) => setField('expenses', v);
-      const scheduleData = getField('scheduleData');
-      const setScheduleData = (v) => setField('scheduleData', v);
-      const targetFee = getField('targetFee');
-      const setTargetFee = (v) => setField('targetFee', v);
-      const changeOrders = getField('changeOrders');
-      const setChangeOrders = (v) => setField('changeOrders', v);
-      const actuals = getField('actuals');
-      const setActuals = (v) => setField('actuals', v);
-
-      // AI Copilot
       const [copilotOpen, setCopilotOpen] = useState(false);
-      const [copilotMessages, setCopilotMessages] = useState([
-        { role: "ai", text: "Hello! I'm your AI planning assistant. I can help optimize your staffing, analyze margins, or suggest improvements. What would you like to explore?" }
-      ]);
+      const [copilotMessages, setCopilotMessages] = useState([{ role: "ai", text: "Hello! I'm your AI planning assistant. Click 'Analyze leverage' to get optimization recommendations." }]);
 
-      // View 1 - Initiation
-      const [selectedClient, setSelectedClient] = useState(null);
-      const [clientSearchOpen, setClientSearchOpen] = useState(false);
-      const [clientSearchQuery, setClientSearchQuery] = useState("");
-      const [deliveryPhase, setDeliveryPhase] = useState("");
-      const [enablingTech, setEnablingTech] = useState("None");
-      const [interTerritory, setInterTerritory] = useState(false);
-      const [approver, setApprover] = useState("");
-      const [workLocation, setWorkLocation] = useState("US");
-      const [riskApproved, setRiskApproved] = useState(false);
+      // Contract & Work Package State
+      const [contract, setContract] = useState({ id: null, client: null, contractName: "", contractValue: 0, status: "draft" });
+      const [workPackages, setWorkPackages] = useState([]);
+      const [activeWorkPackage, setActiveWorkPackage] = useState(null);
+      const [rateCardLocked, setRateCardLocked] = useState(false);
+      const [codesCreated, setCodesCreated] = useState(false);
 
-      // View 2 - Budgeting
-      const [pricingStructure, setPricingStructure] = useState("Fixed Fee");
-      const [useRateCard, setUseRateCard] = useState(false);
-      const [newRowId, setNewRowId] = useState(null);
+      // Staffing & Expenses stored per Work Package
+      const [wpData, setWpData] = useState({}); // { wpId: { staffing: [], expenses: [], targetFee: 0, schedule: [] } }
 
-      // View 3 - Scheduling
-      const [selectedScheduleRows, setSelectedScheduleRows] = useState(new Set());
-      const SPREAD_TYPES = [
-        { id: "even", label: "Even", icon: "EvenSpread" },
-        { id: "frontLoaded", label: "Front", icon: "FrontLoad" },
-        { id: "backLoaded", label: "Back", icon: "BackLoad" },
-        { id: "custom", label: "Custom", icon: null },
-      ];
+      // Actuals & Change Orders
+      const [actuals, setActuals] = useState({}); // { wpId: [{ resourceId, budgetHours, actualHours, etcHours, pspRate }] }
+      const [changeOrders, setChangeOrders] = useState([]);
 
-      // View 4 - Forecasting
-      const [alertVisible, setAlertVisible] = useState(true);
-      const [highlightedResource, setHighlightedResource] = useState(null);
-      const etcInputRef = useRef(null);
+      // Initialize work packages with default data
+      const initializeWorkPackages = useCallback((client) => {
+        const wps = DEFAULT_WORK_PACKAGES.map((wp, idx) => ({
+          id: generateId(),
+          name: wp.name,
+          productCode: wp.productCode,
+          questionnaire: { interTerritory: false, territoryApprover: "", workLocation: "US" },
+        }));
+        setWorkPackages(wps);
 
-      // Derived: deal loaded state
-      const dealLoaded = selectedClient !== null;
-      const dealDetails = selectedClient ? {
-        client: selectedClient.name,
-        product: selectedClient.product,
-        stage: selectedClient.stage,
-        margin: selectedClient.margin
-      } : { client: "", product: "", stage: "", margin: TARGET_MARGIN };
+        // Initialize wpData for each WP
+        const initialWpData = {};
+        const initialActuals = {};
+        wps.forEach(wp => {
+          initialWpData[wp.id] = { staffing: [], expenses: [], targetFee: 0, schedule: [] };
+          initialActuals[wp.id] = [];
+        });
+        setWpData(initialWpData);
+        setActuals(initialActuals);
+        setActiveWorkPackage(wps[0]?.id || null);
+      }, []);
 
-      // Calculations - Budget
-      const totalLaborCost = staffing.reduce((sum, s) => sum + s.rate * s.hours, 0);
-      const totalBudgetHours = staffing.reduce((sum, s) => sum + s.hours, 0);
+      // Calculate totals for a single work package
+      const calculateWpTotals = useCallback((wpId) => {
+        const data = wpData[wpId] || { staffing: [], expenses: [], targetFee: 0 };
+        const laborCost = data.staffing.reduce((sum, s) => sum + (s.rate * s.hours), 0);
+        const laborHours = data.staffing.reduce((sum, s) => sum + s.hours, 0);
+        const expenseCost = data.expenses.reduce((sum, e) => sum + ((e.amount || 0) * (e.recoverablePercent || 0) / 100), 0);
+        const totalCost = laborCost + expenseCost;
+        const margin = data.targetFee > 0 ? ((data.targetFee - totalCost) / data.targetFee * 100) : 0;
 
-      // Expenses calculations
-      const totalExpenses = expenses.reduce((sum, e) => sum + (e.amount || 0), 0);
-      const recoverableExpenses = expenses.reduce((sum, e) => sum + ((e.amount || 0) * (e.recoverablePercent || 0) / 100), 0);
-      const totalBudgetCost = totalLaborCost + recoverableExpenses;
+        // Leverage calculations
+        const levelHours = data.staffing.reduce((acc, s) => { acc[s.level] = (acc[s.level] || 0) + s.hours; return acc; }, {});
+        const acLeverage = laborHours > 0 ? (((levelHours["Associate"] || 0) + (levelHours["Senior Associate"] || 0)) / laborHours * 100) : 0;
+        const mgmtPercent = laborHours > 0 ? (((levelHours["Partner"] || 0) + (levelHours["Senior Manager"] || 0) + (levelHours["Manager"] || 0)) / laborHours * 100) : 0;
 
-      const effectiveMargin = dealDetails.margin || TARGET_MARGIN;
-      const recommendedFee = Math.ceil(totalBudgetCost / (1 - effectiveMargin / 100));
-      const projectedMargin = targetFee > 0 ? ((targetFee - totalBudgetCost) / targetFee) * 100 : 0;
-      const marginIsHealthy = projectedMargin >= effectiveMargin;
-      const marginVariance = projectedMargin - effectiveMargin;
+        return { laborCost, laborHours, expenseCost, totalCost, fee: data.targetFee, margin, acLeverage, mgmtPercent };
+      }, [wpData]);
 
-      // Leverage metrics
-      const levelHours = staffing.reduce((acc, s) => {
-        acc[s.level] = (acc[s.level] || 0) + s.hours;
-        return acc;
-      }, {});
-      const acLeverage = totalBudgetHours > 0
-        ? (((levelHours["Associate"] || 0) + (levelHours["Senior Associate"] || 0)) / totalBudgetHours * 100)
-        : 0;
-      const mgmtPercent = totalBudgetHours > 0
-        ? (((levelHours["Partner"] || 0) + (levelHours["Senior Manager"] || 0) + (levelHours["Manager"] || 0)) / totalBudgetHours * 100)
-        : 0;
+      // Calculate grand totals across all work packages
+      const grandTotals = useMemo(() => {
+        let totalHours = 0, totalCost = 0, totalFee = 0;
+        const byWp = {};
 
-      // Forecast calculations
-      const totalActualCost = actuals.reduce((sum, a) => sum + a.rate * a.actualHours, 0);
-      const totalActualHours = actuals.reduce((sum, a) => sum + a.actualHours, 0);
-      const totalProjectedCost = actuals.reduce((sum, a) => sum + a.rate * (a.actualHours + a.etcHours), 0);
-      const totalProjectedHours = actuals.reduce((sum, a) => sum + a.actualHours + a.etcHours, 0);
+        workPackages.forEach(wp => {
+          const totals = calculateWpTotals(wp.id);
+          byWp[wp.id] = { ...totals, name: wp.name };
+          totalHours += totals.laborHours;
+          totalCost += totals.totalCost;
+          totalFee += totals.fee;
+        });
 
-      // Change orders
-      const totalChangeOrders = changeOrders.reduce((sum, co) => sum + (co.amount || 0), 0);
-      const totalProjectedRevenue = targetFee + totalChangeOrders;
-      const projectedProfit = totalProjectedRevenue - totalProjectedCost;
-      const unbudgetedResources = actuals.filter(a => a.budgetHours === 0 && a.actualHours > 0);
+        // Overall leverage
+        let allStaffing = [];
+        Object.values(wpData).forEach(d => { allStaffing = allStaffing.concat(d.staffing || []); });
+        const levelHours = allStaffing.reduce((acc, s) => { acc[s.level] = (acc[s.level] || 0) + s.hours; return acc; }, {});
+        const acLeverage = totalHours > 0 ? (((levelHours["Associate"] || 0) + (levelHours["Senior Associate"] || 0)) / totalHours * 100) : 0;
+        const mgmtPercent = totalHours > 0 ? (((levelHours["Partner"] || 0) + (levelHours["Senior Manager"] || 0) + (levelHours["Manager"] || 0)) / totalHours * 100) : 0;
 
-      // Sync staffing to schedule (preserve existing week allocations where possible)
-      useEffect(() => {
-        if (staffing.length > 0) {
-          setScheduleData(prev => {
-            const existingMap = new Map(prev.map(s => [s.id, s]));
-            return staffing.map(s => {
-              const existing = existingMap.get(s.id);
-              // Keep existing weekly allocation if hours haven't changed
-              if (existing && existing.totalHours === s.hours) {
-                return { ...existing, name: s.name, level: s.level };
-              }
-              // Otherwise create new even spread
-              const perWeek = Math.floor(s.hours / 4);
-              return {
-                id: s.id,
-                name: s.name,
-                level: s.level,
-                totalHours: s.hours,
-                spreadType: "even",
-                weeks: [perWeek, perWeek, perWeek, s.hours - 3 * perWeek],
-              };
-            });
-          });
-        }
-      }, [staffing]);
+        const blendedMargin = totalFee > 0 ? ((totalFee - totalCost) / totalFee * 100) : 0;
+        const changeOrderTotal = changeOrders.reduce((sum, co) => sum + (co.amount || 0), 0);
 
-      // Handlers
-      const updateStaffRow = (id, field, value) => {
-        setStaffing(prev => prev.map(row => {
-          if (row.id !== id) return row;
-          const updated = { ...row, [field]: value };
-          if (field === "level" && !useRateCard) {
-            updated.rate = RATE_CARD[value] || 0;
+        return { totalHours, totalCost, totalFee, blendedMargin, acLeverage, mgmtPercent, byWp, changeOrderTotal };
+      }, [workPackages, wpData, changeOrders, calculateWpTotals]);
+
+      // Handlers for staffing
+      const addStaffRow = (wpId) => {
+        setWpData(prev => ({
+          ...prev,
+          [wpId]: {
+            ...prev[wpId],
+            staffing: [...(prev[wpId]?.staffing || []), { id: generateId(), name: "TBD", level: "Associate", rate: RATE_CARD["Associate"], hours: 0 }]
           }
-          return updated;
         }));
       };
 
-      const addStaffRow = useCallback(() => {
-        setStaffing(prev => {
-          const newId = prev.length > 0 ? Math.max(...prev.map(s => s.id)) + 1 : 1;
-          setNewRowId(newId);
-          setTimeout(() => setNewRowId(null), 1000);
-          return [...prev, {
-            id: newId, name: "TBD", level: "Associate",
-            rate: RATE_CARD["Associate"], hours: 0,
-            region: "Northeast", los: "Tax"
-          }];
-        });
-      }, []);
-
-      const deleteStaffRow = (id) => setStaffing(prev => prev.filter(row => row.id !== id));
-
-      // Expense handlers
-      const addExpense = useCallback(() => {
-        setExpenses(prev => {
-          const newId = prev.length > 0 ? Math.max(...prev.map(e => e.id)) + 1 : 1;
-          return [...prev, { id: newId, type: "", amount: 0, recoverablePercent: 100 }];
-        });
-      }, []);
-
-      const updateExpense = (id, field, value) => {
-        setExpenses(prev => prev.map(exp => exp.id === id ? { ...exp, [field]: value } : exp));
+      const updateStaffRow = (wpId, rowId, field, value) => {
+        setWpData(prev => ({
+          ...prev,
+          [wpId]: {
+            ...prev[wpId],
+            staffing: prev[wpId].staffing.map(row => {
+              if (row.id !== rowId) return row;
+              const updated = { ...row, [field]: value };
+              if (field === "level" && rateCardLocked) {
+                updated.rate = RATE_CARD[value] || 0;
+              }
+              return updated;
+            })
+          }
+        }));
       };
 
-      const deleteExpense = (id) => setExpenses(prev => prev.filter(exp => exp.id !== id));
-
-      // Change order handlers
-      const addChangeOrder = useCallback(() => {
-        setChangeOrders(prev => {
-          const newId = prev.length > 0 ? Math.max(...prev.map(co => co.id)) + 1 : 1;
-          return [...prev, { id: newId, description: "", amount: 0 }];
-        });
-      }, []);
-
-      const updateChangeOrder = (id, field, value) => {
-        setChangeOrders(prev => prev.map(co => co.id === id ? { ...co, [field]: value } : co));
+      const deleteStaffRow = (wpId, rowId) => {
+        setWpData(prev => ({
+          ...prev,
+          [wpId]: { ...prev[wpId], staffing: prev[wpId].staffing.filter(row => row.id !== rowId) }
+        }));
       };
 
-      const deleteChangeOrder = (id) => setChangeOrders(prev => prev.filter(co => co.id !== id));
-
-      const handleRateCardToggle = () => {
-        const newValue = !useRateCard;
-        if (newValue) {
-          // When enabling rate card lock, reset rates to standard
-          setStaffing(prev => prev.map(row => ({ ...row, rate: RATE_CARD[row.level] || 0 })));
-        }
-        setUseRateCard(newValue);
+      // Handlers for expenses
+      const addExpenseRow = (wpId) => {
+        setWpData(prev => ({
+          ...prev,
+          [wpId]: {
+            ...prev[wpId],
+            expenses: [...(prev[wpId]?.expenses || []), { id: generateId(), type: "", amount: 0, recoverablePercent: 100 }]
+          }
+        }));
       };
 
-      const applyRecommendedFee = () => {
-        setTargetFee(recommendedFee);
-        setToast({ message: `Fee set to ${formatCurrency(recommendedFee)}`, type: "success" });
+      const updateExpenseRow = (wpId, rowId, field, value) => {
+        setWpData(prev => ({
+          ...prev,
+          [wpId]: {
+            ...prev[wpId],
+            expenses: prev[wpId].expenses.map(row => row.id === rowId ? { ...row, [field]: value } : row)
+          }
+        }));
       };
 
-      const updateScheduleSpread = (id, spreadType) => {
-        setScheduleData(prev => prev.map(row => {
-          if (row.id !== id) return row;
-          const total = row.totalHours;
+      const deleteExpenseRow = (wpId, rowId) => {
+        setWpData(prev => ({
+          ...prev,
+          [wpId]: { ...prev[wpId], expenses: prev[wpId].expenses.filter(row => row.id !== rowId) }
+        }));
+      };
+
+      // Target fee handler
+      const setTargetFee = (wpId, value) => {
+        setWpData(prev => ({
+          ...prev,
+          [wpId]: { ...prev[wpId], targetFee: parseInt(value) || 0 }
+        }));
+      };
+
+      // Schedule handlers
+      const updateScheduleSpread = (wpId, resourceId, spreadType) => {
+        setWpData(prev => {
+          const staffing = prev[wpId]?.staffing || [];
+          const resource = staffing.find(s => s.id === resourceId);
+          if (!resource) return prev;
+
+          const total = resource.hours;
           let weeks;
           switch (spreadType) {
             case "frontLoaded": weeks = [Math.round(total * 0.4), Math.round(total * 0.3), Math.round(total * 0.2), Math.round(total * 0.1)]; break;
             case "backLoaded": weeks = [Math.round(total * 0.1), Math.round(total * 0.2), Math.round(total * 0.3), Math.round(total * 0.4)]; break;
             default: const perWeek = Math.floor(total / 4); weeks = [perWeek, perWeek, perWeek, total - 3 * perWeek];
           }
-          return { ...row, spreadType, weeks };
-        }));
-      };
 
-      const updateWeekHours = (id, weekIndex, value) => {
-        setScheduleData(prev => prev.map(row => {
-          if (row.id !== id) return row;
-          const newWeeks = [...row.weeks];
-          newWeeks[weekIndex] = parseInt(value) || 0;
-          return { ...row, weeks: newWeeks, spreadType: "custom" };
-        }));
-      };
+          const schedule = prev[wpId]?.schedule || [];
+          const existingIdx = schedule.findIndex(s => s.resourceId === resourceId);
+          const newScheduleEntry = { resourceId, spreadType, weeks, totalHours: total };
 
-      const updateEtc = (id, value) => {
-        const numValue = parseInt(value) || 0;
-        setActuals(prev => prev.map(a => (a.id === id ? { ...a, etcHours: numValue } : a)));
-        // Only dismiss alert if this is the highlighted (unbudgeted) resource
-        if (highlightedResource === id) {
-          setAlertVisible(false);
-          setHighlightedResource(null);
-        }
-      };
-
-      const updatePspRate = (id, value) => {
-        const numValue = parseInt(value) || 0;
-        setActuals(prev => prev.map(a => (a.id === id ? { ...a, pspRate: numValue } : a)));
-      };
-
-      const handleAssignEtc = () => {
-        const unbudgeted = actuals.find(a => a.budgetHours === 0 && a.actualHours > 0);
-        if (unbudgeted) {
-          setHighlightedResource(unbudgeted.id);
-          setTimeout(() => etcInputRef.current?.focus(), 100);
-        }
-      };
-
-      // Schedule row selection handlers
-      const toggleScheduleRow = (id) => {
-        setSelectedScheduleRows(prev => {
-          const newSet = new Set(prev);
-          if (newSet.has(id)) {
-            newSet.delete(id);
-          } else {
-            newSet.add(id);
-          }
-          return newSet;
+          return {
+            ...prev,
+            [wpId]: {
+              ...prev[wpId],
+              schedule: existingIdx >= 0
+                ? schedule.map((s, i) => i === existingIdx ? newScheduleEntry : s)
+                : [...schedule, newScheduleEntry]
+            }
+          };
         });
       };
 
-      const toggleAllScheduleRows = () => {
-        if (selectedScheduleRows.size === scheduleData.length) {
-          setSelectedScheduleRows(new Set());
-        } else {
-          setSelectedScheduleRows(new Set(scheduleData.map(r => r.id)));
-        }
-      };
-
-      const applyBulkSpread = (spreadType) => {
-        if (selectedScheduleRows.size === 0) return;
-        selectedScheduleRows.forEach(id => {
-          updateScheduleSpread(id, spreadType);
+      const updateWeekHours = (wpId, resourceId, weekIdx, value) => {
+        setWpData(prev => {
+          const schedule = prev[wpId]?.schedule || [];
+          return {
+            ...prev,
+            [wpId]: {
+              ...prev[wpId],
+              schedule: schedule.map(s => {
+                if (s.resourceId !== resourceId) return s;
+                const newWeeks = [...s.weeks];
+                newWeeks[weekIdx] = parseInt(value) || 0;
+                return { ...s, weeks: newWeeks, spreadType: "custom" };
+              })
+            }
+          };
         });
-        setToast({ message: `Applied ${spreadType === 'frontLoaded' ? 'front-loaded' : spreadType === 'backLoaded' ? 'back-loaded' : 'even'} spread to ${selectedScheduleRows.size} resources`, type: "success" });
       };
 
-      // Keyboard shortcuts - use ref for stable callback
-      const addStaffRowRef = useRef(addStaffRow);
-      addStaffRowRef.current = addStaffRow;
-
+      // Sync staffing to schedule
       useEffect(() => {
-        const handleKeyDown = (e) => {
-          if ((e.metaKey || e.ctrlKey) && !e.shiftKey) {
-            if (e.key === "1") { e.preventDefault(); setActiveView("initiation"); }
-            if (e.key === "2") { e.preventDefault(); setActiveView("budgeting"); }
-            if (e.key === "3") { e.preventDefault(); setActiveView("scheduling"); }
-            if (e.key === "4") { e.preventDefault(); setActiveView("forecasting"); }
-            if (e.key === "n" && activeView === "budgeting") { e.preventDefault(); addStaffRowRef.current(); }
-          }
-        };
-        window.addEventListener("keydown", handleKeyDown);
-        return () => window.removeEventListener("keydown", handleKeyDown);
-      }, [activeView]);
+        workPackages.forEach(wp => {
+          const staffing = wpData[wp.id]?.staffing || [];
+          const schedule = wpData[wp.id]?.schedule || [];
 
+          staffing.forEach(staff => {
+            const existing = schedule.find(s => s.resourceId === staff.id);
+            if (!existing || existing.totalHours !== staff.hours) {
+              updateScheduleSpread(wp.id, staff.id, "even");
+            }
+          });
+        });
+      }, [workPackages, wpData]);
+
+      // Change order handlers
+      const addChangeOrder = () => {
+        setChangeOrders(prev => [...prev, { id: generateId(), wpId: activeWorkPackage, description: "", amount: 0 }]);
+      };
+
+      const updateChangeOrder = (id, field, value) => {
+        setChangeOrders(prev => prev.map(co => co.id === id ? { ...co, [field]: value } : co));
+      };
+
+      const deleteChangeOrder = (id) => {
+        setChangeOrders(prev => prev.filter(co => co.id !== id));
+      };
+
+      // Actuals handlers
+      const updateActual = (wpId, resourceId, field, value) => {
+        setActuals(prev => ({
+          ...prev,
+          [wpId]: (prev[wpId] || []).map(a => a.resourceId === resourceId ? { ...a, [field]: parseInt(value) || 0 } : a)
+        }));
+      };
+
+      // Initialize actuals from staffing (demo data)
+      useEffect(() => {
+        if (codesCreated && Object.keys(actuals).length > 0) {
+          const newActuals = {};
+          workPackages.forEach(wp => {
+            const staffing = wpData[wp.id]?.staffing || [];
+            newActuals[wp.id] = staffing.map(s => ({
+              resourceId: s.id,
+              name: s.name,
+              level: s.level,
+              rate: s.rate,
+              budgetHours: s.hours,
+              actualHours: Math.round(s.hours * 0.7), // Demo: 70% complete
+              etcHours: Math.round(s.hours * 0.15),
+              pspRate: s.rate,
+            }));
+          });
+          setActuals(newActuals);
+        }
+      }, [codesCreated, workPackages]);
+
+      // Rate card toggle
+      const handleRateCardToggle = () => {
+        const newValue = !rateCardLocked;
+        if (newValue) {
+          // Reset all rates to standard
+          setWpData(prev => {
+            const updated = { ...prev };
+            Object.keys(updated).forEach(wpId => {
+              updated[wpId] = {
+                ...updated[wpId],
+                staffing: updated[wpId].staffing.map(s => ({ ...s, rate: RATE_CARD[s.level] || 0 }))
+              };
+            });
+            return updated;
+          });
+        }
+        setRateCardLocked(newValue);
+      };
+
+      // Navigation
       const navItems = [
         { id: "initiation", label: "Code Create", num: "1" },
-        { id: "budgeting", label: "Budget", num: "2" },
-        { id: "scheduling", label: "Schedule", num: "3" },
-        { id: "forecasting", label: "Forecast", num: "4" },
+        { id: "budget", label: "Budget", num: "2" },
+        { id: "schedule", label: "Schedule", num: "3" },
+        { id: "forecast", label: "Forecast", num: "4" },
       ];
 
-      const canProceedFromInitiation = dealLoaded && riskApproved && (!interTerritory || approver !== "");
-      const hasBudget = staffing.length > 0 && targetFee > 0;
+      const dealLoaded = contract.client !== null;
+      const canProceedFromInitiation = dealLoaded && workPackages.length > 0;
+      const hasBudget = grandTotals.totalFee > 0 && grandTotals.totalHours > 0;
 
       return (
         <div className="flex h-screen bg-navy-950 text-navy-100 text-sm">
-          {/* Sidebar - Dense, functional */}
+          {/* Sidebar */}
           <aside className="w-48 bg-navy-900 border-r border-navy-800 flex flex-col">
-            {/* Header */}
             <div className="px-4 py-3 border-b border-navy-800">
               <div className="text-base font-semibold text-white">PwC Plan</div>
               <div className="text-[10px] text-navy-500 uppercase tracking-wider">powered by Aiwyn</div>
             </div>
-
-            {/* Nav */}
             <nav className="flex-1 py-2">
               {navItems.map(item => (
                 <button
                   key={item.id}
                   onClick={() => setActiveView(item.id)}
                   className={`w-full flex items-center justify-between px-4 py-2 text-left text-sm transition-colors ${
-                    activeView === item.id
-                      ? "bg-navy-800 text-white border-r-2 border-profit"
-                      : "text-navy-400 hover:bg-navy-800/50 hover:text-navy-200"
+                    activeView === item.id ? "bg-navy-800 text-white border-r-2 border-profit" : "text-navy-400 hover:bg-navy-800/50 hover:text-navy-200"
                   }`}
                 >
                   <span>{item.label}</span>
@@ -696,165 +460,114 @@
                 </button>
               ))}
             </nav>
-
-            {/* Status Footer */}
             {dealLoaded && (
               <div className="px-4 py-3 border-t border-navy-800 bg-navy-900/50">
-                <div className="text-[10px] text-navy-500 uppercase tracking-wider mb-1">Engagement</div>
-                <div className="text-sm font-medium text-white truncate">{dealDetails.client}</div>
-                <div className="text-xs text-navy-400 truncate">{dealDetails.product}</div>
-                <div className="flex gap-1 mt-2">
-                  <StatusBadge status="success">{dealDetails.stage}</StatusBadge>
-                  {riskApproved && <StatusBadge status="info">Risk ✓</StatusBadge>}
-                </div>
+                <div className="text-[10px] text-navy-500 uppercase tracking-wider mb-1">Contract</div>
+                <div className="text-sm font-medium text-white truncate">{contract.client.name}</div>
+                <div className="text-xs text-navy-400 truncate">{contract.contractName}</div>
+                <div className="text-xs text-profit-light mt-1">{formatCurrency(contract.contractValue)}</div>
               </div>
             )}
           </aside>
 
-          {/* Main */}
+          {/* Main Content */}
           <main className="flex-1 flex flex-col overflow-hidden">
-            {/* Header Bar */}
+            {/* Header */}
             <header className="bg-navy-900 border-b border-navy-800 px-4 py-2 flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <h1 className="text-base font-semibold text-white">
-                  {navItems.find(n => n.id === activeView)?.label}
-                </h1>
-                {dealLoaded && (
-                  <span className="text-xs text-navy-500">
-                    {dealDetails.client} / {dealDetails.product}
-                  </span>
-                )}
+                <h1 className="text-base font-semibold text-white">{navItems.find(n => n.id === activeView)?.label}</h1>
+                {dealLoaded && <span className="text-xs text-navy-500">{contract.client.name} / {contract.contractName}</span>}
               </div>
               <div className="flex items-center gap-6 text-xs">
-                {/* Scenario Selector */}
                 <div className="flex items-center gap-2">
-                  <span className="text-navy-500">Active Scenario:</span>
+                  <span className="text-navy-500">Scenario:</span>
                   <select
                     value={activeScenario}
-                    onChange={(e) => {
-                      setActiveScenario(e.target.value);
-                      setToast({ message: `Switched to ${e.target.value === 'baseline' ? 'Baseline Budget' : e.target.value === 'scenarioA' ? 'Scenario A' : 'Scenario B'}`, type: "success" });
-                    }}
-                    className="px-2 py-1 bg-navy-800 border border-navy-700 text-sm text-white focus:border-navy-500"
+                    onChange={(e) => { setActiveScenario(e.target.value); setToast({ message: `Switched to ${e.target.value}`, type: "success" }); }}
+                    className="px-2 py-1 bg-navy-800 border border-navy-700 text-sm text-white"
                   >
                     <option value="baseline">Baseline Budget</option>
                     <option value="scenarioA">Scenario A</option>
                     <option value="scenarioB">Scenario B</option>
                   </select>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-navy-500">Target Margin:</span>
-                  <span className="font-mono font-medium text-white">{effectiveMargin}%</span>
-                </div>
+                {dealLoaded && (
+                  <div className="flex items-center gap-2">
+                    <span className="text-navy-500">Target Margin:</span>
+                    <span className="font-mono font-medium text-white">{contract.client.margin}%</span>
+                  </div>
+                )}
               </div>
             </header>
 
             {/* Content */}
             <div className="flex-1 overflow-auto p-4">
               {activeView === "initiation" && (
-                <ViewInitiation
-                  selectedClient={selectedClient}
-                  setSelectedClient={setSelectedClient}
-                  clientSearchOpen={clientSearchOpen}
-                  setClientSearchOpen={setClientSearchOpen}
-                  clientSearchQuery={clientSearchQuery}
-                  setClientSearchQuery={setClientSearchQuery}
-                  dealLoaded={dealLoaded}
-                  dealDetails={dealDetails}
-                  deliveryPhase={deliveryPhase}
-                  setDeliveryPhase={setDeliveryPhase}
-                  enablingTech={enablingTech}
-                  setEnablingTech={setEnablingTech}
-                  interTerritory={interTerritory}
-                  setInterTerritory={setInterTerritory}
-                  approver={approver}
-                  setApprover={setApprover}
-                  workLocation={workLocation}
-                  setWorkLocation={setWorkLocation}
-                  riskApproved={riskApproved}
-                  setRiskApproved={setRiskApproved}
+                <ViewCodeCreate
+                  contract={contract}
+                  setContract={setContract}
+                  workPackages={workPackages}
+                  setWorkPackages={setWorkPackages}
+                  initializeWorkPackages={initializeWorkPackages}
+                  codesCreated={codesCreated}
+                  setCodesCreated={setCodesCreated}
                   canProceed={canProceedFromInitiation}
-                  onComplete={() => {
-                    setActiveView("budgeting");
-                    setToast({ message: "SAP codes created", type: "success" });
-                  }}
+                  onComplete={() => { setActiveView("budget"); setToast({ message: "WBS codes created", type: "success" }); }}
                 />
               )}
-              {activeView === "budgeting" && (
-                <ViewBudgeting
+              {activeView === "budget" && (
+                <ViewBudget
                   dealLoaded={dealLoaded}
-                  pricingStructure={pricingStructure}
-                  setPricingStructure={setPricingStructure}
-                  useRateCard={useRateCard}
+                  codesCreated={codesCreated}
+                  workPackages={workPackages}
+                  activeWorkPackage={activeWorkPackage}
+                  setActiveWorkPackage={setActiveWorkPackage}
+                  wpData={wpData}
+                  grandTotals={grandTotals}
+                  calculateWpTotals={calculateWpTotals}
+                  rateCardLocked={rateCardLocked}
                   handleRateCardToggle={handleRateCardToggle}
-                  staffing={staffing}
-                  updateStaffRow={updateStaffRow}
                   addStaffRow={addStaffRow}
+                  updateStaffRow={updateStaffRow}
                   deleteStaffRow={deleteStaffRow}
-                  expenses={expenses}
-                  addExpense={addExpense}
-                  updateExpense={updateExpense}
-                  deleteExpense={deleteExpense}
-                  targetFee={targetFee}
+                  addExpenseRow={addExpenseRow}
+                  updateExpenseRow={updateExpenseRow}
+                  deleteExpenseRow={deleteExpenseRow}
                   setTargetFee={setTargetFee}
-                  totalLaborCost={totalLaborCost}
-                  totalBudgetCost={totalBudgetCost}
-                  totalBudgetHours={totalBudgetHours}
-                  totalExpenses={totalExpenses}
-                  recoverableExpenses={recoverableExpenses}
-                  recommendedFee={recommendedFee}
-                  applyRecommendedFee={applyRecommendedFee}
-                  projectedMargin={projectedMargin}
-                  marginIsHealthy={marginIsHealthy}
-                  marginVariance={marginVariance}
-                  effectiveMargin={effectiveMargin}
-                  acLeverage={acLeverage}
-                  mgmtPercent={mgmtPercent}
-                  newRowId={newRowId}
+                  targetMargin={contract.client?.margin || TARGET_MARGIN}
                   onNavigate={() => setActiveView("initiation")}
+                  setToast={setToast}
                 />
               )}
-              {activeView === "scheduling" && (
-                <ViewScheduling
+              {activeView === "schedule" && (
+                <ViewSchedule
                   dealLoaded={dealLoaded}
                   hasBudget={hasBudget}
-                  scheduleData={scheduleData}
-                  spreadTypes={SPREAD_TYPES}
+                  workPackages={workPackages}
+                  activeWorkPackage={activeWorkPackage}
+                  setActiveWorkPackage={setActiveWorkPackage}
+                  wpData={wpData}
                   updateScheduleSpread={updateScheduleSpread}
                   updateWeekHours={updateWeekHours}
-                  selectedRows={selectedScheduleRows}
-                  toggleRow={toggleScheduleRow}
-                  toggleAllRows={toggleAllScheduleRows}
-                  applyBulkSpread={applyBulkSpread}
                   setToast={setToast}
-                  onNavigate={() => setActiveView("budgeting")}
+                  onNavigate={() => setActiveView("budget")}
                 />
               )}
-              {activeView === "forecasting" && (
-                <ViewForecasting
-                  alertVisible={alertVisible}
-                  setAlertVisible={setAlertVisible}
-                  unbudgetedResources={unbudgetedResources}
-                  handleAssignEtc={handleAssignEtc}
-                  highlightedResource={highlightedResource}
+              {activeView === "forecast" && (
+                <ViewForecast
+                  dealLoaded={dealLoaded}
+                  workPackages={workPackages}
+                  activeWorkPackage={activeWorkPackage}
+                  setActiveWorkPackage={setActiveWorkPackage}
+                  wpData={wpData}
                   actuals={actuals}
-                  updateEtc={updateEtc}
-                  updatePspRate={updatePspRate}
-                  etcInputRef={etcInputRef}
-                  targetFee={targetFee}
-                  totalBudgetCost={totalBudgetCost}
-                  totalBudgetHours={totalBudgetHours}
-                  totalActualCost={totalActualCost}
-                  totalActualHours={totalActualHours}
-                  totalProjectedCost={totalProjectedCost}
-                  totalProjectedHours={totalProjectedHours}
-                  projectedProfit={projectedProfit}
+                  updateActual={updateActual}
                   changeOrders={changeOrders}
                   addChangeOrder={addChangeOrder}
                   updateChangeOrder={updateChangeOrder}
                   deleteChangeOrder={deleteChangeOrder}
-                  totalChangeOrders={totalChangeOrders}
-                  totalProjectedRevenue={totalProjectedRevenue}
+                  grandTotals={grandTotals}
+                  setToast={setToast}
                 />
               )}
             </div>
@@ -862,89 +575,39 @@
 
           {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
-          {/* AI Copilot Button */}
-          <button
-            onClick={() => setCopilotOpen(true)}
-            className="fixed bottom-6 right-6 w-14 h-14 bg-profit hover:bg-profit-dark rounded-full shadow-lg flex items-center justify-center text-white transition-all hover:scale-105 z-40"
-          >
+          {/* AI Copilot */}
+          <button onClick={() => setCopilotOpen(true)} className="fixed bottom-6 right-6 w-14 h-14 bg-profit hover:bg-profit-dark rounded-full shadow-lg flex items-center justify-center text-white transition-all hover:scale-105 z-40">
             <Icons.Sparkle size={24} />
           </button>
 
-          {/* AI Copilot Panel */}
           {copilotOpen && (
             <div className="fixed inset-0 z-50 flex justify-end">
               <div className="absolute inset-0 bg-black/30" onClick={() => setCopilotOpen(false)} />
               <div className="relative w-80 h-full bg-navy-900 border-l border-navy-800 flex flex-col fade-in">
-                {/* Header */}
                 <div className="px-4 py-3 border-b border-navy-800 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Icons.Sparkle size={16} className="text-profit-light" />
-                    <span className="font-semibold text-white">AI Copilot</span>
-                  </div>
-                  <button onClick={() => setCopilotOpen(false)} className="text-navy-400 hover:text-white">
-                    <Icons.X size={18} />
-                  </button>
+                  <div className="flex items-center gap-2"><Icons.Sparkle size={16} className="text-profit-light" /><span className="font-semibold text-white">AI Copilot</span></div>
+                  <button onClick={() => setCopilotOpen(false)} className="text-navy-400 hover:text-white"><Icons.X size={18} /></button>
                 </div>
-
-                {/* Messages */}
                 <div className="flex-1 overflow-auto p-4 space-y-3">
                   {copilotMessages.map((msg, idx) => (
                     <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                      <div className={`max-w-[85%] px-3 py-2 text-sm ${
-                        msg.role === 'user'
-                          ? 'bg-profit/20 text-profit-light border border-profit/30'
-                          : 'bg-navy-800 text-navy-100 border border-navy-700'
-                      }`}>
-                        {msg.text}
-                      </div>
+                      <div className={`max-w-[85%] px-3 py-2 text-sm ${msg.role === 'user' ? 'bg-profit/20 text-profit-light border border-profit/30' : 'bg-navy-800 text-navy-100 border border-navy-700'}`}>{msg.text}</div>
                     </div>
                   ))}
                 </div>
-
-                {/* Quick Actions */}
                 <div className="px-4 py-2 border-t border-navy-800">
-                  <div className="text-[10px] text-navy-500 uppercase mb-2">Quick Actions</div>
                   <button
                     onClick={() => {
-                      setCopilotMessages(prev => [...prev, { role: 'user', text: 'Suggest Optimization' }]);
+                      setCopilotMessages(prev => [...prev, { role: 'user', text: 'Analyze leverage' }]);
                       setTimeout(() => {
-                        setCopilotMessages(prev => [...prev, {
-                          role: 'ai',
-                          text: `Based on the ${effectiveMargin}% target margin, I recommend shifting 20 hours from Partner to Senior Manager. This improves margin by ~3% while maintaining oversight quality. Would you like me to apply this adjustment?`
-                        }]);
+                        const advice = grandTotals.acLeverage < 50
+                          ? `To hit ${contract.client?.margin || 42}% margin, shift 40 hours from Partner to Senior Associate. This improves leverage from ${grandTotals.acLeverage.toFixed(0)}% to ~60%.`
+                          : `Current leverage at ${grandTotals.acLeverage.toFixed(0)}% is healthy. Consider adding 20 more Associate hours to further improve margins.`;
+                        setCopilotMessages(prev => [...prev, { role: 'ai', text: advice }]);
                       }, 800);
                     }}
-                    className="w-full px-3 py-2 text-left text-sm bg-navy-800 hover:bg-navy-700 text-navy-200 border border-navy-700 transition-colors"
-                  >
-                    💡 Suggest Optimization
-                  </button>
-                </div>
-
-                {/* Input */}
-                <div className="p-4 border-t border-navy-800">
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      placeholder="Ask a question..."
-                      className="flex-1 px-3 py-2 bg-navy-950 border border-navy-700 text-sm text-white placeholder-navy-500 focus:border-navy-500"
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' && e.target.value.trim()) {
-                          const text = e.target.value.trim();
-                          setCopilotMessages(prev => [...prev, { role: 'user', text }]);
-                          e.target.value = '';
-                          setTimeout(() => {
-                            setCopilotMessages(prev => [...prev, {
-                              role: 'ai',
-                              text: "I'm analyzing your request. For this demo, try clicking 'Suggest Optimization' to see how I can help optimize your engagement plan."
-                            }]);
-                          }, 600);
-                        }
-                      }}
-                    />
-                    <button className="px-3 py-2 bg-profit hover:bg-profit-dark text-white">
-                      <Icons.Send size={16} />
-                    </button>
-                  </div>
+                    className="w-full px-3 py-2 text-left text-sm bg-navy-800 hover:bg-navy-700 text-navy-200 border border-navy-700"
+                  >💡 Analyze leverage</button>
                 </div>
               </div>
             </div>
@@ -954,76 +617,61 @@
     }
 
     // ============================================
-    // VIEW 1: INITIATION
+    // VIEW 1: CODE CREATE
     // ============================================
-    function ViewInitiation({
-      selectedClient, setSelectedClient, clientSearchOpen, setClientSearchOpen,
-      clientSearchQuery, setClientSearchQuery, dealLoaded, dealDetails,
-      deliveryPhase, setDeliveryPhase, enablingTech, setEnablingTech,
-      interTerritory, setInterTerritory, approver, setApprover,
-      workLocation, setWorkLocation, riskApproved, setRiskApproved,
-      canProceed, onComplete,
-    }) {
-      const filteredClients = MOCK_CLIENTS.filter(c =>
-        c.name.toLowerCase().includes(clientSearchQuery.toLowerCase()) ||
-        c.service.toLowerCase().includes(clientSearchQuery.toLowerCase())
-      );
+    function ViewCodeCreate({ contract, setContract, workPackages, setWorkPackages, initializeWorkPackages, codesCreated, setCodesCreated, canProceed, onComplete }) {
+      const [searchOpen, setSearchOpen] = useState(false);
+      const [searchQuery, setSearchQuery] = useState("");
 
-      const sapCodes = [
-        { type: "Master Contract", code: "MC-2024-001", status: dealLoaded ? "Ready" : "Pending" },
-        { type: "WBS Element - Labor", code: "WBS-L-001", status: dealLoaded ? "Ready" : "Pending" },
-        { type: "WBS Element - Expenses", code: "WBS-E-001", status: dealLoaded ? "Ready" : "Pending" },
-        { type: "Cost Center Link", code: interTerritory ? "CC-INT-001" : "—", status: interTerritory ? "Required" : "Optional" },
-      ];
+      const filteredClients = MOCK_CLIENTS.filter(c => c.name.toLowerCase().includes(searchQuery.toLowerCase()) || c.service.toLowerCase().includes(searchQuery.toLowerCase()));
+
+      const handleSelectClient = (client) => {
+        setContract({ id: generateId(), client, contractName: client.contractName, contractValue: client.contractValue, status: "draft" });
+        initializeWorkPackages(client);
+        setSearchOpen(false);
+        setSearchQuery("");
+      };
+
+      const updateQuestionnaire = (wpId, field, value) => {
+        setWorkPackages(prev => prev.map(wp => wp.id === wpId ? { ...wp, questionnaire: { ...wp.questionnaire, [field]: value } } : wp));
+      };
+
+      const handleCreateCodes = () => {
+        setCodesCreated(true);
+        onComplete();
+      };
 
       return (
         <div className="max-w-4xl space-y-4 fade-in">
-          {/* Salesforce Lookup - Combobox */}
+          {/* Salesforce Lookup */}
           <section className="bg-navy-900 border border-navy-800">
-            <div className="px-4 py-2 border-b border-navy-800 flex items-center justify-between bg-navy-800/50">
+            <div className="px-4 py-2 border-b border-navy-800 bg-navy-800/50 flex items-center justify-between">
               <span className="text-xs font-medium text-navy-300 uppercase tracking-wider">Salesforce Lookup</span>
-              {dealLoaded && <StatusBadge status="success">Connected</StatusBadge>}
+              {contract.client && <StatusBadge status="success">Connected</StatusBadge>}
             </div>
             <div className="p-4">
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-navy-500">
-                  <Icons.Search />
-                </span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-navy-500"><Icons.Search /></span>
                 <input
                   type="text"
-                  value={selectedClient ? `${selectedClient.name} (${selectedClient.service})` : clientSearchQuery}
-                  onChange={(e) => {
-                    setClientSearchQuery(e.target.value);
-                    setClientSearchOpen(true);
-                    if (selectedClient) setSelectedClient(null);
-                  }}
-                  onFocus={() => setClientSearchOpen(true)}
+                  value={contract.client ? `${contract.client.name} (${contract.contractName})` : searchQuery}
+                  onChange={(e) => { setSearchQuery(e.target.value); setSearchOpen(true); if (contract.client) setContract({ ...contract, client: null }); }}
+                  onFocus={() => setSearchOpen(true)}
                   placeholder="Search clients..."
-                  className="w-full pl-9 pr-10 py-2 bg-navy-950 border border-navy-700 text-sm text-white placeholder-navy-500 focus:border-navy-500 focus:ring-1 focus:ring-navy-500"
+                  className="w-full pl-9 pr-10 py-2 bg-navy-950 border border-navy-700 text-sm text-white placeholder-navy-500 focus:border-navy-500"
                 />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-navy-500">
-                  <Icons.ChevronDown size={16} />
-                </span>
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-navy-500"><Icons.ChevronDown size={16} /></span>
 
-                {/* Dropdown */}
-                {clientSearchOpen && !selectedClient && (
+                {searchOpen && !contract.client && (
                   <div className="absolute z-10 w-full mt-1 bg-navy-900 border border-navy-700 shadow-lg max-h-48 overflow-auto">
                     {filteredClients.length === 0 ? (
                       <div className="px-4 py-3 text-sm text-navy-500">No clients found</div>
                     ) : (
                       filteredClients.map(client => (
-                        <button
-                          key={client.id}
-                          onClick={() => {
-                            setSelectedClient(client);
-                            setClientSearchOpen(false);
-                            setClientSearchQuery("");
-                          }}
-                          className="w-full px-4 py-2 text-left hover:bg-navy-800 flex items-center justify-between"
-                        >
+                        <button key={client.id} onClick={() => handleSelectClient(client)} className="w-full px-4 py-2 text-left hover:bg-navy-800 flex items-center justify-between">
                           <div>
                             <div className="text-sm text-white font-medium">{client.name}</div>
-                            <div className="text-xs text-navy-400">{client.product}</div>
+                            <div className="text-xs text-navy-400">{client.contractName} • {formatCurrency(client.contractValue)}</div>
                           </div>
                           <StatusBadge status="info">{client.service}</StatusBadge>
                         </button>
@@ -1035,189 +683,126 @@
             </div>
           </section>
 
-          {/* Deal Details - Enhanced */}
-          {dealLoaded && (
+          {/* Contract Header */}
+          {contract.client && (
             <section className="bg-navy-900 border border-navy-800 fade-in">
               <div className="px-4 py-2 border-b border-navy-800 bg-navy-800/50">
-                <span className="text-xs font-medium text-navy-300 uppercase tracking-wider">Deal Details</span>
+                <span className="text-xs font-medium text-navy-300 uppercase tracking-wider">Contract Header</span>
               </div>
-              <div className="p-4">
-                <div className="grid grid-cols-5 gap-4 mb-4">
-                  <div>
-                    <div className="text-[10px] text-navy-500 uppercase tracking-wider mb-1">Client</div>
-                    <div className="text-sm font-medium text-white">{dealDetails.client}</div>
-                  </div>
-                  <div>
-                    <div className="text-[10px] text-navy-500 uppercase tracking-wider mb-1">Product</div>
-                    <div className="text-sm font-medium text-white">{dealDetails.product}</div>
-                    <div className="text-[10px] text-navy-500">(Code {selectedClient?.code})</div>
-                  </div>
-                  <div>
-                    <div className="text-[10px] text-navy-500 uppercase tracking-wider mb-1">Stage</div>
-                    <StatusBadge status="success">{dealDetails.stage}</StatusBadge>
-                  </div>
-                  <div>
-                    <div className="text-[10px] text-navy-500 uppercase tracking-wider mb-1">Target Margin</div>
-                    <div className="text-lg font-bold text-profit-light">{dealDetails.margin}%</div>
-                  </div>
-                  <div>
-                    <div className="text-[10px] text-navy-500 uppercase tracking-wider mb-1">Validation</div>
-                    <StatusBadge status="success">Stage Validated</StatusBadge>
-                  </div>
+              <div className="p-4 grid grid-cols-4 gap-4">
+                <div>
+                  <div className="text-[10px] text-navy-500 uppercase">Client</div>
+                  <div className="text-sm font-medium text-white">{contract.client.name}</div>
                 </div>
-                {/* Compliance Fields */}
-                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-navy-800">
-                  <div>
-                    <div className="text-[10px] text-navy-500 uppercase tracking-wider mb-1">Delivery Phase</div>
-                    <select
-                      value={deliveryPhase}
-                      onChange={(e) => setDeliveryPhase(e.target.value)}
-                      className="w-full px-3 py-1.5 bg-navy-950 border border-navy-700 text-sm text-white focus:border-navy-500"
-                    >
-                      <option value="">Select Phase...</option>
-                      {DELIVERY_PHASES.map(p => <option key={p} value={p}>{p}</option>)}
-                    </select>
-                  </div>
-                  <div>
-                    <div className="text-[10px] text-navy-500 uppercase tracking-wider mb-1">Enabling Technology</div>
-                    <select
-                      value={enablingTech}
-                      onChange={(e) => setEnablingTech(e.target.value)}
-                      className="w-full px-3 py-1.5 bg-navy-950 border border-navy-700 text-sm text-white focus:border-navy-500"
-                    >
-                      {ENABLING_TECH.map(t => <option key={t} value={t}>{t}</option>)}
-                    </select>
-                  </div>
+                <div>
+                  <div className="text-[10px] text-navy-500 uppercase">Contract</div>
+                  <div className="text-sm font-medium text-white">{contract.contractName}</div>
+                </div>
+                <div>
+                  <div className="text-[10px] text-navy-500 uppercase">Value</div>
+                  <div className="text-lg font-bold text-profit-light">{formatCurrency(contract.contractValue)}</div>
+                </div>
+                <div>
+                  <div className="text-[10px] text-navy-500 uppercase">Target Margin</div>
+                  <div className="text-lg font-bold text-profit-light">{contract.client.margin}%</div>
                 </div>
               </div>
             </section>
           )}
 
-          {/* Questionnaire */}
-          <section className="bg-navy-900 border border-navy-800">
-            <div className="px-4 py-2 border-b border-navy-800 bg-navy-800/50">
-              <span className="text-xs font-medium text-navy-300 uppercase tracking-wider">Configuration</span>
-            </div>
-            <div className="divide-y divide-navy-800">
-              {/* Inter-territory */}
-              <div className="px-4 py-3 flex items-center justify-between">
-                <div>
-                  <div className="text-sm text-white">Inter-territory Work</div>
-                  <div className="text-xs text-navy-500">Requires territory approver assignment</div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={() => setInterTerritory(!interTerritory)}
-                    className={`relative w-10 h-5 transition-colors ${interTerritory ? "bg-profit" : "bg-navy-700"}`}
-                  >
-                    <span className={`absolute top-0.5 w-4 h-4 bg-white transition-transform ${interTerritory ? "translate-x-5" : "translate-x-0.5"}`} />
-                  </button>
-                  {interTerritory && (
-                    <select
-                      value={approver}
-                      onChange={(e) => setApprover(e.target.value)}
-                      className="px-3 py-1.5 bg-navy-950 border border-navy-700 text-sm text-white focus:border-navy-500"
-                    >
-                      <option value="">Select Approver</option>
-                      <option value="R. Johnson">R. Johnson (EMEA)</option>
-                      <option value="S. Patel">S. Patel (APAC)</option>
-                      <option value="M. Williams">M. Williams (Americas)</option>
-                    </select>
-                  )}
-                </div>
+          {/* Work Package Configuration */}
+          {contract.client && (
+            <section className="bg-navy-900 border border-navy-800 fade-in">
+              <div className="px-4 py-2 border-b border-navy-800 bg-navy-800/50 flex items-center justify-between">
+                <span className="text-xs font-medium text-navy-300 uppercase tracking-wider">Work Packages</span>
+                <span className="text-xs text-navy-500">{workPackages.length} packages</span>
               </div>
-
-              {/* Location */}
-              <div className="px-4 py-3 flex items-center justify-between">
-                <div>
-                  <div className="text-sm text-white">Work Location</div>
-                  <div className="text-xs text-navy-500">Primary jurisdiction for engagement</div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <select
-                    value={workLocation}
-                    onChange={(e) => setWorkLocation(e.target.value)}
-                    className="px-3 py-1.5 bg-navy-950 border border-navy-700 text-sm text-white focus:border-navy-500"
-                  >
-                    <option value="US">United States</option>
-                    <option value="UK">United Kingdom</option>
-                    <option value="CA">Canada</option>
-                  </select>
-                  {workLocation !== "US" && (
-                    <StatusBadge status="warning">
-                      <Icons.Globe size={10} />
-                      <span className="ml-1">Int'l Tax</span>
-                    </StatusBadge>
-                  )}
-                </div>
-              </div>
-
-              {/* Risk */}
-              <div className={`px-4 py-3 flex items-center justify-between ${riskApproved ? "bg-profit/5" : ""}`}>
-                <div>
-                  <div className="text-sm text-white">Risk Profile Approved</div>
-                  <div className="text-xs text-navy-500">Required before code creation</div>
-                </div>
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={riskApproved}
-                    onChange={(e) => setRiskApproved(e.target.checked)}
-                    className="w-4 h-4 border-navy-600 bg-navy-950 text-profit focus:ring-profit/50 focus:ring-offset-navy-900"
-                  />
-                  <span className={`text-sm ${riskApproved ? "text-profit-light font-medium" : "text-navy-400"}`}>
-                    {riskApproved ? "Approved" : "Pending"}
-                  </span>
-                </label>
-              </div>
-            </div>
-          </section>
-
-          {/* SAP Codes */}
-          <section className="bg-navy-900 border border-navy-800">
-            <div className="px-4 py-2 border-b border-navy-800 bg-navy-800/50 flex items-center justify-between">
-              <span className="text-xs font-medium text-navy-300 uppercase tracking-wider">SAP Codes</span>
-              <span className="text-xs text-navy-500">{sapCodes.filter(c => c.status === "Ready").length} codes ready</span>
-            </div>
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="text-[10px] text-navy-500 uppercase tracking-wider border-b border-navy-800">
-                  <th className="text-left px-4 py-2 font-medium">Type</th>
-                  <th className="text-left px-4 py-2 font-medium">Code</th>
-                  <th className="text-right px-4 py-2 font-medium">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {sapCodes.map((code, idx) => (
-                  <tr key={idx} className="border-b border-navy-800/50 last:border-0">
-                    <td className="px-4 py-2 text-navy-200">{code.type}</td>
-                    <td className="px-4 py-2 font-mono text-xs text-navy-400">{code.code}</td>
-                    <td className="px-4 py-2 text-right">
-                      <StatusBadge status={code.status === "Ready" ? "success" : code.status === "Required" ? "warning" : "neutral"}>
-                        {code.status}
-                      </StatusBadge>
-                    </td>
-                  </tr>
+              <div className="divide-y divide-navy-800">
+                {workPackages.map((wp, idx) => (
+                  <div key={wp.id} className="p-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <Icons.File size={16} className="text-navy-400" />
+                        <span className="font-medium text-white">{wp.name}</span>
+                        <StatusBadge status="info">Code {wp.productCode}</StatusBadge>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 pl-6">
+                      <div>
+                        <label className="text-[10px] text-navy-500 uppercase block mb-1">Inter-territory?</label>
+                        <div className="flex items-center gap-3">
+                          <button
+                            onClick={() => updateQuestionnaire(wp.id, "interTerritory", !wp.questionnaire.interTerritory)}
+                            className={`relative w-10 h-5 transition-colors ${wp.questionnaire.interTerritory ? "bg-profit" : "bg-navy-700"}`}
+                          >
+                            <span className={`absolute top-0.5 w-4 h-4 bg-white transition-transform ${wp.questionnaire.interTerritory ? "translate-x-5" : "translate-x-0.5"}`} />
+                          </button>
+                          <span className="text-sm text-navy-300">{wp.questionnaire.interTerritory ? "Yes" : "No"}</span>
+                        </div>
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-navy-500 uppercase block mb-1">Work Location</label>
+                        <select
+                          value={wp.questionnaire.workLocation}
+                          onChange={(e) => updateQuestionnaire(wp.id, "workLocation", e.target.value)}
+                          className="px-3 py-1.5 bg-navy-950 border border-navy-700 text-sm text-white"
+                        >
+                          <option value="US">United States</option>
+                          <option value="UK">United Kingdom</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
                 ))}
-              </tbody>
-            </table>
-          </section>
+              </div>
+            </section>
+          )}
+
+          {/* WBS Tree Preview */}
+          {contract.client && workPackages.length > 0 && (
+            <section className="bg-navy-900 border border-navy-800 fade-in">
+              <div className="px-4 py-2 border-b border-navy-800 bg-navy-800/50">
+                <span className="text-xs font-medium text-navy-300 uppercase tracking-wider">WBS Tree Preview</span>
+              </div>
+              <div className="p-4 font-mono text-sm">
+                <div className="flex items-center gap-2 text-profit-light">
+                  <Icons.Folder size={14} /> Contract: {contract.client.name} {contract.contractName}
+                </div>
+                {workPackages.map((wp, wpIdx) => (
+                  <div key={wp.id} className="ml-4 mt-2">
+                    <div className="flex items-center gap-2 text-white">
+                      <Icons.File size={14} /> WP{wpIdx + 1}: {wp.name}
+                    </div>
+                    {wp.questionnaire.workLocation === "US" && (
+                      <div className="ml-4 mt-1 flex items-center gap-2 text-navy-400">
+                        <Icons.Tag size={12} /> WBS: {wp.name.replace(/\s+/g, '-')}-US-Labor
+                      </div>
+                    )}
+                    {wp.questionnaire.workLocation === "UK" && (
+                      <div className="ml-4 mt-1 flex items-center gap-2 text-navy-400">
+                        <Icons.Tag size={12} /> WBS: {wp.name.replace(/\s+/g, '-')}-UK-Labor
+                      </div>
+                    )}
+                    {wp.questionnaire.interTerritory && (
+                      <div className="ml-4 mt-1 flex items-center gap-2 text-warning-light">
+                        <Icons.Tag size={12} /> WBS: {wp.name.replace(/\s+/g, '-')}-InterTerritory
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
 
           {/* Actions */}
           <div className="flex justify-between items-center pt-2">
-            <div className="text-xs text-navy-500">
-              {!canProceed && "Complete all required fields to proceed"}
-            </div>
+            <div className="text-xs text-navy-500">{!canProceed && "Select a client to proceed"}</div>
             <button
-              onClick={onComplete}
-              disabled={!canProceed}
-              className={`px-4 py-2 text-sm font-medium transition-colors ${
-                canProceed
-                  ? "bg-profit hover:bg-profit-dark text-white"
-                  : "bg-navy-800 text-navy-500 cursor-not-allowed"
-              }`}
+              onClick={handleCreateCodes}
+              disabled={!canProceed || codesCreated}
+              className={`px-4 py-2 text-sm font-medium transition-colors ${canProceed && !codesCreated ? "bg-profit hover:bg-profit-dark text-white" : "bg-navy-800 text-navy-500 cursor-not-allowed"}`}
             >
-              Create SAP Codes →
+              {codesCreated ? "Codes Created ✓" : "Create WBS Codes →"}
             </button>
           </div>
         </div>
@@ -1225,523 +810,402 @@
     }
 
     // ============================================
-    // VIEW 2: BUDGETING
+    // VIEW 2: BUDGET
     // ============================================
-    function ViewBudgeting({
-      dealLoaded, pricingStructure, setPricingStructure, useRateCard, handleRateCardToggle,
-      staffing, updateStaffRow, addStaffRow, deleteStaffRow,
-      expenses, addExpense, updateExpense, deleteExpense,
-      targetFee, setTargetFee, totalLaborCost, totalBudgetCost, totalBudgetHours, totalExpenses, recoverableExpenses,
-      recommendedFee, applyRecommendedFee, projectedMargin, marginIsHealthy, marginVariance, effectiveMargin,
-      acLeverage, mgmtPercent, newRowId, onNavigate,
-    }) {
-      const [hoveredRow, setHoveredRow] = useState(null);
-      const [hoveredExpenseRow, setHoveredExpenseRow] = useState(null);
+    function ViewBudget({ dealLoaded, codesCreated, workPackages, activeWorkPackage, setActiveWorkPackage, wpData, grandTotals, calculateWpTotals, rateCardLocked, handleRateCardToggle, addStaffRow, updateStaffRow, deleteStaffRow, addExpenseRow, updateExpenseRow, deleteExpenseRow, setTargetFee, targetMargin, onNavigate, setToast }) {
+      const [hoveredStaff, setHoveredStaff] = useState(null);
+      const [hoveredExpense, setHoveredExpense] = useState(null);
 
-      if (!dealLoaded) {
+      if (!dealLoaded || !codesCreated) {
         return (
           <div className="flex flex-col items-center justify-center h-64 text-center">
-            <div className="text-navy-500 mb-4">No engagement loaded</div>
-            <button onClick={onNavigate} className="text-sm text-profit hover:text-profit-light">
-              ← Go to Code Create
-            </button>
+            <div className="text-navy-500 mb-4">No WBS codes created</div>
+            <button onClick={onNavigate} className="text-sm text-profit hover:text-profit-light">← Go to Code Create</button>
           </div>
         );
       }
 
-      return (
-        <div className="flex gap-4 fade-in">
-          {/* Left Panel - Staffing & Expenses */}
-          <div className="flex-1 space-y-3">
-            {/* Controls */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-navy-500">Pricing:</span>
-                  <select
-                    value={pricingStructure}
-                    onChange={(e) => setPricingStructure(e.target.value)}
-                    className="px-2 py-1 bg-navy-900 border border-navy-700 text-sm text-white focus:border-navy-500"
-                  >
-                    <option>Fixed Fee</option>
-                    <option>T&M</option>
-                    <option>Capped Fee</option>
-                    <option>Contingent</option>
-                  </select>
-                </div>
-              </div>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <span className="text-xs text-navy-500">Rate Card Lock</span>
-                <button
-                  onClick={handleRateCardToggle}
-                  className={`relative w-8 h-4 transition-colors ${useRateCard ? "bg-profit" : "bg-navy-700"}`}
-                >
-                  <span className={`absolute top-0.5 w-3 h-3 bg-white transition-transform ${useRateCard ? "translate-x-4" : "translate-x-0.5"}`} />
-                </button>
-              </label>
-            </div>
-
-            {/* Staffing Table */}
-            <div className="bg-navy-900 border border-navy-800">
-              <div className="px-4 py-2 border-b border-navy-800 bg-navy-800/50 flex items-center justify-between">
-                <span className="text-xs font-medium text-navy-300 uppercase tracking-wider">Staffing Grid</span>
-                <span className="text-xs text-navy-500">{staffing.length} resources</span>
-              </div>
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="text-[10px] text-navy-500 uppercase tracking-wider border-b border-navy-800">
-                    <th className="w-8"></th>
-                    <th className="text-left px-3 py-2 font-medium">Name</th>
-                    <th className="text-left px-3 py-2 font-medium">Level</th>
-                    <th className="text-right px-3 py-2 font-medium">Rate</th>
-                    <th className="text-right px-3 py-2 font-medium">Hours</th>
-                    <th className="text-right px-3 py-2 font-medium">Cost</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {staffing.length === 0 ? (
-                    <tr>
-                      <td colSpan={6} className="px-4 py-6 text-center text-navy-500">
-                        No resources added. <button onClick={addStaffRow} className="text-profit hover:text-profit-light">Add first resource</button>
-                      </td>
-                    </tr>
-                  ) : (
-                    staffing.map(row => {
-                      const isTBD = row.name === "TBD" || row.name.startsWith("TBD");
-                      const isNew = row.id === newRowId;
-                      return (
-                        <tr
-                          key={row.id}
-                          onMouseEnter={() => setHoveredRow(row.id)}
-                          onMouseLeave={() => setHoveredRow(null)}
-                          className={`border-b border-navy-800/50 hover:bg-navy-800/30 ${isNew ? "row-flash" : ""}`}
-                        >
-                          <td className="px-2 py-1.5 text-center">
-                            {hoveredRow === row.id && (
-                              <button onClick={() => deleteStaffRow(row.id)} className="text-navy-600 hover:text-loss-light">
-                                <Icons.Trash />
-                              </button>
-                            )}
-                          </td>
-                          <td className="px-3 py-1.5">
-                            <input
-                              type="text"
-                              value={row.name}
-                              onChange={(e) => updateStaffRow(row.id, "name", e.target.value)}
-                              className={`w-full px-1 py-0.5 bg-transparent border-0 focus:ring-1 focus:ring-navy-500 ${isTBD ? "text-warning-light italic" : "text-white"}`}
-                            />
-                          </td>
-                          <td className="px-3 py-1.5">
-                            <select
-                              value={row.level}
-                              onChange={(e) => updateStaffRow(row.id, "level", e.target.value)}
-                              className="w-full px-1 py-0.5 bg-transparent border-0 text-white focus:ring-1 focus:ring-navy-500"
-                            >
-                              {LEVELS.map(l => <option key={l} value={l} className="bg-navy-900">{l}</option>)}
-                            </select>
-                          </td>
-                          <td className="px-3 py-1.5 text-right">
-                            <div className="flex items-center justify-end gap-1">
-                              {useRateCard && <Icons.Lock size={10} className="text-navy-600" />}
-                              <span className="text-navy-500">$</span>
-                              <input
-                                type="number"
-                                value={row.rate}
-                                onChange={(e) => updateStaffRow(row.id, "rate", parseInt(e.target.value) || 0)}
-                                disabled={useRateCard}
-                                className={`w-14 px-1 py-0.5 text-right bg-transparent border-0 tabular-nums focus:ring-1 focus:ring-navy-500 ${useRateCard ? "text-navy-500 opacity-50 cursor-not-allowed" : "text-white"}`}
-                              />
-                            </div>
-                          </td>
-                          <td className="px-3 py-1.5 text-right">
-                            <input
-                              type="number"
-                              value={row.hours}
-                              onChange={(e) => updateStaffRow(row.id, "hours", parseInt(e.target.value) || 0)}
-                              className="w-14 px-1 py-0.5 text-right bg-transparent border-0 text-white tabular-nums focus:ring-1 focus:ring-navy-500"
-                            />
-                          </td>
-                          <td className="px-3 py-1.5 text-right font-medium text-white tabular-nums">
-                            {formatCurrency(row.rate * row.hours)}
-                          </td>
-                        </tr>
-                      );
-                    })
-                  )}
-                </tbody>
-                <tfoot>
-                  <tr className="border-t border-navy-700 bg-navy-800/30">
-                    <td colSpan={4} className="px-3 py-2">
-                      <button onClick={addStaffRow} className="flex items-center gap-1 text-xs text-profit hover:text-profit-light">
-                        <Icons.Plus size={12} /> Add Resource <span className="text-navy-600 ml-1">⌘N</span>
-                      </button>
-                    </td>
-                    <td className="px-3 py-2 text-right text-xs text-navy-400 tabular-nums">{formatNumber(totalBudgetHours)} hrs</td>
-                    <td className="px-3 py-2 text-right font-semibold text-white tabular-nums">{formatCurrency(totalLaborCost)}</td>
-                  </tr>
-                </tfoot>
-              </table>
-            </div>
-
-            {/* Expenses Grid - NEW */}
-            <div className="bg-navy-900 border border-navy-800">
-              <div className="px-4 py-2 border-b border-navy-800 bg-navy-800/50 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Icons.Receipt size={14} className="text-navy-400" />
-                  <span className="text-xs font-medium text-navy-300 uppercase tracking-wider">Expenses</span>
-                </div>
-                <span className="text-xs text-navy-500">{expenses.length} items</span>
-              </div>
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="text-[10px] text-navy-500 uppercase tracking-wider border-b border-navy-800">
-                    <th className="w-8"></th>
-                    <th className="text-left px-3 py-2 font-medium">Type</th>
-                    <th className="text-right px-3 py-2 font-medium">Amount</th>
-                    <th className="text-right px-3 py-2 font-medium">% Rec.</th>
-                    <th className="text-right px-3 py-2 font-medium">Recoverable</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {expenses.length === 0 ? (
-                    <tr>
-                      <td colSpan={5} className="px-4 py-4 text-center text-navy-500 text-xs">
-                        No expenses added. <button onClick={addExpense} className="text-profit hover:text-profit-light">Add expense</button>
-                      </td>
-                    </tr>
-                  ) : (
-                    expenses.map(exp => (
-                      <tr
-                        key={exp.id}
-                        onMouseEnter={() => setHoveredExpenseRow(exp.id)}
-                        onMouseLeave={() => setHoveredExpenseRow(null)}
-                        className="border-b border-navy-800/50 hover:bg-navy-800/30"
-                      >
-                        <td className="px-2 py-1.5 text-center">
-                          {hoveredExpenseRow === exp.id && (
-                            <button onClick={() => deleteExpense(exp.id)} className="text-navy-600 hover:text-loss-light">
-                              <Icons.Trash />
-                            </button>
-                          )}
-                        </td>
-                        <td className="px-3 py-1.5">
-                          <select
-                            value={exp.type || ""}
-                            onChange={(e) => updateExpense(exp.id, "type", e.target.value)}
-                            className="w-full px-1 py-0.5 bg-transparent border-0 text-white focus:ring-1 focus:ring-navy-500"
-                          >
-                            <option value="" className="bg-navy-900">Select type...</option>
-                            {EXPENSE_TYPES.map(t => <option key={t} value={t} className="bg-navy-900">{t}</option>)}
-                          </select>
-                        </td>
-                        <td className="px-3 py-1.5 text-right">
-                          <div className="flex items-center justify-end gap-1">
-                            <span className="text-navy-500">$</span>
-                            <input
-                              type="number"
-                              value={exp.amount || ""}
-                              onChange={(e) => updateExpense(exp.id, "amount", parseInt(e.target.value) || 0)}
-                              placeholder="0"
-                              className="w-20 px-1 py-0.5 text-right bg-transparent border-0 text-white tabular-nums focus:ring-1 focus:ring-navy-500"
-                            />
-                          </div>
-                        </td>
-                        <td className="px-3 py-1.5 text-right">
-                          <div className="flex items-center justify-end gap-1">
-                            <input
-                              type="number"
-                              value={exp.recoverablePercent ?? 100}
-                              onChange={(e) => updateExpense(exp.id, "recoverablePercent", Math.min(100, Math.max(0, parseInt(e.target.value) || 0)))}
-                              className="w-12 px-1 py-0.5 text-right bg-transparent border-0 text-white tabular-nums focus:ring-1 focus:ring-navy-500"
-                            />
-                            <span className="text-navy-500">%</span>
-                          </div>
-                        </td>
-                        <td className="px-3 py-1.5 text-right font-medium text-white tabular-nums">
-                          {formatCurrency((exp.amount || 0) * (exp.recoverablePercent ?? 100) / 100)}
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-                <tfoot>
-                  <tr className="border-t border-navy-700 bg-navy-800/30">
-                    <td colSpan={2} className="px-3 py-2">
-                      <button onClick={addExpense} className="flex items-center gap-1 text-xs text-profit hover:text-profit-light">
-                        <Icons.Plus size={12} /> Add Expense
-                      </button>
-                    </td>
-                    <td className="px-3 py-2 text-right text-xs text-navy-400 tabular-nums">{formatCurrency(totalExpenses)}</td>
-                    <td className="px-3 py-2"></td>
-                    <td className="px-3 py-2 text-right font-semibold text-white tabular-nums">{formatCurrency(recoverableExpenses)}</td>
-                  </tr>
-                </tfoot>
-              </table>
-            </div>
-          </div>
-
-          {/* Right Panel - Financial Summary */}
-          <div className="w-64 space-y-3">
-            {/* Target Fee */}
-            <div className="bg-navy-900 border border-navy-800 p-3">
-              <div className="text-[10px] text-navy-500 uppercase tracking-wider mb-2">Target Fee</div>
-              <div className="relative">
-                <span className="absolute left-2 top-1/2 -translate-y-1/2 text-navy-500">$</span>
-                <input
-                  type="number"
-                  value={targetFee || ""}
-                  onChange={(e) => setTargetFee(parseInt(e.target.value) || 0)}
-                  placeholder="0"
-                  className="w-full pl-6 pr-2 py-2 bg-navy-950 border border-navy-700 text-lg font-semibold text-white tabular-nums focus:border-navy-500"
-                />
-              </div>
-            </div>
-
-            {/* Recommended Fee */}
-            {totalBudgetCost > 0 && (
-              <div className="bg-navy-900 border border-profit/30 p-3 fade-in">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-[10px] text-navy-500 uppercase tracking-wider">Recommended Fee</span>
-                </div>
-                <div className="text-xl font-semibold text-profit-light tabular-nums">{formatCurrency(recommendedFee)}</div>
-                <div className="text-[10px] text-navy-500 mt-1">For {effectiveMargin}% margin</div>
-                <button
-                  onClick={applyRecommendedFee}
-                  className="w-full mt-2 px-3 py-1.5 bg-profit/20 hover:bg-profit/30 text-profit-light text-xs font-medium border border-profit/30 transition-colors"
-                >
-                  Apply Fee
-                </button>
-              </div>
-            )}
-
-            {/* Cost Summary */}
-            <div className="bg-navy-900 border border-navy-800 p-3">
-              <div className="text-[10px] text-navy-500 uppercase tracking-wider mb-2">Total Cost</div>
-              <div className="text-xl font-semibold text-white tabular-nums">{formatCurrency(totalBudgetCost)}</div>
-              <div className="text-xs text-navy-500 mt-2 space-y-1">
-                <div className="flex justify-between">
-                  <span>Labor:</span>
-                  <span className="tabular-nums">{formatCurrency(totalLaborCost)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Expenses (rec.):</span>
-                  <span className="tabular-nums">{formatCurrency(recoverableExpenses)}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Leverage Metrics - NEW */}
-            {totalBudgetHours > 0 && (
-              <div className="bg-navy-900 border border-navy-800 p-3">
-                <div className="text-[10px] text-navy-500 uppercase tracking-wider mb-2">Leverage Metrics</div>
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs text-navy-400">AC Leverage:</span>
-                    <span className="text-sm font-medium text-white tabular-nums">{acLeverage.toFixed(0)}%</span>
-                  </div>
-                  <div className="h-1.5 bg-navy-800 overflow-hidden">
-                    <div className="h-full bg-profit transition-all" style={{ width: `${Math.min(acLeverage, 100)}%` }} />
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs text-navy-400">Mgmt Hours:</span>
-                    <span className="text-sm font-medium text-white tabular-nums">{mgmtPercent.toFixed(0)}%</span>
-                  </div>
-                  <div className="h-1.5 bg-navy-800 overflow-hidden">
-                    <div className="h-full bg-warning transition-all" style={{ width: `${Math.min(mgmtPercent, 100)}%` }} />
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Margin */}
-            {targetFee > 0 && (
-              <div className={`border p-3 fade-in ${marginIsHealthy ? "bg-profit/10 border-profit/30" : "bg-loss/10 border-loss/30"}`}>
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-[10px] text-navy-500 uppercase tracking-wider">Projected Margin</span>
-                  {marginIsHealthy ? <Icons.TrendUp size={12} className="text-profit-light" /> : <Icons.TrendDown size={12} className="text-loss-light" />}
-                </div>
-                <div className={`text-2xl font-bold tabular-nums ${marginIsHealthy ? "text-profit-light" : "text-loss-light"}`}>
-                  {formatPercent(projectedMargin)}
-                </div>
-                <div className={`text-xs mt-1 ${marginIsHealthy ? "text-profit" : "text-loss"}`}>
-                  {marginVariance >= 0 ? "+" : ""}{marginVariance.toFixed(1)}% vs target
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      );
-    }
-
-    // ============================================
-    // VIEW 3: SCHEDULING
-    // ============================================
-    function ViewScheduling({
-      dealLoaded, hasBudget, scheduleData, spreadTypes, updateScheduleSpread, updateWeekHours,
-      selectedRows, toggleRow, toggleAllRows, applyBulkSpread,
-      setToast, onNavigate
-    }) {
-      const weekDates = getWeekDates();
-      const [syncing, setSyncing] = useState(false);
-      const MAX_WEEKLY = 40;
-
-      if (!dealLoaded || !hasBudget || scheduleData.length === 0) {
-        return (
-          <div className="flex flex-col items-center justify-center h-64 text-center">
-            <div className="text-navy-500 mb-4">No staffing plan to schedule</div>
-            <button onClick={onNavigate} className="text-sm text-profit hover:text-profit-light">
-              ← Go to Budget
-            </button>
-          </div>
-        );
-      }
-
-      const handleSync = () => {
-        setSyncing(true);
-        setTimeout(() => {
-          setSyncing(false);
-          setToast({ message: "Synced to Team Builder", type: "success" });
-        }, 1200);
-      };
-
-      const allSelected = selectedRows.size === scheduleData.length && scheduleData.length > 0;
+      const currentWp = workPackages.find(wp => wp.id === activeWorkPackage);
+      const currentData = wpData[activeWorkPackage] || { staffing: [], expenses: [], targetFee: 0 };
+      const wpTotals = activeWorkPackage ? calculateWpTotals(activeWorkPackage) : null;
 
       return (
         <div className="space-y-4 fade-in">
-          {/* Bulk S-Curve Actions */}
-          <div className="flex items-center justify-between bg-navy-900 border border-navy-800 px-4 py-2">
+          {/* Tabs */}
+          <div className="flex border-b border-navy-800">
+            <button
+              onClick={() => setActiveWorkPackage(null)}
+              className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${activeWorkPackage === null ? "border-profit text-white" : "border-transparent text-navy-400 hover:text-navy-200"}`}
+            >Summary</button>
+            {workPackages.map(wp => (
+              <button
+                key={wp.id}
+                onClick={() => setActiveWorkPackage(wp.id)}
+                className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${activeWorkPackage === wp.id ? "border-profit text-white" : "border-transparent text-navy-400 hover:text-navy-200"}`}
+              >{wp.name}</button>
+            ))}
+          </div>
+
+          {/* Summary Tab */}
+          {activeWorkPackage === null && (
+            <div className="space-y-4">
+              {/* Totals by WP */}
+              <div className="bg-navy-900 border border-navy-800">
+                <div className="px-4 py-2 border-b border-navy-800 bg-navy-800/50">
+                  <span className="text-xs font-medium text-navy-300 uppercase tracking-wider">Totals by Work Package</span>
+                </div>
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="text-[10px] text-navy-500 uppercase tracking-wider border-b border-navy-800">
+                      <th className="text-left px-4 py-2">Work Package</th>
+                      <th className="text-right px-4 py-2">Hours</th>
+                      <th className="text-right px-4 py-2">Cost</th>
+                      <th className="text-right px-4 py-2">Fee</th>
+                      <th className="text-right px-4 py-2">Margin</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {workPackages.map(wp => {
+                      const totals = grandTotals.byWp[wp.id] || { laborHours: 0, totalCost: 0, fee: 0, margin: 0 };
+                      const marginHealthy = totals.margin >= targetMargin;
+                      return (
+                        <tr key={wp.id} className="border-b border-navy-800/50 hover:bg-navy-800/30">
+                          <td className="px-4 py-2 text-white font-medium">{wp.name}</td>
+                          <td className="px-4 py-2 text-right text-navy-300 tabular-nums">{formatNumber(totals.laborHours)}</td>
+                          <td className="px-4 py-2 text-right text-navy-300 tabular-nums">{formatCurrency(totals.totalCost)}</td>
+                          <td className="px-4 py-2 text-right text-white tabular-nums">{formatCurrency(totals.fee)}</td>
+                          <td className={`px-4 py-2 text-right font-medium tabular-nums ${marginHealthy ? "text-profit-light" : "text-loss-light"}`}>{formatPercent(totals.margin)}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                  <tfoot>
+                    <tr className="bg-navy-800/50 font-semibold">
+                      <td className="px-4 py-2 text-white">Contract Total</td>
+                      <td className="px-4 py-2 text-right text-white tabular-nums">{formatNumber(grandTotals.totalHours)}</td>
+                      <td className="px-4 py-2 text-right text-white tabular-nums">{formatCurrency(grandTotals.totalCost)}</td>
+                      <td className="px-4 py-2 text-right text-white tabular-nums">{formatCurrency(grandTotals.totalFee)}</td>
+                      <td className={`px-4 py-2 text-right tabular-nums ${grandTotals.blendedMargin >= targetMargin ? "text-profit-light" : "text-loss-light"}`}>{formatPercent(grandTotals.blendedMargin)}</td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+
+              {/* Consolidated Metrics */}
+              <div className="grid grid-cols-4 gap-4">
+                <div className="bg-navy-900 border border-navy-800 p-4">
+                  <div className="text-[10px] text-navy-500 uppercase mb-1">Total Fee</div>
+                  <div className="text-2xl font-bold text-white tabular-nums">{formatCurrency(grandTotals.totalFee)}</div>
+                </div>
+                <div className="bg-navy-900 border border-navy-800 p-4">
+                  <div className="text-[10px] text-navy-500 uppercase mb-1">Total Cost</div>
+                  <div className="text-2xl font-bold text-white tabular-nums">{formatCurrency(grandTotals.totalCost)}</div>
+                </div>
+                <div className="bg-navy-900 border border-navy-800 p-4">
+                  <div className="text-[10px] text-navy-500 uppercase mb-1">AC Leverage</div>
+                  <div className="text-2xl font-bold text-profit-light tabular-nums">{grandTotals.acLeverage.toFixed(0)}%</div>
+                  <div className="h-1.5 bg-navy-800 mt-2"><div className="h-full bg-profit" style={{ width: `${Math.min(grandTotals.acLeverage, 100)}%` }} /></div>
+                </div>
+                <div className="bg-navy-900 border border-navy-800 p-4">
+                  <div className="text-[10px] text-navy-500 uppercase mb-1">Mgmt Hours</div>
+                  <div className="text-2xl font-bold text-warning-light tabular-nums">{grandTotals.mgmtPercent.toFixed(0)}%</div>
+                  <div className="h-1.5 bg-navy-800 mt-2"><div className="h-full bg-warning" style={{ width: `${Math.min(grandTotals.mgmtPercent, 100)}%` }} /></div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Work Package Tab */}
+          {activeWorkPackage && currentWp && (
+            <div className="flex gap-4">
+              {/* Left Panel */}
+              <div className="flex-1 space-y-3">
+                {/* Controls */}
+                <div className="flex items-center justify-between">
+                  <div className="text-sm font-medium text-white">{currentWp.name}</div>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <span className="text-xs text-navy-500">Rate Card Lock</span>
+                    <button onClick={handleRateCardToggle} className={`relative w-8 h-4 transition-colors ${rateCardLocked ? "bg-profit" : "bg-navy-700"}`}>
+                      <span className={`absolute top-0.5 w-3 h-3 bg-white transition-transform ${rateCardLocked ? "translate-x-4" : "translate-x-0.5"}`} />
+                    </button>
+                  </label>
+                </div>
+
+                {/* Staffing Grid */}
+                <div className="bg-navy-900 border border-navy-800">
+                  <div className="px-4 py-2 border-b border-navy-800 bg-navy-800/50 flex items-center justify-between">
+                    <span className="text-xs font-medium text-navy-300 uppercase">Staffing Grid</span>
+                    <span className="text-xs text-navy-500">{currentData.staffing.length} resources</span>
+                  </div>
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="text-[10px] text-navy-500 uppercase border-b border-navy-800">
+                        <th className="w-8"></th>
+                        <th className="text-left px-3 py-2">Name</th>
+                        <th className="text-left px-3 py-2">Level</th>
+                        <th className="text-right px-3 py-2">Rate</th>
+                        <th className="text-right px-3 py-2">Hours</th>
+                        <th className="text-right px-3 py-2">Cost</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {currentData.staffing.length === 0 ? (
+                        <tr><td colSpan={6} className="px-4 py-6 text-center text-navy-500">No resources. <button onClick={() => addStaffRow(activeWorkPackage)} className="text-profit hover:text-profit-light">Add first resource</button></td></tr>
+                      ) : (
+                        currentData.staffing.map(row => (
+                          <tr key={row.id} onMouseEnter={() => setHoveredStaff(row.id)} onMouseLeave={() => setHoveredStaff(null)} className="border-b border-navy-800/50 hover:bg-navy-800/30">
+                            <td className="px-2 py-1.5 text-center">
+                              {hoveredStaff === row.id && <button onClick={() => deleteStaffRow(activeWorkPackage, row.id)} className="text-navy-600 hover:text-loss-light"><Icons.Trash /></button>}
+                            </td>
+                            <td className="px-3 py-1.5">
+                              <input type="text" value={row.name} onChange={(e) => updateStaffRow(activeWorkPackage, row.id, "name", e.target.value)} className={`w-full px-1 py-0.5 bg-transparent border-0 ${row.name === "TBD" ? "text-warning-light italic" : "text-white"}`} />
+                            </td>
+                            <td className="px-3 py-1.5">
+                              <select value={row.level} onChange={(e) => updateStaffRow(activeWorkPackage, row.id, "level", e.target.value)} className="w-full px-1 py-0.5 bg-transparent border-0 text-white">
+                                {LEVELS.map(l => <option key={l} value={l} className="bg-navy-900">{l}</option>)}
+                              </select>
+                            </td>
+                            <td className="px-3 py-1.5 text-right">
+                              <div className="flex items-center justify-end gap-1">
+                                {rateCardLocked && <Icons.Lock size={10} className="text-navy-600" />}
+                                <span className="text-navy-500">$</span>
+                                <input type="number" value={row.rate} onChange={(e) => updateStaffRow(activeWorkPackage, row.id, "rate", parseInt(e.target.value) || 0)} disabled={rateCardLocked} className={`w-14 px-1 py-0.5 text-right bg-transparent border-0 tabular-nums ${rateCardLocked ? "text-navy-500 opacity-50 cursor-not-allowed" : "text-white"}`} />
+                              </div>
+                            </td>
+                            <td className="px-3 py-1.5 text-right">
+                              <input type="number" value={row.hours} onChange={(e) => updateStaffRow(activeWorkPackage, row.id, "hours", parseInt(e.target.value) || 0)} className="w-14 px-1 py-0.5 text-right bg-transparent border-0 text-white tabular-nums" />
+                            </td>
+                            <td className="px-3 py-1.5 text-right font-medium text-white tabular-nums">{formatCurrency(row.rate * row.hours)}</td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                    <tfoot>
+                      <tr className="border-t border-navy-700 bg-navy-800/30">
+                        <td colSpan={4} className="px-3 py-2">
+                          <button onClick={() => addStaffRow(activeWorkPackage)} className="flex items-center gap-1 text-xs text-profit hover:text-profit-light"><Icons.Plus size={12} /> Add Resource</button>
+                        </td>
+                        <td className="px-3 py-2 text-right text-xs text-navy-400 tabular-nums">{formatNumber(wpTotals?.laborHours || 0)} hrs</td>
+                        <td className="px-3 py-2 text-right font-semibold text-white tabular-nums">{formatCurrency(wpTotals?.laborCost || 0)}</td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+
+                {/* Expenses Grid */}
+                <div className="bg-navy-900 border border-navy-800">
+                  <div className="px-4 py-2 border-b border-navy-800 bg-navy-800/50 flex items-center justify-between">
+                    <div className="flex items-center gap-2"><Icons.Receipt size={14} className="text-navy-400" /><span className="text-xs font-medium text-navy-300 uppercase">Expenses</span></div>
+                    <span className="text-xs text-navy-500">{currentData.expenses.length} items</span>
+                  </div>
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="text-[10px] text-navy-500 uppercase border-b border-navy-800">
+                        <th className="w-8"></th>
+                        <th className="text-left px-3 py-2">Type</th>
+                        <th className="text-right px-3 py-2">Amount</th>
+                        <th className="text-right px-3 py-2">% Rec.</th>
+                        <th className="text-right px-3 py-2">Recoverable</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {currentData.expenses.length === 0 ? (
+                        <tr><td colSpan={5} className="px-4 py-4 text-center text-navy-500 text-xs">No expenses. <button onClick={() => addExpenseRow(activeWorkPackage)} className="text-profit hover:text-profit-light">Add expense</button></td></tr>
+                      ) : (
+                        currentData.expenses.map(exp => (
+                          <tr key={exp.id} onMouseEnter={() => setHoveredExpense(exp.id)} onMouseLeave={() => setHoveredExpense(null)} className="border-b border-navy-800/50 hover:bg-navy-800/30">
+                            <td className="px-2 py-1.5 text-center">
+                              {hoveredExpense === exp.id && <button onClick={() => deleteExpenseRow(activeWorkPackage, exp.id)} className="text-navy-600 hover:text-loss-light"><Icons.Trash /></button>}
+                            </td>
+                            <td className="px-3 py-1.5">
+                              <select value={exp.type || ""} onChange={(e) => updateExpenseRow(activeWorkPackage, exp.id, "type", e.target.value)} className="w-full px-1 py-0.5 bg-transparent border-0 text-white">
+                                <option value="" className="bg-navy-900">Select...</option>
+                                {EXPENSE_TYPES.map(t => <option key={t} value={t} className="bg-navy-900">{t}</option>)}
+                              </select>
+                            </td>
+                            <td className="px-3 py-1.5 text-right">
+                              <div className="flex items-center justify-end gap-1">
+                                <span className="text-navy-500">$</span>
+                                <input type="number" value={exp.amount || ""} onChange={(e) => updateExpenseRow(activeWorkPackage, exp.id, "amount", parseInt(e.target.value) || 0)} placeholder="0" className="w-20 px-1 py-0.5 text-right bg-transparent border-0 text-white tabular-nums" />
+                              </div>
+                            </td>
+                            <td className="px-3 py-1.5 text-right">
+                              <div className="flex items-center justify-end gap-1">
+                                <input type="number" value={exp.recoverablePercent ?? 100} onChange={(e) => updateExpenseRow(activeWorkPackage, exp.id, "recoverablePercent", Math.min(100, Math.max(0, parseInt(e.target.value) || 0)))} className="w-12 px-1 py-0.5 text-right bg-transparent border-0 text-white tabular-nums" />
+                                <span className="text-navy-500">%</span>
+                              </div>
+                            </td>
+                            <td className="px-3 py-1.5 text-right font-medium text-white tabular-nums">{formatCurrency((exp.amount || 0) * (exp.recoverablePercent ?? 100) / 100)}</td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                    <tfoot>
+                      <tr className="border-t border-navy-700 bg-navy-800/30">
+                        <td colSpan={2} className="px-3 py-2"><button onClick={() => addExpenseRow(activeWorkPackage)} className="flex items-center gap-1 text-xs text-profit hover:text-profit-light"><Icons.Plus size={12} /> Add Expense</button></td>
+                        <td className="px-3 py-2"></td>
+                        <td className="px-3 py-2"></td>
+                        <td className="px-3 py-2 text-right font-semibold text-white tabular-nums">{formatCurrency(wpTotals?.expenseCost || 0)}</td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              </div>
+
+              {/* Right Panel - Financial Sidebar */}
+              <div className="w-64 space-y-3">
+                <div className="bg-navy-900 border border-navy-800 p-3">
+                  <div className="text-[10px] text-navy-500 uppercase mb-2">Target Fee</div>
+                  <div className="relative">
+                    <span className="absolute left-2 top-1/2 -translate-y-1/2 text-navy-500">$</span>
+                    <input type="number" value={currentData.targetFee || ""} onChange={(e) => setTargetFee(activeWorkPackage, e.target.value)} placeholder="0" className="w-full pl-6 pr-2 py-2 bg-navy-950 border border-navy-700 text-lg font-semibold text-white tabular-nums" />
+                  </div>
+                </div>
+
+                {wpTotals?.totalCost > 0 && (
+                  <div className="bg-navy-900 border border-profit/30 p-3 fade-in">
+                    <div className="text-[10px] text-navy-500 uppercase mb-1">Recommended Fee</div>
+                    <div className="text-xl font-semibold text-profit-light tabular-nums">{formatCurrency(Math.ceil(wpTotals.totalCost / (1 - targetMargin / 100)))}</div>
+                    <div className="text-[10px] text-navy-500 mt-1">For {targetMargin}% margin</div>
+                    <button onClick={() => { setTargetFee(activeWorkPackage, Math.ceil(wpTotals.totalCost / (1 - targetMargin / 100))); setToast({ message: "Fee applied", type: "success" }); }} className="w-full mt-2 px-3 py-1.5 bg-profit/20 hover:bg-profit/30 text-profit-light text-xs font-medium border border-profit/30">Apply Fee</button>
+                  </div>
+                )}
+
+                <div className="bg-navy-900 border border-navy-800 p-3">
+                  <div className="text-[10px] text-navy-500 uppercase mb-2">Total Cost</div>
+                  <div className="text-xl font-semibold text-white tabular-nums">{formatCurrency(wpTotals?.totalCost || 0)}</div>
+                  <div className="text-xs text-navy-500 mt-2 space-y-1">
+                    <div className="flex justify-between"><span>Labor:</span><span className="tabular-nums">{formatCurrency(wpTotals?.laborCost || 0)}</span></div>
+                    <div className="flex justify-between"><span>Expenses:</span><span className="tabular-nums">{formatCurrency(wpTotals?.expenseCost || 0)}</span></div>
+                  </div>
+                </div>
+
+                {(wpTotals?.laborHours || 0) > 0 && (
+                  <div className="bg-navy-900 border border-navy-800 p-3">
+                    <div className="text-[10px] text-navy-500 uppercase mb-2">Leverage Metrics</div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center"><span className="text-xs text-navy-400">AC Leverage:</span><span className="text-sm font-medium text-white tabular-nums">{(wpTotals?.acLeverage || 0).toFixed(0)}%</span></div>
+                      <div className="h-1.5 bg-navy-800"><div className="h-full bg-profit" style={{ width: `${Math.min(wpTotals?.acLeverage || 0, 100)}%` }} /></div>
+                      <div className="flex justify-between items-center"><span className="text-xs text-navy-400">Mgmt Hours:</span><span className="text-sm font-medium text-white tabular-nums">{(wpTotals?.mgmtPercent || 0).toFixed(0)}%</span></div>
+                      <div className="h-1.5 bg-navy-800"><div className="h-full bg-warning" style={{ width: `${Math.min(wpTotals?.mgmtPercent || 0, 100)}%` }} /></div>
+                    </div>
+                  </div>
+                )}
+
+                {currentData.targetFee > 0 && (
+                  <div className={`border p-3 fade-in ${(wpTotals?.margin || 0) >= targetMargin ? "bg-profit/10 border-profit/30" : "bg-loss/10 border-loss/30"}`}>
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-[10px] text-navy-500 uppercase">Projected Margin</span>
+                      {(wpTotals?.margin || 0) >= targetMargin ? <Icons.TrendUp size={12} className="text-profit-light" /> : <Icons.TrendDown size={12} className="text-loss-light" />}
+                    </div>
+                    <div className={`text-2xl font-bold tabular-nums ${(wpTotals?.margin || 0) >= targetMargin ? "text-profit-light" : "text-loss-light"}`}>{formatPercent(wpTotals?.margin || 0)}</div>
+                    <div className={`text-xs mt-1 ${(wpTotals?.margin || 0) >= targetMargin ? "text-profit" : "text-loss"}`}>{((wpTotals?.margin || 0) - targetMargin).toFixed(1)}% vs target</div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // ============================================
+    // VIEW 3: SCHEDULE
+    // ============================================
+    function ViewSchedule({ dealLoaded, hasBudget, workPackages, activeWorkPackage, setActiveWorkPackage, wpData, updateScheduleSpread, updateWeekHours, setToast, onNavigate }) {
+      const weekDates = getWeekDates();
+      const [syncing, setSyncing] = useState(false);
+      const [selectedRows, setSelectedRows] = useState(new Set());
+      const MAX_WEEKLY = 40;
+
+      const currentWp = workPackages.find(wp => wp.id === activeWorkPackage);
+      const currentData = wpData[activeWorkPackage] || { staffing: [], schedule: [] };
+
+      if (!dealLoaded || !hasBudget) {
+        return (
+          <div className="flex flex-col items-center justify-center h-64 text-center">
+            <div className="text-navy-500 mb-4">No budget data to schedule</div>
+            <button onClick={onNavigate} className="text-sm text-profit hover:text-profit-light">← Go to Budget</button>
+          </div>
+        );
+      }
+
+      const applyBulkSpread = (spreadType) => {
+        if (selectedRows.size === 0) return;
+        selectedRows.forEach(resourceId => updateScheduleSpread(activeWorkPackage, resourceId, spreadType));
+        setToast({ message: `Applied ${spreadType} spread to ${selectedRows.size} resources`, type: "success" });
+      };
+
+      const handleSync = () => {
+        setSyncing(true);
+        setTimeout(() => { setSyncing(false); setToast({ message: "Synced to Team Builder", type: "success" }); }, 1200);
+      };
+
+      return (
+        <div className="space-y-4 fade-in">
+          {/* WP Selector */}
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <span className="text-xs text-navy-500">Apply to selected ({selectedRows.size}):</span>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => applyBulkSpread("frontLoaded")}
-                  disabled={selectedRows.size === 0}
-                  className={`flex items-center gap-1 px-2 py-1 text-xs font-medium border transition-colors ${
-                    selectedRows.size > 0
-                      ? "bg-navy-800 text-navy-200 border-navy-700 hover:bg-navy-700 hover:text-profit-light"
-                      : "bg-navy-900 text-navy-600 border-navy-800 cursor-not-allowed"
-                  }`}
-                >
-                  <Icons.FrontLoad size={12} /> Front
-                </button>
-                <button
-                  onClick={() => applyBulkSpread("even")}
-                  disabled={selectedRows.size === 0}
-                  className={`flex items-center gap-1 px-2 py-1 text-xs font-medium border transition-colors ${
-                    selectedRows.size > 0
-                      ? "bg-navy-800 text-navy-200 border-navy-700 hover:bg-navy-700 hover:text-profit-light"
-                      : "bg-navy-900 text-navy-600 border-navy-800 cursor-not-allowed"
-                  }`}
-                >
-                  <Icons.EvenSpread size={12} /> Even
-                </button>
-                <button
-                  onClick={() => applyBulkSpread("backLoaded")}
-                  disabled={selectedRows.size === 0}
-                  className={`flex items-center gap-1 px-2 py-1 text-xs font-medium border transition-colors ${
-                    selectedRows.size > 0
-                      ? "bg-navy-800 text-navy-200 border-navy-700 hover:bg-navy-700 hover:text-profit-light"
-                      : "bg-navy-900 text-navy-600 border-navy-800 cursor-not-allowed"
-                  }`}
-                >
-                  <Icons.BackLoad size={12} /> Back
-                </button>
+              <select value={activeWorkPackage || ""} onChange={(e) => setActiveWorkPackage(e.target.value)} className="px-3 py-1.5 bg-navy-900 border border-navy-700 text-sm text-white">
+                {workPackages.map(wp => <option key={wp.id} value={wp.id}>{wp.name}</option>)}
+              </select>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-navy-500">Apply to selected ({selectedRows.size}):</span>
+                <button onClick={() => applyBulkSpread("frontLoaded")} disabled={selectedRows.size === 0} className={`flex items-center gap-1 px-2 py-1 text-xs font-medium border ${selectedRows.size > 0 ? "bg-navy-800 text-navy-200 border-navy-700 hover:bg-navy-700" : "bg-navy-900 text-navy-600 border-navy-800 cursor-not-allowed"}`}><Icons.FrontLoad size={12} /> /</button>
+                <button onClick={() => applyBulkSpread("even")} disabled={selectedRows.size === 0} className={`flex items-center gap-1 px-2 py-1 text-xs font-medium border ${selectedRows.size > 0 ? "bg-navy-800 text-navy-200 border-navy-700 hover:bg-navy-700" : "bg-navy-900 text-navy-600 border-navy-800 cursor-not-allowed"}`}><Icons.EvenSpread size={12} /> -</button>
+                <button onClick={() => applyBulkSpread("backLoaded")} disabled={selectedRows.size === 0} className={`flex items-center gap-1 px-2 py-1 text-xs font-medium border ${selectedRows.size > 0 ? "bg-navy-800 text-navy-200 border-navy-700 hover:bg-navy-700" : "bg-navy-900 text-navy-600 border-navy-800 cursor-not-allowed"}`}><Icons.BackLoad size={12} /> \</button>
               </div>
             </div>
           </div>
 
-          {/* Schedule Table */}
+          {/* Schedule Grid */}
           <div className="bg-navy-900 border border-navy-800">
             <div className="px-4 py-2 border-b border-navy-800 bg-navy-800/50 flex items-center justify-between">
-              <span className="text-xs font-medium text-navy-300 uppercase tracking-wider">Resource Schedule</span>
+              <span className="text-xs font-medium text-navy-300 uppercase">{currentWp?.name || "Schedule"}</span>
               <span className="text-xs text-navy-500">{weekDates[0]} — {weekDates[3]}</span>
             </div>
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-[10px] text-navy-500 uppercase tracking-wider border-b border-navy-800">
+                <tr className="text-[10px] text-navy-500 uppercase border-b border-navy-800">
                   <th className="w-8 px-2 py-2">
-                    <input
-                      type="checkbox"
-                      checked={allSelected}
-                      onChange={toggleAllRows}
-                      className="w-3.5 h-3.5 border-navy-600 bg-navy-950 text-profit focus:ring-profit/50 focus:ring-offset-navy-900"
-                    />
+                    <input type="checkbox" checked={selectedRows.size === currentData.staffing.length && currentData.staffing.length > 0} onChange={() => setSelectedRows(prev => prev.size === currentData.staffing.length ? new Set() : new Set(currentData.staffing.map(s => s.id)))} className="w-3.5 h-3.5" />
                   </th>
-                  <th className="text-left px-3 py-2 font-medium">Resource</th>
-                  <th className="text-center px-2 py-2 font-medium">Total</th>
-                  <th className="text-left px-2 py-2 font-medium">Spread</th>
-                  {weekDates.map((d, i) => (
-                    <th key={i} className="text-center px-2 py-2 font-medium w-20">{d}</th>
-                  ))}
+                  <th className="text-left px-3 py-2">Resource</th>
+                  <th className="text-center px-2 py-2">Total</th>
+                  <th className="text-center px-2 py-2">Spread</th>
+                  {weekDates.map((d, i) => <th key={i} className="text-center px-2 py-2 w-20">{d}</th>)}
                 </tr>
               </thead>
               <tbody>
-                {scheduleData.map(resource => {
-                  const isSelected = selectedRows.has(resource.id);
+                {currentData.staffing.map(staff => {
+                  const scheduleEntry = currentData.schedule.find(s => s.resourceId === staff.id) || { weeks: [0, 0, 0, 0], spreadType: "even" };
+                  const isSelected = selectedRows.has(staff.id);
                   return (
-                    <tr key={resource.id} className={`border-b border-navy-800/50 ${isSelected ? "bg-profit/5" : "hover:bg-navy-800/30"}`}>
+                    <tr key={staff.id} className={`border-b border-navy-800/50 ${isSelected ? "bg-profit/5" : "hover:bg-navy-800/30"}`}>
                       <td className="px-2 py-2 text-center">
-                        <input
-                          type="checkbox"
-                          checked={isSelected}
-                          onChange={() => toggleRow(resource.id)}
-                          className="w-3.5 h-3.5 border-navy-600 bg-navy-950 text-profit focus:ring-profit/50 focus:ring-offset-navy-900"
-                        />
+                        <input type="checkbox" checked={isSelected} onChange={() => setSelectedRows(prev => { const n = new Set(prev); n.has(staff.id) ? n.delete(staff.id) : n.add(staff.id); return n; })} className="w-3.5 h-3.5" />
                       </td>
                       <td className="px-3 py-2">
-                        <div className="text-white font-medium">{resource.name}</div>
-                        <div className="text-[10px] text-navy-500">{resource.level}</div>
+                        <div className="text-white font-medium">{staff.name}</div>
+                        <div className="text-[10px] text-navy-500">{staff.level}</div>
                       </td>
                       <td className="px-2 py-2 text-center">
-                        <span className="px-2 py-0.5 bg-navy-800 text-white text-xs font-medium tabular-nums">
-                          {resource.totalHours}h
-                        </span>
+                        <span className="px-2 py-0.5 bg-navy-800 text-white text-xs font-medium tabular-nums">{staff.hours}h</span>
                       </td>
                       <td className="px-2 py-2">
-                        <div className="flex gap-1">
-                          {spreadTypes.filter(t => t.id !== 'custom').map(type => {
-                            const IconComponent = type.icon ? Icons[type.icon] : null;
-                            return (
-                              <button
-                                key={type.id}
-                                onClick={() => updateScheduleSpread(resource.id, type.id)}
-                                className={`flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium transition-colors ${
-                                  resource.spreadType === type.id
-                                    ? "bg-profit/20 text-profit-light border border-profit/30"
-                                    : "bg-navy-800 text-navy-400 border border-navy-700 hover:border-navy-600"
-                                }`}
-                              >
-                                {IconComponent && <IconComponent size={10} />}
-                                {type.label}
-                              </button>
-                            );
-                          })}
-                          {resource.spreadType === 'custom' && (
-                            <span className="px-2 py-0.5 text-[10px] font-medium bg-warning/20 text-warning-light border border-warning/30">
-                              Custom
-                            </span>
-                          )}
+                        <div className="flex gap-1 justify-center">
+                          {["frontLoaded", "even", "backLoaded"].map(type => (
+                            <button key={type} onClick={() => updateScheduleSpread(activeWorkPackage, staff.id, type)} className={`px-2 py-0.5 text-[10px] font-medium border ${scheduleEntry.spreadType === type ? "bg-profit/20 text-profit-light border-profit/30" : "bg-navy-800 text-navy-400 border-navy-700"}`}>
+                              {type === "frontLoaded" ? "/" : type === "even" ? "-" : "\\"}
+                            </button>
+                          ))}
                         </div>
                       </td>
-                      {resource.weeks.map((hours, idx) => {
+                      {scheduleEntry.weeks.map((hours, idx) => {
                         const isOver = hours > MAX_WEEKLY;
-                        const pct = Math.min((hours / MAX_WEEKLY) * 100, 100);
                         return (
                           <td key={idx} className="px-2 py-2 text-center">
-                            <input
-                              type="number"
-                              value={hours}
-                              onChange={(e) => updateWeekHours(resource.id, idx, e.target.value)}
-                              className={`w-14 px-2 py-1 text-center text-sm font-medium tabular-nums bg-navy-950 border focus:ring-1 focus:ring-navy-500 ${
-                                isOver ? "border-loss/50 text-loss-light" : "border-navy-700 text-white"
-                              }`}
-                            />
-                            <div className="mt-1 h-1 bg-navy-800">
-                              <div
-                                className={`h-full transition-all ${isOver ? "bg-loss" : "bg-profit"}`}
-                                style={{ width: `${pct}%` }}
-                              />
-                            </div>
+                            <input type="number" value={hours} onChange={(e) => updateWeekHours(activeWorkPackage, staff.id, idx, e.target.value)} className={`w-14 px-2 py-1 text-center text-sm font-medium tabular-nums bg-navy-950 border ${isOver ? "border-loss/50 text-loss-light border-b-2 border-b-loss" : "border-navy-700 text-white"}`} />
                           </td>
                         );
                       })}
@@ -1755,20 +1219,10 @@
           {/* Legend & Sync */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4 text-[10px] text-navy-500">
-              <div className="flex items-center gap-1">
-                <div className="w-3 h-1 bg-profit" />
-                <span>≤40h/week</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <div className="w-3 h-1 bg-loss" />
-                <span>&gt;40h/week (over capacity)</span>
-              </div>
+              <div className="flex items-center gap-1"><div className="w-3 h-1 bg-profit" /><span>≤40h/week</span></div>
+              <div className="flex items-center gap-1"><div className="w-3 h-1 bg-loss" /><span>&gt;40h/week (red underline)</span></div>
             </div>
-            <button
-              onClick={handleSync}
-              disabled={syncing}
-              className="flex items-center gap-2 px-4 py-2 bg-profit hover:bg-profit-dark disabled:bg-navy-700 text-white text-sm font-medium transition-colors"
-            >
+            <button onClick={handleSync} disabled={syncing} className="flex items-center gap-2 px-4 py-2 bg-profit hover:bg-profit-dark disabled:bg-navy-700 text-white text-sm font-medium">
               {syncing ? <Icons.Loader /> : <Icons.Sync />}
               {syncing ? "Syncing..." : "Sync to Team Builder"}
             </button>
@@ -1778,294 +1232,185 @@
     }
 
     // ============================================
-    // VIEW 4: FORECASTING
+    // VIEW 4: FORECAST
     // ============================================
-    function ViewForecasting({
-      alertVisible, setAlertVisible, unbudgetedResources, handleAssignEtc, highlightedResource,
-      actuals, updateEtc, updatePspRate, etcInputRef,
-      targetFee, totalBudgetCost, totalBudgetHours,
-      totalActualCost, totalActualHours, totalProjectedCost, totalProjectedHours, projectedProfit,
-      changeOrders, addChangeOrder, updateChangeOrder, deleteChangeOrder, totalChangeOrders, totalProjectedRevenue,
-    }) {
-      const [hoveredChangeOrder, setHoveredChangeOrder] = useState(null);
-      const projectedMargin = totalProjectedRevenue > 0 ? ((totalProjectedRevenue - totalProjectedCost) / totalProjectedRevenue) * 100 : 0;
-      const hoursVariance = totalProjectedHours - totalBudgetHours;
-      const costVariance = totalProjectedCost - totalBudgetCost;
+    function ViewForecast({ dealLoaded, workPackages, activeWorkPackage, setActiveWorkPackage, wpData, actuals, updateActual, changeOrders, addChangeOrder, updateChangeOrder, deleteChangeOrder, grandTotals, setToast }) {
+      const [hoveredCO, setHoveredCO] = useState(null);
 
-      // Calculate projected revenue per resource
-      const totalProjectedRevenueFromResources = actuals.reduce((sum, a) => {
-        const pspRate = a.pspRate || a.rate;
-        return sum + (a.actualHours + a.etcHours) * pspRate;
-      }, 0);
+      const currentWp = workPackages.find(wp => wp.id === activeWorkPackage);
+      const currentActuals = actuals[activeWorkPackage] || [];
+      const currentStaffing = wpData[activeWorkPackage]?.staffing || [];
+
+      // Generate actuals from staffing if empty
+      const displayActuals = currentActuals.length > 0 ? currentActuals : currentStaffing.map(s => ({
+        resourceId: s.id, name: s.name, level: s.level, rate: s.rate,
+        budgetHours: s.hours, actualHours: Math.round(s.hours * 0.7), etcHours: Math.round(s.hours * 0.15), pspRate: s.rate
+      }));
+
+      // Find unbudgeted resources
+      const unbudgeted = displayActuals.filter(a => a.budgetHours === 0 && a.actualHours > 0);
+
+      // Calculate forecast totals
+      const forecastTotals = useMemo(() => {
+        let budgetHrs = 0, actualHrs = 0, etcHrs = 0, projectedCost = 0, projectedRev = 0;
+        displayActuals.forEach(a => {
+          budgetHrs += a.budgetHours || 0;
+          actualHrs += a.actualHours || 0;
+          etcHrs += a.etcHours || 0;
+          const projHrs = (a.actualHours || 0) + (a.etcHours || 0);
+          projectedCost += projHrs * a.rate;
+          projectedRev += projHrs * (a.pspRate || a.rate);
+        });
+        return { budgetHrs, actualHrs, etcHrs, projectedHrs: actualHrs + etcHrs, projectedCost, projectedRev };
+      }, [displayActuals]);
+
+      const totalRevenue = grandTotals.totalFee + grandTotals.changeOrderTotal;
+      const projectedProfit = totalRevenue - forecastTotals.projectedCost;
+      const projectedMargin = totalRevenue > 0 ? (projectedProfit / totalRevenue * 100) : 0;
+
+      if (!dealLoaded) {
+        return <div className="flex flex-col items-center justify-center h-64 text-center text-navy-500">No engagement loaded</div>;
+      }
 
       return (
         <div className="space-y-4 fade-in">
-          {/* Alert */}
-          {alertVisible && unbudgetedResources.length > 0 && (
+          {/* Unbudgeted Alert */}
+          {unbudgeted.length > 0 && (
             <div className="bg-warning/10 border border-warning/30 px-4 py-3 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <Icons.AlertTriangle className="text-warning-light" />
-                <div>
-                  <span className="text-sm font-medium text-warning-light">Unbudgeted Time: </span>
-                  <span className="text-sm text-navy-200">
-                    {unbudgetedResources[0].name} logged {unbudgetedResources[0].actualHours}h without budget allocation
-                  </span>
-                </div>
+                <span className="text-sm text-navy-200"><span className="font-medium text-warning-light">Alert:</span> {unbudgeted.length} Resource ({unbudgeted[0]?.name}) charging time but not on budget.</span>
               </div>
-              <div className="flex items-center gap-2">
-                <button onClick={handleAssignEtc} className="px-3 py-1 bg-warning/20 hover:bg-warning/30 text-warning-light text-xs font-medium border border-warning/30">
-                  Assign ETC
-                </button>
-                <button onClick={() => setAlertVisible(false)} className="p-1 text-navy-500 hover:text-navy-300">
-                  <Icons.X />
-                </button>
-              </div>
+              <button className="px-3 py-1 bg-warning/20 hover:bg-warning/30 text-warning-light text-xs font-medium border border-warning/30">Assign ETC</button>
             </div>
           )}
 
           {/* Summary Cards */}
           <div className="grid grid-cols-4 gap-3">
             <div className={`border p-3 ${projectedProfit >= 0 ? "bg-profit/10 border-profit/30" : "bg-loss/10 border-loss/30"}`}>
-              <div className="text-[10px] text-navy-500 uppercase tracking-wider mb-1">Projected Profit</div>
-              <div className={`text-xl font-bold tabular-nums ${projectedProfit >= 0 ? "text-profit-light" : "text-loss-light"}`}>
-                {formatCurrency(projectedProfit)}
-              </div>
+              <div className="text-[10px] text-navy-500 uppercase mb-1">Projected Profit</div>
+              <div className={`text-xl font-bold tabular-nums ${projectedProfit >= 0 ? "text-profit-light" : "text-loss-light"}`}>{formatCurrency(projectedProfit)}</div>
             </div>
             <div className={`border p-3 ${projectedMargin >= TARGET_MARGIN ? "bg-profit/10 border-profit/30" : "bg-loss/10 border-loss/30"}`}>
-              <div className="text-[10px] text-navy-500 uppercase tracking-wider mb-1">Projected Margin</div>
-              <div className={`text-xl font-bold tabular-nums ${projectedMargin >= TARGET_MARGIN ? "text-profit-light" : "text-loss-light"}`}>
-                {formatPercent(projectedMargin)}
-              </div>
+              <div className="text-[10px] text-navy-500 uppercase mb-1">Projected Margin</div>
+              <div className={`text-xl font-bold tabular-nums ${projectedMargin >= TARGET_MARGIN ? "text-profit-light" : "text-loss-light"}`}>{formatPercent(projectedMargin)}</div>
             </div>
-            <div className={`border p-3 ${hoursVariance <= 0 ? "bg-profit/10 border-profit/30" : "bg-loss/10 border-loss/30"}`}>
-              <div className="text-[10px] text-navy-500 uppercase tracking-wider mb-1">Hours Variance</div>
-              <div className={`text-xl font-bold tabular-nums ${hoursVariance <= 0 ? "text-profit-light" : "text-loss-light"}`}>
-                {hoursVariance >= 0 ? "+" : ""}{hoursVariance}h
-              </div>
+            <div className="bg-navy-900 border border-navy-800 p-3">
+              <div className="text-[10px] text-navy-500 uppercase mb-1">Hours Variance</div>
+              <div className={`text-xl font-bold tabular-nums ${forecastTotals.projectedHrs <= forecastTotals.budgetHrs ? "text-profit-light" : "text-loss-light"}`}>{forecastTotals.projectedHrs - forecastTotals.budgetHrs}h</div>
             </div>
-            <div className={`border p-3 ${costVariance <= 0 ? "bg-profit/10 border-profit/30" : "bg-loss/10 border-loss/30"}`}>
-              <div className="text-[10px] text-navy-500 uppercase tracking-wider mb-1">Cost Variance</div>
-              <div className={`text-xl font-bold tabular-nums ${costVariance <= 0 ? "text-profit-light" : "text-loss-light"}`}>
-                {formatCurrency(costVariance)}
-              </div>
+            <div className="bg-navy-900 border border-navy-800 p-3">
+              <div className="text-[10px] text-navy-500 uppercase mb-1">Contract Revenue</div>
+              <div className="text-xl font-bold text-white tabular-nums">{formatCurrency(totalRevenue)}</div>
             </div>
           </div>
 
-          {/* Budget vs Actuals */}
+          {/* WP Selector */}
+          <div className="flex items-center gap-4">
+            <select value={activeWorkPackage || ""} onChange={(e) => setActiveWorkPackage(e.target.value)} className="px-3 py-1.5 bg-navy-900 border border-navy-700 text-sm text-white">
+              {workPackages.map(wp => <option key={wp.id} value={wp.id}>{wp.name}</option>)}
+            </select>
+          </div>
+
+          {/* Forecast Grid */}
           <div className="bg-navy-900 border border-navy-800">
             <div className="px-4 py-2 border-b border-navy-800 bg-navy-800/50">
-              <span className="text-xs font-medium text-navy-300 uppercase tracking-wider">Budget vs Actuals vs Projected</span>
+              <span className="text-xs font-medium text-navy-300 uppercase">{currentWp?.name} - Forecast</span>
             </div>
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-[10px] text-navy-500 uppercase tracking-wider border-b border-navy-800">
-                  <th className="text-left px-4 py-2 font-medium">Metric</th>
-                  <th className="text-right px-4 py-2 font-medium">Budget</th>
-                  <th className="text-right px-4 py-2 font-medium">Actuals</th>
-                  <th className="text-right px-4 py-2 font-medium">Projected</th>
-                  <th className="text-right px-4 py-2 font-medium">Variance</th>
+                <tr className="text-[10px] text-navy-500 uppercase border-b border-navy-800">
+                  <th className="text-left px-4 py-2">Resource</th>
+                  <th className="text-right px-3 py-2">Budget Hrs</th>
+                  <th className="text-right px-3 py-2">Actuals</th>
+                  <th className="text-right px-3 py-2">ETC</th>
+                  <th className="text-right px-3 py-2">PSP Rate</th>
+                  <th className="text-right px-3 py-2">Proj Revenue</th>
                 </tr>
               </thead>
               <tbody>
-                <tr className="border-b border-navy-800/50">
-                  <td className="px-4 py-2 text-navy-300">Hours</td>
-                  <td className="px-4 py-2 text-right text-white tabular-nums">{formatNumber(totalBudgetHours)}</td>
-                  <td className="px-4 py-2 text-right text-white tabular-nums">{formatNumber(totalActualHours)}</td>
-                  <td className="px-4 py-2 text-right text-white font-medium tabular-nums">{formatNumber(totalProjectedHours)}</td>
-                  <td className={`px-4 py-2 text-right font-medium tabular-nums ${hoursVariance <= 0 ? "text-profit-light" : "text-loss-light"}`}>
-                    {hoursVariance >= 0 ? "+" : ""}{hoursVariance}
-                  </td>
-                </tr>
-                <tr className="border-b border-navy-800/50">
-                  <td className="px-4 py-2 text-navy-300">Cost</td>
-                  <td className="px-4 py-2 text-right text-white tabular-nums">{formatCurrency(totalBudgetCost)}</td>
-                  <td className="px-4 py-2 text-right text-white tabular-nums">{formatCurrency(totalActualCost)}</td>
-                  <td className="px-4 py-2 text-right text-white font-medium tabular-nums">{formatCurrency(totalProjectedCost)}</td>
-                  <td className={`px-4 py-2 text-right font-medium tabular-nums ${costVariance <= 0 ? "text-profit-light" : "text-loss-light"}`}>
-                    {formatCurrency(costVariance)}
-                  </td>
-                </tr>
-                <tr className="bg-navy-800/30">
-                  <td className="px-4 py-2 text-navy-300">Revenue</td>
-                  <td className="px-4 py-2 text-right text-white tabular-nums">{formatCurrency(targetFee)}</td>
-                  <td className="px-4 py-2 text-right text-navy-500">—</td>
-                  <td className="px-4 py-2 text-right text-white font-medium tabular-nums">{formatCurrency(totalProjectedRevenue)}</td>
-                  <td className={`px-4 py-2 text-right font-medium tabular-nums ${totalChangeOrders >= 0 ? "text-profit-light" : "text-loss-light"}`}>
-                    {totalChangeOrders > 0 ? `+${formatCurrency(totalChangeOrders)}` : "—"}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          {/* ETC Table with PSP Rate and Projected Revenue */}
-          <div className="bg-navy-900 border border-navy-800">
-            <div className="px-4 py-2 border-b border-navy-800 bg-navy-800/50 flex items-center justify-between">
-              <span className="text-xs font-medium text-navy-300 uppercase tracking-wider">ETC by Resource</span>
-              <span className="text-xs text-navy-500">{actuals.length} resources</span>
-            </div>
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="text-[10px] text-navy-500 uppercase tracking-wider border-b border-navy-800">
-                  <th className="text-left px-3 py-2 font-medium">Resource</th>
-                  <th className="text-right px-2 py-2 font-medium">Budget</th>
-                  <th className="text-right px-2 py-2 font-medium">Charged</th>
-                  <th className="text-right px-2 py-2 font-medium">ETC</th>
-                  <th className="text-right px-2 py-2 font-medium">Proj Hrs</th>
-                  <th className="text-right px-2 py-2 font-medium">PSP Rate</th>
-                  <th className="text-right px-2 py-2 font-medium">Proj Rev</th>
-                  <th className="text-right px-2 py-2 font-medium">Var</th>
-                </tr>
-              </thead>
-              <tbody>
-                {actuals.map(resource => {
-                  const isHighlighted = highlightedResource === resource.id;
-                  const isUnbudgeted = resource.budgetHours === 0 && resource.actualHours > 0;
-                  const projected = resource.actualHours + resource.etcHours;
-                  const variance = resource.budgetHours > 0 ? projected - resource.budgetHours : null;
-                  const pspRate = resource.pspRate || resource.rate;
-                  const projectedRev = projected * pspRate;
+                {displayActuals.map(a => {
+                  const projHrs = (a.actualHours || 0) + (a.etcHours || 0);
+                  const projRev = projHrs * (a.pspRate || a.rate);
                   return (
-                    <tr key={resource.id} className={`border-b border-navy-800/50 ${isHighlighted ? "bg-warning/10" : "hover:bg-navy-800/30"}`}>
-                      <td className="px-3 py-2">
+                    <tr key={a.resourceId} className="border-b border-navy-800/50 hover:bg-navy-800/30">
+                      <td className="px-4 py-2">
                         <div className="flex items-center gap-2">
-                          {isUnbudgeted && <span className="w-1.5 h-1.5 bg-warning status-pulse" />}
-                          <div>
-                            <div className="text-white font-medium">{resource.name}</div>
-                            <div className="text-[10px] text-navy-500">{resource.level}</div>
-                          </div>
+                          {a.budgetHours === 0 && a.actualHours > 0 && <span className="w-1.5 h-1.5 bg-warning status-pulse" />}
+                          <div><div className="text-white font-medium">{a.name}</div><div className="text-[10px] text-navy-500">{a.level}</div></div>
                         </div>
                       </td>
-                      <td className="px-2 py-2 text-right text-white tabular-nums">{resource.budgetHours || "—"}</td>
-                      <td className="px-2 py-2 text-right text-white tabular-nums">{resource.actualHours}</td>
-                      <td className="px-2 py-2 text-right">
-                        <input
-                          ref={isHighlighted ? etcInputRef : null}
-                          type="number"
-                          value={resource.etcHours}
-                          onChange={(e) => updateEtc(resource.id, e.target.value)}
-                          className={`w-14 px-1 py-1 text-right text-sm font-medium tabular-nums bg-navy-950 border focus:ring-1 focus:ring-navy-500 ${
-                            isHighlighted ? "border-warning ring-1 ring-warning/30" : "border-navy-700"
-                          } text-white`}
-                        />
+                      <td className="px-3 py-2 text-right text-navy-300 tabular-nums">{a.budgetHours || "—"}</td>
+                      <td className="px-3 py-2 text-right text-white tabular-nums">{a.actualHours}</td>
+                      <td className="px-3 py-2 text-right">
+                        <input type="number" value={a.etcHours} onChange={(e) => updateActual(activeWorkPackage, a.resourceId, "etcHours", e.target.value)} className="w-16 px-2 py-1 text-right bg-navy-950 border border-navy-700 text-white tabular-nums" />
                       </td>
-                      <td className="px-2 py-2 text-right text-white font-medium tabular-nums">{projected}</td>
-                      <td className="px-2 py-2 text-right">
+                      <td className="px-3 py-2 text-right">
                         <div className="flex items-center justify-end gap-1">
                           <span className="text-navy-500 text-xs">$</span>
-                          <input
-                            type="number"
-                            value={pspRate}
-                            onChange={(e) => updatePspRate(resource.id, e.target.value)}
-                            className="w-14 px-1 py-1 text-right text-sm font-medium tabular-nums bg-navy-950 border border-navy-700 text-white focus:ring-1 focus:ring-navy-500"
-                          />
+                          <input type="number" value={a.pspRate || a.rate} onChange={(e) => updateActual(activeWorkPackage, a.resourceId, "pspRate", e.target.value)} className="w-16 px-2 py-1 text-right bg-navy-950 border border-navy-700 text-white tabular-nums" />
                         </div>
                       </td>
-                      <td className="px-2 py-2 text-right text-profit-light font-medium tabular-nums">{formatCurrency(projectedRev)}</td>
-                      <td className={`px-2 py-2 text-right font-medium tabular-nums ${
-                        variance === null ? "text-navy-500" : variance <= 0 ? "text-profit-light" : "text-loss-light"
-                      }`}>
-                        {variance === null ? "—" : `${variance >= 0 ? "+" : ""}${variance}`}
-                      </td>
+                      <td className="px-3 py-2 text-right text-profit-light font-medium tabular-nums">{formatCurrency(projRev)}</td>
                     </tr>
                   );
                 })}
               </tbody>
               <tfoot>
-                <tr className="border-t border-navy-700 bg-navy-800/30">
-                  <td className="px-3 py-2 text-navy-400 font-medium">Total</td>
-                  <td className="px-2 py-2 text-right text-navy-400 tabular-nums">{totalBudgetHours}</td>
-                  <td className="px-2 py-2 text-right text-navy-400 tabular-nums">{totalActualHours}</td>
-                  <td className="px-2 py-2 text-right text-navy-400 tabular-nums">{actuals.reduce((s, a) => s + a.etcHours, 0)}</td>
-                  <td className="px-2 py-2 text-right text-white font-semibold tabular-nums">{totalProjectedHours}</td>
-                  <td className="px-2 py-2"></td>
-                  <td className="px-2 py-2 text-right text-profit-light font-semibold tabular-nums">{formatCurrency(totalProjectedRevenueFromResources)}</td>
-                  <td className={`px-2 py-2 text-right font-semibold tabular-nums ${hoursVariance <= 0 ? "text-profit-light" : "text-loss-light"}`}>
-                    {hoursVariance >= 0 ? "+" : ""}{hoursVariance}
-                  </td>
+                <tr className="bg-navy-800/50 font-semibold">
+                  <td className="px-4 py-2 text-white">Total</td>
+                  <td className="px-3 py-2 text-right text-navy-400 tabular-nums">{forecastTotals.budgetHrs}</td>
+                  <td className="px-3 py-2 text-right text-navy-400 tabular-nums">{forecastTotals.actualHrs}</td>
+                  <td className="px-3 py-2 text-right text-navy-400 tabular-nums">{forecastTotals.etcHrs}</td>
+                  <td className="px-3 py-2"></td>
+                  <td className="px-3 py-2 text-right text-profit-light tabular-nums">{formatCurrency(forecastTotals.projectedRev)}</td>
                 </tr>
               </tfoot>
             </table>
           </div>
 
-          {/* Change Orders Section */}
+          {/* Change Orders */}
           <div className="bg-navy-900 border border-navy-800">
             <div className="px-4 py-2 border-b border-navy-800 bg-navy-800/50 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Icons.DollarSign size={14} className="text-navy-400" />
-                <span className="text-xs font-medium text-navy-300 uppercase tracking-wider">Change Orders</span>
-              </div>
-              <span className="text-xs text-navy-500">{changeOrders.length} items</span>
+              <div className="flex items-center gap-2"><Icons.DollarSign size={14} className="text-navy-400" /><span className="text-xs font-medium text-navy-300 uppercase">Change Orders</span></div>
+              <button onClick={addChangeOrder} className="flex items-center gap-1 text-xs text-profit hover:text-profit-light"><Icons.Plus size={12} /> Add Change Order</button>
             </div>
-            <div className="p-3">
+            <div className="p-4">
               {changeOrders.length === 0 ? (
-                <div className="text-center text-navy-500 text-xs py-3">
-                  No change orders. <button onClick={addChangeOrder} className="text-profit hover:text-profit-light">Add change order</button>
-                </div>
+                <div className="text-center text-navy-500 text-xs">No change orders</div>
               ) : (
                 <div className="space-y-2">
-                  {changeOrders.map(co => (
-                    <div
-                      key={co.id}
-                      onMouseEnter={() => setHoveredChangeOrder(co.id)}
-                      onMouseLeave={() => setHoveredChangeOrder(null)}
-                      className="flex items-center gap-3 py-1"
-                    >
-                      <div className="w-6 text-center">
-                        {hoveredChangeOrder === co.id && (
-                          <button onClick={() => deleteChangeOrder(co.id)} className="text-navy-600 hover:text-loss-light">
-                            <Icons.Trash size={12} />
-                          </button>
-                        )}
-                      </div>
-                      <input
-                        type="text"
-                        value={co.description}
-                        onChange={(e) => updateChangeOrder(co.id, "description", e.target.value)}
-                        placeholder="Description..."
-                        className="flex-1 px-2 py-1 bg-navy-950 border border-navy-700 text-sm text-white placeholder-navy-500 focus:border-navy-500"
-                      />
+                  {changeOrders.map((co, idx) => (
+                    <div key={co.id} onMouseEnter={() => setHoveredCO(co.id)} onMouseLeave={() => setHoveredCO(null)} className="flex items-center gap-3">
+                      <div className="w-6 text-center">{hoveredCO === co.id && <button onClick={() => deleteChangeOrder(co.id)} className="text-navy-600 hover:text-loss-light"><Icons.Trash size={12} /></button>}</div>
+                      <span className="text-xs text-navy-500">#{idx + 1}</span>
+                      <input type="text" value={co.description} onChange={(e) => updateChangeOrder(co.id, "description", e.target.value)} placeholder="Description..." className="flex-1 px-2 py-1 bg-navy-950 border border-navy-700 text-sm text-white placeholder-navy-500" />
                       <div className="flex items-center gap-1">
                         <span className="text-navy-500 text-xs">$</span>
-                        <input
-                          type="number"
-                          value={co.amount || ""}
-                          onChange={(e) => updateChangeOrder(co.id, "amount", parseInt(e.target.value) || 0)}
-                          placeholder="0"
-                          className="w-24 px-2 py-1 text-right bg-navy-950 border border-navy-700 text-sm text-white tabular-nums focus:border-navy-500"
-                        />
+                        <input type="number" value={co.amount || ""} onChange={(e) => updateChangeOrder(co.id, "amount", parseInt(e.target.value) || 0)} placeholder="0" className="w-24 px-2 py-1 text-right bg-navy-950 border border-navy-700 text-sm text-white tabular-nums" />
                       </div>
                     </div>
                   ))}
                 </div>
               )}
               <div className="flex items-center justify-between mt-3 pt-3 border-t border-navy-700">
-                <button onClick={addChangeOrder} className="flex items-center gap-1 text-xs text-profit hover:text-profit-light">
-                  <Icons.Plus size={12} /> Add Change Order
-                </button>
-                <div className="flex items-center gap-3">
-                  <span className="text-xs text-navy-500">Total:</span>
-                  <span className={`text-sm font-semibold tabular-nums ${totalChangeOrders >= 0 ? "text-profit-light" : "text-loss-light"}`}>
-                    {totalChangeOrders >= 0 ? "+" : ""}{formatCurrency(totalChangeOrders)}
-                  </span>
-                </div>
+                <span className="text-xs text-navy-500">Total Change Orders:</span>
+                <span className={`text-sm font-semibold tabular-nums ${grandTotals.changeOrderTotal >= 0 ? "text-profit-light" : "text-loss-light"}`}>
+                  {grandTotals.changeOrderTotal >= 0 ? "+" : ""}{formatCurrency(grandTotals.changeOrderTotal)}
+                </span>
               </div>
             </div>
           </div>
 
-          {/* Updated Revenue Summary */}
+          {/* Global Revenue Summary */}
           <div className="bg-profit/10 border border-profit/30 p-4 flex items-center justify-between">
             <div>
-              <div className="text-xs text-navy-400 uppercase tracking-wider mb-1">Total Projected Revenue</div>
-              <div className="text-sm text-navy-300">
-                Base Fee ({formatCurrency(targetFee)}) + Change Orders ({formatCurrency(totalChangeOrders)})
-              </div>
+              <div className="text-xs text-navy-400 uppercase mb-1">Global Revenue</div>
+              <div className="text-sm text-navy-300">Contract Fee ({formatCurrency(grandTotals.totalFee)}) + Change Orders ({formatCurrency(grandTotals.changeOrderTotal)})</div>
             </div>
             <div className="text-right">
-              <div className="text-2xl font-bold text-profit-light tabular-nums">{formatCurrency(totalProjectedRevenue)}</div>
-              <div className={`text-xs ${projectedMargin >= TARGET_MARGIN ? "text-profit" : "text-loss"}`}>
-                {formatPercent(projectedMargin)} margin
-              </div>
+              <div className="text-2xl font-bold text-profit-light tabular-nums">{formatCurrency(totalRevenue)}</div>
+              <div className={`text-xs ${projectedMargin >= TARGET_MARGIN ? "text-profit" : "text-loss"}`}>{formatPercent(projectedMargin)} projected margin</div>
             </div>
           </div>
         </div>
