@@ -177,6 +177,51 @@
           <polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/>
         </svg>
       ),
+      Sparkle: ({ size = 14 }) => (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 3l1.5 5.5L19 10l-5.5 1.5L12 17l-1.5-5.5L5 10l5.5-1.5z"/><path d="M19 15l.5 2 2 .5-2 .5-.5 2-.5-2-2-.5 2-.5z"/>
+        </svg>
+      ),
+      ChevronDown: ({ size = 14 }) => (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="m6 9 6 6 6-6"/>
+        </svg>
+      ),
+      Send: ({ size = 14 }) => (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/>
+        </svg>
+      ),
+      FrontLoad: ({ size = 14 }) => (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+          <path d="M6 18L18 6"/>
+        </svg>
+      ),
+      EvenSpread: ({ size = 14 }) => (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+          <path d="M5 12h14"/>
+        </svg>
+      ),
+      BackLoad: ({ size = 14 }) => (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+          <path d="M6 6L18 18"/>
+        </svg>
+      ),
+      Receipt: ({ size = 14 }) => (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1z"/><path d="M8 10h8M8 14h4"/>
+        </svg>
+      ),
+      DollarSign: ({ size = 14 }) => (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+        </svg>
+      ),
+      MessageCircle: ({ size = 14 }) => (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+        </svg>
+      ),
     };
 
     // ============================================
@@ -193,6 +238,24 @@
     const REGIONS = ["Northeast", "Southeast", "Midwest", "West", "International"];
     const LINE_OF_SERVICE = ["Tax", "Audit", "Advisory", "Consulting"];
     const TARGET_MARGIN = 42;
+
+    // Mock client data for Combobox
+    const MOCK_CLIENTS = [
+      { id: "acme", name: "Acme Corp", service: "Tax", product: "Tax Compliance", code: "418", margin: 42, stage: "Interact" },
+      { id: "globex", name: "Globex", service: "Audit", product: "Financial Statement Audit", code: "512", margin: 38, stage: "Propose" },
+      { id: "soylent", name: "Soylent Corp", service: "Advisory", product: "Strategy Consulting", code: "625", margin: 45, stage: "Interact" },
+    ];
+
+    const DELIVERY_PHASES = ["Discovery", "Planning", "Execution", "Closeout"];
+    const ENABLING_TECH = ["None", "Alteryx", "Power BI", "Tableau", "Custom ML"];
+    const EXPENSE_TYPES = ["Travel - Air", "Travel - Hotel", "Travel - Ground", "Meals & Entertainment", "Software/Subscriptions", "Contractor", "Filing Fees", "Other"];
+
+    // Initial demo data for scenarios
+    const INITIAL_ACTUALS = [
+      { id: 1, name: "J. Smith", level: "Partner", rate: 450, budgetHours: 40, actualHours: 35, etcHours: 5, pspRate: 450 },
+      { id: 2, name: "A. Lee", level: "Senior Associate", rate: 250, budgetHours: 120, actualHours: 95, etcHours: 20, pspRate: 250 },
+      { id: 3, name: "M. Chen", level: "Associate", rate: 175, budgetHours: 0, actualHours: 12, etcHours: 0, pspRate: 175 },
+    ];
 
     // ============================================
     // UTILITIES
@@ -269,11 +332,73 @@
       const [activeView, setActiveView] = useState("initiation");
       const [toast, setToast] = useState(null);
 
+      // Scenario Management
+      const [activeScenario, setActiveScenario] = useState("baseline");
+      const [scenarioData, setScenarioData] = useState({
+        baseline: {
+          staffing: [],
+          expenses: [],
+          scheduleData: [],
+          targetFee: 0,
+          changeOrders: [],
+          actuals: [...INITIAL_ACTUALS]
+        },
+        scenarioA: {
+          staffing: [],
+          expenses: [],
+          scheduleData: [],
+          targetFee: 0,
+          changeOrders: [],
+          actuals: []
+        },
+        scenarioB: {
+          staffing: [],
+          expenses: [],
+          scheduleData: [],
+          targetFee: 0,
+          changeOrders: [],
+          actuals: []
+        }
+      });
+
+      // Helper to get/set scenario data
+      const getField = (field) => scenarioData[activeScenario][field];
+      const setField = (field, value) => {
+        setScenarioData(prev => ({
+          ...prev,
+          [activeScenario]: {
+            ...prev[activeScenario],
+            [field]: typeof value === 'function' ? value(prev[activeScenario][field]) : value
+          }
+        }));
+      };
+
+      // Aliased accessors for scenario data
+      const staffing = getField('staffing');
+      const setStaffing = (v) => setField('staffing', v);
+      const expenses = getField('expenses');
+      const setExpenses = (v) => setField('expenses', v);
+      const scheduleData = getField('scheduleData');
+      const setScheduleData = (v) => setField('scheduleData', v);
+      const targetFee = getField('targetFee');
+      const setTargetFee = (v) => setField('targetFee', v);
+      const changeOrders = getField('changeOrders');
+      const setChangeOrders = (v) => setField('changeOrders', v);
+      const actuals = getField('actuals');
+      const setActuals = (v) => setField('actuals', v);
+
+      // AI Copilot
+      const [copilotOpen, setCopilotOpen] = useState(false);
+      const [copilotMessages, setCopilotMessages] = useState([
+        { role: "ai", text: "Hello! I'm your AI planning assistant. I can help optimize your staffing, analyze margins, or suggest improvements. What would you like to explore?" }
+      ]);
+
       // View 1 - Initiation
-      const [opportunityId, setOpportunityId] = useState("");
-      const [isSearching, setIsSearching] = useState(false);
-      const [dealLoaded, setDealLoaded] = useState(false);
-      const [dealDetails, setDealDetails] = useState({ client: "", product: "", stage: "" });
+      const [selectedClient, setSelectedClient] = useState(null);
+      const [clientSearchOpen, setClientSearchOpen] = useState(false);
+      const [clientSearchQuery, setClientSearchQuery] = useState("");
+      const [deliveryPhase, setDeliveryPhase] = useState("");
+      const [enablingTech, setEnablingTech] = useState("None");
       const [interTerritory, setInterTerritory] = useState(false);
       const [approver, setApprover] = useState("");
       const [workLocation, setWorkLocation] = useState("US");
@@ -282,42 +407,68 @@
       // View 2 - Budgeting
       const [pricingStructure, setPricingStructure] = useState("Fixed Fee");
       const [useRateCard, setUseRateCard] = useState(false);
-      const [targetFee, setTargetFee] = useState(0);
-      const [staffing, setStaffing] = useState([]);
       const [newRowId, setNewRowId] = useState(null);
 
       // View 3 - Scheduling
-      const [scheduleData, setScheduleData] = useState([]);
+      const [selectedScheduleRows, setSelectedScheduleRows] = useState(new Set());
       const SPREAD_TYPES = [
-        { id: "even", label: "Even" },
-        { id: "frontLoaded", label: "Front" },
-        { id: "backLoaded", label: "Back" },
-        { id: "custom", label: "Custom" },
+        { id: "even", label: "Even", icon: "EvenSpread" },
+        { id: "frontLoaded", label: "Front", icon: "FrontLoad" },
+        { id: "backLoaded", label: "Back", icon: "BackLoad" },
+        { id: "custom", label: "Custom", icon: null },
       ];
 
       // View 4 - Forecasting
       const [alertVisible, setAlertVisible] = useState(true);
       const [highlightedResource, setHighlightedResource] = useState(null);
-      const [actuals, setActuals] = useState([
-        { id: 1, name: "J. Smith", level: "Partner", rate: 450, budgetHours: 40, actualHours: 35, etcHours: 5 },
-        { id: 2, name: "A. Lee", level: "Senior Associate", rate: 250, budgetHours: 120, actualHours: 95, etcHours: 20 },
-        { id: 3, name: "M. Chen", level: "Associate", rate: 175, budgetHours: 0, actualHours: 12, etcHours: 0 },
-      ]);
       const etcInputRef = useRef(null);
 
-      // Calculations
-      const totalBudgetCost = staffing.reduce((sum, s) => sum + s.rate * s.hours, 0);
-      const totalBudgetHours = staffing.reduce((sum, s) => sum + s.hours, 0);
-      const recommendedFee = Math.ceil(totalBudgetCost / (1 - TARGET_MARGIN / 100));
-      const projectedMargin = targetFee > 0 ? ((targetFee - totalBudgetCost) / targetFee) * 100 : 0;
-      const marginIsHealthy = projectedMargin >= TARGET_MARGIN;
-      const marginVariance = projectedMargin - TARGET_MARGIN;
+      // Derived: deal loaded state
+      const dealLoaded = selectedClient !== null;
+      const dealDetails = selectedClient ? {
+        client: selectedClient.name,
+        product: selectedClient.product,
+        stage: selectedClient.stage,
+        margin: selectedClient.margin
+      } : { client: "", product: "", stage: "", margin: TARGET_MARGIN };
 
+      // Calculations - Budget
+      const totalLaborCost = staffing.reduce((sum, s) => sum + s.rate * s.hours, 0);
+      const totalBudgetHours = staffing.reduce((sum, s) => sum + s.hours, 0);
+
+      // Expenses calculations
+      const totalExpenses = expenses.reduce((sum, e) => sum + (e.amount || 0), 0);
+      const recoverableExpenses = expenses.reduce((sum, e) => sum + ((e.amount || 0) * (e.recoverablePercent || 0) / 100), 0);
+      const totalBudgetCost = totalLaborCost + recoverableExpenses;
+
+      const effectiveMargin = dealDetails.margin || TARGET_MARGIN;
+      const recommendedFee = Math.ceil(totalBudgetCost / (1 - effectiveMargin / 100));
+      const projectedMargin = targetFee > 0 ? ((targetFee - totalBudgetCost) / targetFee) * 100 : 0;
+      const marginIsHealthy = projectedMargin >= effectiveMargin;
+      const marginVariance = projectedMargin - effectiveMargin;
+
+      // Leverage metrics
+      const levelHours = staffing.reduce((acc, s) => {
+        acc[s.level] = (acc[s.level] || 0) + s.hours;
+        return acc;
+      }, {});
+      const acLeverage = totalBudgetHours > 0
+        ? (((levelHours["Associate"] || 0) + (levelHours["Senior Associate"] || 0)) / totalBudgetHours * 100)
+        : 0;
+      const mgmtPercent = totalBudgetHours > 0
+        ? (((levelHours["Partner"] || 0) + (levelHours["Senior Manager"] || 0) + (levelHours["Manager"] || 0)) / totalBudgetHours * 100)
+        : 0;
+
+      // Forecast calculations
       const totalActualCost = actuals.reduce((sum, a) => sum + a.rate * a.actualHours, 0);
       const totalActualHours = actuals.reduce((sum, a) => sum + a.actualHours, 0);
       const totalProjectedCost = actuals.reduce((sum, a) => sum + a.rate * (a.actualHours + a.etcHours), 0);
       const totalProjectedHours = actuals.reduce((sum, a) => sum + a.actualHours + a.etcHours, 0);
-      const projectedProfit = targetFee - totalProjectedCost;
+
+      // Change orders
+      const totalChangeOrders = changeOrders.reduce((sum, co) => sum + (co.amount || 0), 0);
+      const totalProjectedRevenue = targetFee + totalChangeOrders;
+      const projectedProfit = totalProjectedRevenue - totalProjectedCost;
       const unbudgetedResources = actuals.filter(a => a.budgetHours === 0 && a.actualHours > 0);
 
       // Sync staffing to schedule (preserve existing week allocations where possible)
@@ -393,6 +544,34 @@
 
       const deleteStaffRow = (id) => setStaffing(prev => prev.filter(row => row.id !== id));
 
+      // Expense handlers
+      const addExpense = useCallback(() => {
+        setExpenses(prev => {
+          const newId = prev.length > 0 ? Math.max(...prev.map(e => e.id)) + 1 : 1;
+          return [...prev, { id: newId, type: "", amount: 0, recoverablePercent: 100 }];
+        });
+      }, []);
+
+      const updateExpense = (id, field, value) => {
+        setExpenses(prev => prev.map(exp => exp.id === id ? { ...exp, [field]: value } : exp));
+      };
+
+      const deleteExpense = (id) => setExpenses(prev => prev.filter(exp => exp.id !== id));
+
+      // Change order handlers
+      const addChangeOrder = useCallback(() => {
+        setChangeOrders(prev => {
+          const newId = prev.length > 0 ? Math.max(...prev.map(co => co.id)) + 1 : 1;
+          return [...prev, { id: newId, description: "", amount: 0 }];
+        });
+      }, []);
+
+      const updateChangeOrder = (id, field, value) => {
+        setChangeOrders(prev => prev.map(co => co.id === id ? { ...co, [field]: value } : co));
+      };
+
+      const deleteChangeOrder = (id) => setChangeOrders(prev => prev.filter(co => co.id !== id));
+
       const handleRateCardToggle = () => {
         const newValue = !useRateCard;
         if (newValue) {
@@ -440,12 +619,46 @@
         }
       };
 
+      const updatePspRate = (id, value) => {
+        const numValue = parseInt(value) || 0;
+        setActuals(prev => prev.map(a => (a.id === id ? { ...a, pspRate: numValue } : a)));
+      };
+
       const handleAssignEtc = () => {
         const unbudgeted = actuals.find(a => a.budgetHours === 0 && a.actualHours > 0);
         if (unbudgeted) {
           setHighlightedResource(unbudgeted.id);
           setTimeout(() => etcInputRef.current?.focus(), 100);
         }
+      };
+
+      // Schedule row selection handlers
+      const toggleScheduleRow = (id) => {
+        setSelectedScheduleRows(prev => {
+          const newSet = new Set(prev);
+          if (newSet.has(id)) {
+            newSet.delete(id);
+          } else {
+            newSet.add(id);
+          }
+          return newSet;
+        });
+      };
+
+      const toggleAllScheduleRows = () => {
+        if (selectedScheduleRows.size === scheduleData.length) {
+          setSelectedScheduleRows(new Set());
+        } else {
+          setSelectedScheduleRows(new Set(scheduleData.map(r => r.id)));
+        }
+      };
+
+      const applyBulkSpread = (spreadType) => {
+        if (selectedScheduleRows.size === 0) return;
+        selectedScheduleRows.forEach(id => {
+          updateScheduleSpread(id, spreadType);
+        });
+        setToast({ message: `Applied ${spreadType === 'frontLoaded' ? 'front-loaded' : spreadType === 'backLoaded' ? 'back-loaded' : 'even'} spread to ${selectedScheduleRows.size} resources`, type: "success" });
       };
 
       // Keyboard shortcuts - use ref for stable callback
@@ -532,9 +745,27 @@
                   </span>
                 )}
               </div>
-              <div className="flex items-center gap-4 text-xs">
-                <span className="text-navy-500">Target Margin:</span>
-                <span className="font-mono font-medium text-white">{TARGET_MARGIN}%</span>
+              <div className="flex items-center gap-6 text-xs">
+                {/* Scenario Selector */}
+                <div className="flex items-center gap-2">
+                  <span className="text-navy-500">Active Scenario:</span>
+                  <select
+                    value={activeScenario}
+                    onChange={(e) => {
+                      setActiveScenario(e.target.value);
+                      setToast({ message: `Switched to ${e.target.value === 'baseline' ? 'Baseline Budget' : e.target.value === 'scenarioA' ? 'Scenario A' : 'Scenario B'}`, type: "success" });
+                    }}
+                    className="px-2 py-1 bg-navy-800 border border-navy-700 text-sm text-white focus:border-navy-500"
+                  >
+                    <option value="baseline">Baseline Budget</option>
+                    <option value="scenarioA">Scenario A</option>
+                    <option value="scenarioB">Scenario B</option>
+                  </select>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-navy-500">Target Margin:</span>
+                  <span className="font-mono font-medium text-white">{effectiveMargin}%</span>
+                </div>
               </div>
             </header>
 
@@ -542,11 +773,18 @@
             <div className="flex-1 overflow-auto p-4">
               {activeView === "initiation" && (
                 <ViewInitiation
-                  opportunityId={opportunityId}
-                  setOpportunityId={setOpportunityId}
-                  isSearching={isSearching}
+                  selectedClient={selectedClient}
+                  setSelectedClient={setSelectedClient}
+                  clientSearchOpen={clientSearchOpen}
+                  setClientSearchOpen={setClientSearchOpen}
+                  clientSearchQuery={clientSearchQuery}
+                  setClientSearchQuery={setClientSearchQuery}
                   dealLoaded={dealLoaded}
                   dealDetails={dealDetails}
+                  deliveryPhase={deliveryPhase}
+                  setDeliveryPhase={setDeliveryPhase}
+                  enablingTech={enablingTech}
+                  setEnablingTech={setEnablingTech}
                   interTerritory={interTerritory}
                   setInterTerritory={setInterTerritory}
                   approver={approver}
@@ -573,15 +811,25 @@
                   updateStaffRow={updateStaffRow}
                   addStaffRow={addStaffRow}
                   deleteStaffRow={deleteStaffRow}
+                  expenses={expenses}
+                  addExpense={addExpense}
+                  updateExpense={updateExpense}
+                  deleteExpense={deleteExpense}
                   targetFee={targetFee}
                   setTargetFee={setTargetFee}
+                  totalLaborCost={totalLaborCost}
                   totalBudgetCost={totalBudgetCost}
                   totalBudgetHours={totalBudgetHours}
+                  totalExpenses={totalExpenses}
+                  recoverableExpenses={recoverableExpenses}
                   recommendedFee={recommendedFee}
                   applyRecommendedFee={applyRecommendedFee}
                   projectedMargin={projectedMargin}
                   marginIsHealthy={marginIsHealthy}
                   marginVariance={marginVariance}
+                  effectiveMargin={effectiveMargin}
+                  acLeverage={acLeverage}
+                  mgmtPercent={mgmtPercent}
                   newRowId={newRowId}
                   onNavigate={() => setActiveView("initiation")}
                 />
@@ -594,6 +842,10 @@
                   spreadTypes={SPREAD_TYPES}
                   updateScheduleSpread={updateScheduleSpread}
                   updateWeekHours={updateWeekHours}
+                  selectedRows={selectedScheduleRows}
+                  toggleRow={toggleScheduleRow}
+                  toggleAllRows={toggleAllScheduleRows}
+                  applyBulkSpread={applyBulkSpread}
                   setToast={setToast}
                   onNavigate={() => setActiveView("budgeting")}
                 />
@@ -607,6 +859,7 @@
                   highlightedResource={highlightedResource}
                   actuals={actuals}
                   updateEtc={updateEtc}
+                  updatePspRate={updatePspRate}
                   etcInputRef={etcInputRef}
                   targetFee={targetFee}
                   totalBudgetCost={totalBudgetCost}
@@ -616,12 +869,106 @@
                   totalProjectedCost={totalProjectedCost}
                   totalProjectedHours={totalProjectedHours}
                   projectedProfit={projectedProfit}
+                  changeOrders={changeOrders}
+                  addChangeOrder={addChangeOrder}
+                  updateChangeOrder={updateChangeOrder}
+                  deleteChangeOrder={deleteChangeOrder}
+                  totalChangeOrders={totalChangeOrders}
+                  totalProjectedRevenue={totalProjectedRevenue}
                 />
               )}
             </div>
           </main>
 
           {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+
+          {/* AI Copilot Button */}
+          <button
+            onClick={() => setCopilotOpen(true)}
+            className="fixed bottom-6 right-6 w-14 h-14 bg-profit hover:bg-profit-dark rounded-full shadow-lg flex items-center justify-center text-white transition-all hover:scale-105 z-40"
+          >
+            <Icons.Sparkle size={24} />
+          </button>
+
+          {/* AI Copilot Panel */}
+          {copilotOpen && (
+            <div className="fixed inset-0 z-50 flex justify-end">
+              <div className="absolute inset-0 bg-black/30" onClick={() => setCopilotOpen(false)} />
+              <div className="relative w-80 h-full bg-navy-900 border-l border-navy-800 flex flex-col fade-in">
+                {/* Header */}
+                <div className="px-4 py-3 border-b border-navy-800 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Icons.Sparkle size={16} className="text-profit-light" />
+                    <span className="font-semibold text-white">AI Copilot</span>
+                  </div>
+                  <button onClick={() => setCopilotOpen(false)} className="text-navy-400 hover:text-white">
+                    <Icons.X size={18} />
+                  </button>
+                </div>
+
+                {/* Messages */}
+                <div className="flex-1 overflow-auto p-4 space-y-3">
+                  {copilotMessages.map((msg, idx) => (
+                    <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                      <div className={`max-w-[85%] px-3 py-2 text-sm ${
+                        msg.role === 'user'
+                          ? 'bg-profit/20 text-profit-light border border-profit/30'
+                          : 'bg-navy-800 text-navy-100 border border-navy-700'
+                      }`}>
+                        {msg.text}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Quick Actions */}
+                <div className="px-4 py-2 border-t border-navy-800">
+                  <div className="text-[10px] text-navy-500 uppercase mb-2">Quick Actions</div>
+                  <button
+                    onClick={() => {
+                      setCopilotMessages(prev => [...prev, { role: 'user', text: 'Suggest Optimization' }]);
+                      setTimeout(() => {
+                        setCopilotMessages(prev => [...prev, {
+                          role: 'ai',
+                          text: `Based on the ${effectiveMargin}% target margin, I recommend shifting 20 hours from Partner to Senior Manager. This improves margin by ~3% while maintaining oversight quality. Would you like me to apply this adjustment?`
+                        }]);
+                      }, 800);
+                    }}
+                    className="w-full px-3 py-2 text-left text-sm bg-navy-800 hover:bg-navy-700 text-navy-200 border border-navy-700 transition-colors"
+                  >
+                    💡 Suggest Optimization
+                  </button>
+                </div>
+
+                {/* Input */}
+                <div className="p-4 border-t border-navy-800">
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="Ask a question..."
+                      className="flex-1 px-3 py-2 bg-navy-950 border border-navy-700 text-sm text-white placeholder-navy-500 focus:border-navy-500"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && e.target.value.trim()) {
+                          const text = e.target.value.trim();
+                          setCopilotMessages(prev => [...prev, { role: 'user', text }]);
+                          e.target.value = '';
+                          setTimeout(() => {
+                            setCopilotMessages(prev => [...prev, {
+                              role: 'ai',
+                              text: "I'm analyzing your request. For this demo, try clicking 'Suggest Optimization' to see how I can help optimize your engagement plan."
+                            }]);
+                          }, 600);
+                        }
+                      }}
+                    />
+                    <button className="px-3 py-2 bg-profit hover:bg-profit-dark text-white">
+                      <Icons.Send size={16} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       );
     }
@@ -630,11 +977,18 @@
     // VIEW 1: INITIATION
     // ============================================
     function ViewInitiation({
-      opportunityId, setOpportunityId, isSearching, dealLoaded, dealDetails,
+      selectedClient, setSelectedClient, clientSearchOpen, setClientSearchOpen,
+      clientSearchQuery, setClientSearchQuery, dealLoaded, dealDetails,
+      deliveryPhase, setDeliveryPhase, enablingTech, setEnablingTech,
       interTerritory, setInterTerritory, approver, setApprover,
       workLocation, setWorkLocation, riskApproved, setRiskApproved,
       canProceed, onComplete,
     }) {
+      const filteredClients = MOCK_CLIENTS.filter(c =>
+        c.name.toLowerCase().includes(clientSearchQuery.toLowerCase()) ||
+        c.service.toLowerCase().includes(clientSearchQuery.toLowerCase())
+      );
+
       const sapCodes = [
         { type: "Master Contract", code: "MC-2024-001", status: dealLoaded ? "Ready" : "Pending" },
         { type: "WBS Element - Labor", code: "WBS-L-001", status: dealLoaded ? "Ready" : "Pending" },
@@ -644,7 +998,7 @@
 
       return (
         <div className="max-w-4xl space-y-4 fade-in">
-          {/* Salesforce Lookup */}
+          {/* Salesforce Lookup - Combobox */}
           <section className="bg-navy-900 border border-navy-800">
             <div className="px-4 py-2 border-b border-navy-800 flex items-center justify-between bg-navy-800/50">
               <span className="text-xs font-medium text-navy-300 uppercase tracking-wider">Salesforce Lookup</span>
@@ -653,41 +1007,107 @@
             <div className="p-4">
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-navy-500">
-                  {isSearching ? <Icons.Loader /> : <Icons.Search />}
+                  <Icons.Search />
                 </span>
                 <input
                   type="text"
-                  value={opportunityId}
-                  onChange={(e) => setOpportunityId(e.target.value)}
-                  placeholder="Enter Opportunity ID (e.g., OPP-1024)"
-                  className="w-full pl-9 pr-4 py-2 bg-navy-950 border border-navy-700 text-sm text-white placeholder-navy-500 focus:border-navy-500 focus:ring-1 focus:ring-navy-500"
+                  value={selectedClient ? `${selectedClient.name} (${selectedClient.service})` : clientSearchQuery}
+                  onChange={(e) => {
+                    setClientSearchQuery(e.target.value);
+                    setClientSearchOpen(true);
+                    if (selectedClient) setSelectedClient(null);
+                  }}
+                  onFocus={() => setClientSearchOpen(true)}
+                  placeholder="Search clients..."
+                  className="w-full pl-9 pr-10 py-2 bg-navy-950 border border-navy-700 text-sm text-white placeholder-navy-500 focus:border-navy-500 focus:ring-1 focus:ring-navy-500"
                 />
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-navy-500">
+                  <Icons.ChevronDown size={16} />
+                </span>
+
+                {/* Dropdown */}
+                {clientSearchOpen && !selectedClient && (
+                  <div className="absolute z-10 w-full mt-1 bg-navy-900 border border-navy-700 shadow-lg max-h-48 overflow-auto">
+                    {filteredClients.length === 0 ? (
+                      <div className="px-4 py-3 text-sm text-navy-500">No clients found</div>
+                    ) : (
+                      filteredClients.map(client => (
+                        <button
+                          key={client.id}
+                          onClick={() => {
+                            setSelectedClient(client);
+                            setClientSearchOpen(false);
+                            setClientSearchQuery("");
+                          }}
+                          className="w-full px-4 py-2 text-left hover:bg-navy-800 flex items-center justify-between"
+                        >
+                          <div>
+                            <div className="text-sm text-white font-medium">{client.name}</div>
+                            <div className="text-xs text-navy-400">{client.product}</div>
+                          </div>
+                          <StatusBadge status="info">{client.service}</StatusBadge>
+                        </button>
+                      ))
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           </section>
 
-          {/* Deal Details */}
+          {/* Deal Details - Enhanced */}
           {dealLoaded && (
             <section className="bg-navy-900 border border-navy-800 fade-in">
               <div className="px-4 py-2 border-b border-navy-800 bg-navy-800/50">
                 <span className="text-xs font-medium text-navy-300 uppercase tracking-wider">Deal Details</span>
               </div>
-              <div className="p-4 grid grid-cols-4 gap-4">
-                <div>
-                  <div className="text-[10px] text-navy-500 uppercase tracking-wider mb-1">Client</div>
-                  <div className="text-sm font-medium text-white">{dealDetails.client}</div>
+              <div className="p-4">
+                <div className="grid grid-cols-5 gap-4 mb-4">
+                  <div>
+                    <div className="text-[10px] text-navy-500 uppercase tracking-wider mb-1">Client</div>
+                    <div className="text-sm font-medium text-white">{dealDetails.client}</div>
+                  </div>
+                  <div>
+                    <div className="text-[10px] text-navy-500 uppercase tracking-wider mb-1">Product</div>
+                    <div className="text-sm font-medium text-white">{dealDetails.product}</div>
+                    <div className="text-[10px] text-navy-500">(Code {selectedClient?.code})</div>
+                  </div>
+                  <div>
+                    <div className="text-[10px] text-navy-500 uppercase tracking-wider mb-1">Stage</div>
+                    <StatusBadge status="success">{dealDetails.stage}</StatusBadge>
+                  </div>
+                  <div>
+                    <div className="text-[10px] text-navy-500 uppercase tracking-wider mb-1">Target Margin</div>
+                    <div className="text-lg font-bold text-profit-light">{dealDetails.margin}%</div>
+                  </div>
+                  <div>
+                    <div className="text-[10px] text-navy-500 uppercase tracking-wider mb-1">Validation</div>
+                    <StatusBadge status="success">Stage Validated</StatusBadge>
+                  </div>
                 </div>
-                <div>
-                  <div className="text-[10px] text-navy-500 uppercase tracking-wider mb-1">Product</div>
-                  <div className="text-sm font-medium text-white">{dealDetails.product}</div>
-                </div>
-                <div>
-                  <div className="text-[10px] text-navy-500 uppercase tracking-wider mb-1">Stage</div>
-                  <StatusBadge status="success">{dealDetails.stage}</StatusBadge>
-                </div>
-                <div>
-                  <div className="text-[10px] text-navy-500 uppercase tracking-wider mb-1">Validation</div>
-                  <StatusBadge status="success">Stage Validated</StatusBadge>
+                {/* Compliance Fields */}
+                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-navy-800">
+                  <div>
+                    <div className="text-[10px] text-navy-500 uppercase tracking-wider mb-1">Delivery Phase</div>
+                    <select
+                      value={deliveryPhase}
+                      onChange={(e) => setDeliveryPhase(e.target.value)}
+                      className="w-full px-3 py-1.5 bg-navy-950 border border-navy-700 text-sm text-white focus:border-navy-500"
+                    >
+                      <option value="">Select Phase...</option>
+                      {DELIVERY_PHASES.map(p => <option key={p} value={p}>{p}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <div className="text-[10px] text-navy-500 uppercase tracking-wider mb-1">Enabling Technology</div>
+                    <select
+                      value={enablingTech}
+                      onChange={(e) => setEnablingTech(e.target.value)}
+                      className="w-full px-3 py-1.5 bg-navy-950 border border-navy-700 text-sm text-white focus:border-navy-500"
+                    >
+                      {ENABLING_TECH.map(t => <option key={t} value={t}>{t}</option>)}
+                    </select>
+                  </div>
                 </div>
               </div>
             </section>
@@ -830,10 +1250,13 @@
     function ViewBudgeting({
       dealLoaded, pricingStructure, setPricingStructure, useRateCard, handleRateCardToggle,
       staffing, updateStaffRow, addStaffRow, deleteStaffRow,
-      targetFee, setTargetFee, totalBudgetCost, totalBudgetHours,
-      recommendedFee, applyRecommendedFee, projectedMargin, marginIsHealthy, marginVariance, newRowId, onNavigate,
+      expenses, addExpense, updateExpense, deleteExpense,
+      targetFee, setTargetFee, totalLaborCost, totalBudgetCost, totalBudgetHours, totalExpenses, recoverableExpenses,
+      recommendedFee, applyRecommendedFee, projectedMargin, marginIsHealthy, marginVariance, effectiveMargin,
+      acLeverage, mgmtPercent, newRowId, onNavigate,
     }) {
       const [hoveredRow, setHoveredRow] = useState(null);
+      const [hoveredExpenseRow, setHoveredExpenseRow] = useState(null);
 
       if (!dealLoaded) {
         return (
@@ -848,7 +1271,7 @@
 
       return (
         <div className="flex gap-4 fade-in">
-          {/* Main Table */}
+          {/* Left Panel - Staffing & Expenses */}
           <div className="flex-1 space-y-3">
             {/* Controls */}
             <div className="flex items-center justify-between">
@@ -880,23 +1303,25 @@
 
             {/* Staffing Table */}
             <div className="bg-navy-900 border border-navy-800">
+              <div className="px-4 py-2 border-b border-navy-800 bg-navy-800/50 flex items-center justify-between">
+                <span className="text-xs font-medium text-navy-300 uppercase tracking-wider">Staffing Grid</span>
+                <span className="text-xs text-navy-500">{staffing.length} resources</span>
+              </div>
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="text-[10px] text-navy-500 uppercase tracking-wider border-b border-navy-800 bg-navy-800/50">
+                  <tr className="text-[10px] text-navy-500 uppercase tracking-wider border-b border-navy-800">
                     <th className="w-8"></th>
                     <th className="text-left px-3 py-2 font-medium">Name</th>
                     <th className="text-left px-3 py-2 font-medium">Level</th>
-                    <th className="text-left px-3 py-2 font-medium">Region</th>
-                    <th className="text-left px-3 py-2 font-medium">LoS</th>
                     <th className="text-right px-3 py-2 font-medium">Rate</th>
                     <th className="text-right px-3 py-2 font-medium">Hours</th>
-                    <th className="text-right px-3 py-2 font-medium">Total</th>
+                    <th className="text-right px-3 py-2 font-medium">Cost</th>
                   </tr>
                 </thead>
                 <tbody>
                   {staffing.length === 0 ? (
                     <tr>
-                      <td colSpan={8} className="px-4 py-8 text-center text-navy-500">
+                      <td colSpan={6} className="px-4 py-6 text-center text-navy-500">
                         No resources added. <button onClick={addStaffRow} className="text-profit hover:text-profit-light">Add first resource</button>
                       </td>
                     </tr>
@@ -935,34 +1360,16 @@
                               {LEVELS.map(l => <option key={l} value={l} className="bg-navy-900">{l}</option>)}
                             </select>
                           </td>
-                          <td className="px-3 py-1.5">
-                            <select
-                              value={row.region || "Northeast"}
-                              onChange={(e) => updateStaffRow(row.id, "region", e.target.value)}
-                              className={`w-full px-1 py-0.5 bg-transparent border-0 focus:ring-1 focus:ring-navy-500 ${isTBD ? "text-warning-light" : "text-white"}`}
-                            >
-                              {REGIONS.map(r => <option key={r} value={r} className="bg-navy-900">{r}</option>)}
-                            </select>
-                          </td>
-                          <td className="px-3 py-1.5">
-                            <select
-                              value={row.los || "Tax"}
-                              onChange={(e) => updateStaffRow(row.id, "los", e.target.value)}
-                              className={`w-full px-1 py-0.5 bg-transparent border-0 focus:ring-1 focus:ring-navy-500 ${isTBD ? "text-warning-light" : "text-white"}`}
-                            >
-                              {LINE_OF_SERVICE.map(l => <option key={l} value={l} className="bg-navy-900">{l}</option>)}
-                            </select>
-                          </td>
                           <td className="px-3 py-1.5 text-right">
                             <div className="flex items-center justify-end gap-1">
-                              {useRateCard && <Icons.Lock size={10} />}
+                              {useRateCard && <Icons.Lock size={10} className="text-navy-600" />}
                               <span className="text-navy-500">$</span>
                               <input
                                 type="number"
                                 value={row.rate}
                                 onChange={(e) => updateStaffRow(row.id, "rate", parseInt(e.target.value) || 0)}
                                 disabled={useRateCard}
-                                className={`w-14 px-1 py-0.5 text-right bg-transparent border-0 tabular-nums focus:ring-1 focus:ring-navy-500 ${useRateCard ? "text-navy-500" : "text-white"}`}
+                                className={`w-14 px-1 py-0.5 text-right bg-transparent border-0 tabular-nums focus:ring-1 focus:ring-navy-500 ${useRateCard ? "text-navy-500 opacity-50 cursor-not-allowed" : "text-white"}`}
                               />
                             </div>
                           </td>
@@ -984,20 +1391,116 @@
                 </tbody>
                 <tfoot>
                   <tr className="border-t border-navy-700 bg-navy-800/30">
-                    <td colSpan={6} className="px-3 py-2">
+                    <td colSpan={4} className="px-3 py-2">
                       <button onClick={addStaffRow} className="flex items-center gap-1 text-xs text-profit hover:text-profit-light">
                         <Icons.Plus size={12} /> Add Resource <span className="text-navy-600 ml-1">⌘N</span>
                       </button>
                     </td>
                     <td className="px-3 py-2 text-right text-xs text-navy-400 tabular-nums">{formatNumber(totalBudgetHours)} hrs</td>
-                    <td className="px-3 py-2 text-right font-semibold text-white tabular-nums">{formatCurrency(totalBudgetCost)}</td>
+                    <td className="px-3 py-2 text-right font-semibold text-white tabular-nums">{formatCurrency(totalLaborCost)}</td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+
+            {/* Expenses Grid - NEW */}
+            <div className="bg-navy-900 border border-navy-800">
+              <div className="px-4 py-2 border-b border-navy-800 bg-navy-800/50 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Icons.Receipt size={14} className="text-navy-400" />
+                  <span className="text-xs font-medium text-navy-300 uppercase tracking-wider">Expenses</span>
+                </div>
+                <span className="text-xs text-navy-500">{expenses.length} items</span>
+              </div>
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-[10px] text-navy-500 uppercase tracking-wider border-b border-navy-800">
+                    <th className="w-8"></th>
+                    <th className="text-left px-3 py-2 font-medium">Type</th>
+                    <th className="text-right px-3 py-2 font-medium">Amount</th>
+                    <th className="text-right px-3 py-2 font-medium">% Rec.</th>
+                    <th className="text-right px-3 py-2 font-medium">Recoverable</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {expenses.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} className="px-4 py-4 text-center text-navy-500 text-xs">
+                        No expenses added. <button onClick={addExpense} className="text-profit hover:text-profit-light">Add expense</button>
+                      </td>
+                    </tr>
+                  ) : (
+                    expenses.map(exp => (
+                      <tr
+                        key={exp.id}
+                        onMouseEnter={() => setHoveredExpenseRow(exp.id)}
+                        onMouseLeave={() => setHoveredExpenseRow(null)}
+                        className="border-b border-navy-800/50 hover:bg-navy-800/30"
+                      >
+                        <td className="px-2 py-1.5 text-center">
+                          {hoveredExpenseRow === exp.id && (
+                            <button onClick={() => deleteExpense(exp.id)} className="text-navy-600 hover:text-loss-light">
+                              <Icons.Trash />
+                            </button>
+                          )}
+                        </td>
+                        <td className="px-3 py-1.5">
+                          <select
+                            value={exp.type || ""}
+                            onChange={(e) => updateExpense(exp.id, "type", e.target.value)}
+                            className="w-full px-1 py-0.5 bg-transparent border-0 text-white focus:ring-1 focus:ring-navy-500"
+                          >
+                            <option value="" className="bg-navy-900">Select type...</option>
+                            {EXPENSE_TYPES.map(t => <option key={t} value={t} className="bg-navy-900">{t}</option>)}
+                          </select>
+                        </td>
+                        <td className="px-3 py-1.5 text-right">
+                          <div className="flex items-center justify-end gap-1">
+                            <span className="text-navy-500">$</span>
+                            <input
+                              type="number"
+                              value={exp.amount || ""}
+                              onChange={(e) => updateExpense(exp.id, "amount", parseInt(e.target.value) || 0)}
+                              placeholder="0"
+                              className="w-20 px-1 py-0.5 text-right bg-transparent border-0 text-white tabular-nums focus:ring-1 focus:ring-navy-500"
+                            />
+                          </div>
+                        </td>
+                        <td className="px-3 py-1.5 text-right">
+                          <div className="flex items-center justify-end gap-1">
+                            <input
+                              type="number"
+                              value={exp.recoverablePercent ?? 100}
+                              onChange={(e) => updateExpense(exp.id, "recoverablePercent", Math.min(100, Math.max(0, parseInt(e.target.value) || 0)))}
+                              className="w-12 px-1 py-0.5 text-right bg-transparent border-0 text-white tabular-nums focus:ring-1 focus:ring-navy-500"
+                            />
+                            <span className="text-navy-500">%</span>
+                          </div>
+                        </td>
+                        <td className="px-3 py-1.5 text-right font-medium text-white tabular-nums">
+                          {formatCurrency((exp.amount || 0) * (exp.recoverablePercent ?? 100) / 100)}
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+                <tfoot>
+                  <tr className="border-t border-navy-700 bg-navy-800/30">
+                    <td colSpan={2} className="px-3 py-2">
+                      <button onClick={addExpense} className="flex items-center gap-1 text-xs text-profit hover:text-profit-light">
+                        <Icons.Plus size={12} /> Add Expense
+                      </button>
+                    </td>
+                    <td className="px-3 py-2 text-right text-xs text-navy-400 tabular-nums">{formatCurrency(totalExpenses)}</td>
+                    <td className="px-3 py-2"></td>
+                    <td className="px-3 py-2 text-right font-semibold text-white tabular-nums">{formatCurrency(recoverableExpenses)}</td>
                   </tr>
                 </tfoot>
               </table>
             </div>
           </div>
 
-          {/* Sidebar - Financial Summary */}
+          {/* Right Panel - Financial Summary */}
           <div className="w-64 space-y-3">
             {/* Target Fee */}
             <div className="bg-navy-900 border border-navy-800 p-3">
@@ -1021,7 +1524,7 @@
                   <span className="text-[10px] text-navy-500 uppercase tracking-wider">Recommended Fee</span>
                 </div>
                 <div className="text-xl font-semibold text-profit-light tabular-nums">{formatCurrency(recommendedFee)}</div>
-                <div className="text-[10px] text-navy-500 mt-1">For {TARGET_MARGIN}% margin</div>
+                <div className="text-[10px] text-navy-500 mt-1">For {effectiveMargin}% margin</div>
                 <button
                   onClick={applyRecommendedFee}
                   className="w-full mt-2 px-3 py-1.5 bg-profit/20 hover:bg-profit/30 text-profit-light text-xs font-medium border border-profit/30 transition-colors"
@@ -1035,8 +1538,40 @@
             <div className="bg-navy-900 border border-navy-800 p-3">
               <div className="text-[10px] text-navy-500 uppercase tracking-wider mb-2">Total Cost</div>
               <div className="text-xl font-semibold text-white tabular-nums">{formatCurrency(totalBudgetCost)}</div>
-              <div className="text-xs text-navy-500 mt-1">{staffing.length} resources • {formatNumber(totalBudgetHours)} hours</div>
+              <div className="text-xs text-navy-500 mt-2 space-y-1">
+                <div className="flex justify-between">
+                  <span>Labor:</span>
+                  <span className="tabular-nums">{formatCurrency(totalLaborCost)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Expenses (rec.):</span>
+                  <span className="tabular-nums">{formatCurrency(recoverableExpenses)}</span>
+                </div>
+              </div>
             </div>
+
+            {/* Leverage Metrics - NEW */}
+            {totalBudgetHours > 0 && (
+              <div className="bg-navy-900 border border-navy-800 p-3">
+                <div className="text-[10px] text-navy-500 uppercase tracking-wider mb-2">Leverage Metrics</div>
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-navy-400">AC Leverage:</span>
+                    <span className="text-sm font-medium text-white tabular-nums">{acLeverage.toFixed(0)}%</span>
+                  </div>
+                  <div className="h-1.5 bg-navy-800 overflow-hidden">
+                    <div className="h-full bg-profit transition-all" style={{ width: `${Math.min(acLeverage, 100)}%` }} />
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-navy-400">Mgmt Hours:</span>
+                    <span className="text-sm font-medium text-white tabular-nums">{mgmtPercent.toFixed(0)}%</span>
+                  </div>
+                  <div className="h-1.5 bg-navy-800 overflow-hidden">
+                    <div className="h-full bg-warning transition-all" style={{ width: `${Math.min(mgmtPercent, 100)}%` }} />
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Margin */}
             {targetFee > 0 && (
@@ -1061,7 +1596,11 @@
     // ============================================
     // VIEW 3: SCHEDULING
     // ============================================
-    function ViewScheduling({ dealLoaded, hasBudget, scheduleData, spreadTypes, updateScheduleSpread, updateWeekHours, setToast, onNavigate }) {
+    function ViewScheduling({
+      dealLoaded, hasBudget, scheduleData, spreadTypes, updateScheduleSpread, updateWeekHours,
+      selectedRows, toggleRow, toggleAllRows, applyBulkSpread,
+      setToast, onNavigate
+    }) {
       const weekDates = getWeekDates();
       const [syncing, setSyncing] = useState(false);
       const MAX_WEEKLY = 40;
@@ -1085,8 +1624,52 @@
         }, 1200);
       };
 
+      const allSelected = selectedRows.size === scheduleData.length && scheduleData.length > 0;
+
       return (
         <div className="space-y-4 fade-in">
+          {/* Bulk S-Curve Actions */}
+          <div className="flex items-center justify-between bg-navy-900 border border-navy-800 px-4 py-2">
+            <div className="flex items-center gap-4">
+              <span className="text-xs text-navy-500">Apply to selected ({selectedRows.size}):</span>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => applyBulkSpread("frontLoaded")}
+                  disabled={selectedRows.size === 0}
+                  className={`flex items-center gap-1 px-2 py-1 text-xs font-medium border transition-colors ${
+                    selectedRows.size > 0
+                      ? "bg-navy-800 text-navy-200 border-navy-700 hover:bg-navy-700 hover:text-profit-light"
+                      : "bg-navy-900 text-navy-600 border-navy-800 cursor-not-allowed"
+                  }`}
+                >
+                  <Icons.FrontLoad size={12} /> Front
+                </button>
+                <button
+                  onClick={() => applyBulkSpread("even")}
+                  disabled={selectedRows.size === 0}
+                  className={`flex items-center gap-1 px-2 py-1 text-xs font-medium border transition-colors ${
+                    selectedRows.size > 0
+                      ? "bg-navy-800 text-navy-200 border-navy-700 hover:bg-navy-700 hover:text-profit-light"
+                      : "bg-navy-900 text-navy-600 border-navy-800 cursor-not-allowed"
+                  }`}
+                >
+                  <Icons.EvenSpread size={12} /> Even
+                </button>
+                <button
+                  onClick={() => applyBulkSpread("backLoaded")}
+                  disabled={selectedRows.size === 0}
+                  className={`flex items-center gap-1 px-2 py-1 text-xs font-medium border transition-colors ${
+                    selectedRows.size > 0
+                      ? "bg-navy-800 text-navy-200 border-navy-700 hover:bg-navy-700 hover:text-profit-light"
+                      : "bg-navy-900 text-navy-600 border-navy-800 cursor-not-allowed"
+                  }`}
+                >
+                  <Icons.BackLoad size={12} /> Back
+                </button>
+              </div>
+            </div>
+          </div>
+
           {/* Schedule Table */}
           <div className="bg-navy-900 border border-navy-800">
             <div className="px-4 py-2 border-b border-navy-800 bg-navy-800/50 flex items-center justify-between">
@@ -1096,7 +1679,15 @@
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-[10px] text-navy-500 uppercase tracking-wider border-b border-navy-800">
-                  <th className="text-left px-4 py-2 font-medium">Resource</th>
+                  <th className="w-8 px-2 py-2">
+                    <input
+                      type="checkbox"
+                      checked={allSelected}
+                      onChange={toggleAllRows}
+                      className="w-3.5 h-3.5 border-navy-600 bg-navy-950 text-profit focus:ring-profit/50 focus:ring-offset-navy-900"
+                    />
+                  </th>
+                  <th className="text-left px-3 py-2 font-medium">Resource</th>
                   <th className="text-center px-2 py-2 font-medium">Total</th>
                   <th className="text-left px-2 py-2 font-medium">Spread</th>
                   {weekDates.map((d, i) => (
@@ -1105,58 +1696,78 @@
                 </tr>
               </thead>
               <tbody>
-                {scheduleData.map(resource => (
-                  <tr key={resource.id} className="border-b border-navy-800/50 hover:bg-navy-800/30">
-                    <td className="px-4 py-2">
-                      <div className="text-white font-medium">{resource.name}</div>
-                      <div className="text-[10px] text-navy-500">{resource.level}</div>
-                    </td>
-                    <td className="px-2 py-2 text-center">
-                      <span className="px-2 py-0.5 bg-navy-800 text-white text-xs font-medium tabular-nums">
-                        {resource.totalHours}h
-                      </span>
-                    </td>
-                    <td className="px-2 py-2">
-                      <div className="flex gap-1">
-                        {spreadTypes.map(type => (
-                          <button
-                            key={type.id}
-                            onClick={() => updateScheduleSpread(resource.id, type.id)}
-                            className={`px-2 py-0.5 text-[10px] font-medium transition-colors ${
-                              resource.spreadType === type.id
-                                ? "bg-profit/20 text-profit-light border border-profit/30"
-                                : "bg-navy-800 text-navy-400 border border-navy-700 hover:border-navy-600"
-                            }`}
-                          >
-                            {type.label}
-                          </button>
-                        ))}
-                      </div>
-                    </td>
-                    {resource.weeks.map((hours, idx) => {
-                      const isOver = hours > MAX_WEEKLY;
-                      const pct = Math.min((hours / MAX_WEEKLY) * 100, 100);
-                      return (
-                        <td key={idx} className="px-2 py-2 text-center">
-                          <input
-                            type="number"
-                            value={hours}
-                            onChange={(e) => updateWeekHours(resource.id, idx, e.target.value)}
-                            className={`w-14 px-2 py-1 text-center text-sm font-medium tabular-nums bg-navy-950 border focus:ring-1 focus:ring-navy-500 ${
-                              isOver ? "border-loss/50 text-loss-light" : "border-navy-700 text-white"
-                            }`}
-                          />
-                          <div className="mt-1 h-1 bg-navy-800">
-                            <div
-                              className={`h-full transition-all ${isOver ? "bg-loss" : "bg-profit"}`}
-                              style={{ width: `${pct}%` }}
+                {scheduleData.map(resource => {
+                  const isSelected = selectedRows.has(resource.id);
+                  return (
+                    <tr key={resource.id} className={`border-b border-navy-800/50 ${isSelected ? "bg-profit/5" : "hover:bg-navy-800/30"}`}>
+                      <td className="px-2 py-2 text-center">
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={() => toggleRow(resource.id)}
+                          className="w-3.5 h-3.5 border-navy-600 bg-navy-950 text-profit focus:ring-profit/50 focus:ring-offset-navy-900"
+                        />
+                      </td>
+                      <td className="px-3 py-2">
+                        <div className="text-white font-medium">{resource.name}</div>
+                        <div className="text-[10px] text-navy-500">{resource.level}</div>
+                      </td>
+                      <td className="px-2 py-2 text-center">
+                        <span className="px-2 py-0.5 bg-navy-800 text-white text-xs font-medium tabular-nums">
+                          {resource.totalHours}h
+                        </span>
+                      </td>
+                      <td className="px-2 py-2">
+                        <div className="flex gap-1">
+                          {spreadTypes.filter(t => t.id !== 'custom').map(type => {
+                            const IconComponent = type.icon ? Icons[type.icon] : null;
+                            return (
+                              <button
+                                key={type.id}
+                                onClick={() => updateScheduleSpread(resource.id, type.id)}
+                                className={`flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium transition-colors ${
+                                  resource.spreadType === type.id
+                                    ? "bg-profit/20 text-profit-light border border-profit/30"
+                                    : "bg-navy-800 text-navy-400 border border-navy-700 hover:border-navy-600"
+                                }`}
+                              >
+                                {IconComponent && <IconComponent size={10} />}
+                                {type.label}
+                              </button>
+                            );
+                          })}
+                          {resource.spreadType === 'custom' && (
+                            <span className="px-2 py-0.5 text-[10px] font-medium bg-warning/20 text-warning-light border border-warning/30">
+                              Custom
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      {resource.weeks.map((hours, idx) => {
+                        const isOver = hours > MAX_WEEKLY;
+                        const pct = Math.min((hours / MAX_WEEKLY) * 100, 100);
+                        return (
+                          <td key={idx} className="px-2 py-2 text-center">
+                            <input
+                              type="number"
+                              value={hours}
+                              onChange={(e) => updateWeekHours(resource.id, idx, e.target.value)}
+                              className={`w-14 px-2 py-1 text-center text-sm font-medium tabular-nums bg-navy-950 border focus:ring-1 focus:ring-navy-500 ${
+                                isOver ? "border-loss/50 text-loss-light" : "border-navy-700 text-white"
+                              }`}
                             />
-                          </div>
-                        </td>
-                      );
-                    })}
-                  </tr>
-                ))}
+                            <div className="mt-1 h-1 bg-navy-800">
+                              <div
+                                className={`h-full transition-all ${isOver ? "bg-loss" : "bg-profit"}`}
+                                style={{ width: `${pct}%` }}
+                              />
+                            </div>
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -1191,13 +1802,21 @@
     // ============================================
     function ViewForecasting({
       alertVisible, setAlertVisible, unbudgetedResources, handleAssignEtc, highlightedResource,
-      actuals, updateEtc, etcInputRef,
+      actuals, updateEtc, updatePspRate, etcInputRef,
       targetFee, totalBudgetCost, totalBudgetHours,
       totalActualCost, totalActualHours, totalProjectedCost, totalProjectedHours, projectedProfit,
+      changeOrders, addChangeOrder, updateChangeOrder, deleteChangeOrder, totalChangeOrders, totalProjectedRevenue,
     }) {
-      const projectedMargin = targetFee > 0 ? ((targetFee - totalProjectedCost) / targetFee) * 100 : 0;
+      const [hoveredChangeOrder, setHoveredChangeOrder] = useState(null);
+      const projectedMargin = totalProjectedRevenue > 0 ? ((totalProjectedRevenue - totalProjectedCost) / totalProjectedRevenue) * 100 : 0;
       const hoursVariance = totalProjectedHours - totalBudgetHours;
       const costVariance = totalProjectedCost - totalBudgetCost;
+
+      // Calculate projected revenue per resource
+      const totalProjectedRevenueFromResources = actuals.reduce((sum, a) => {
+        const pspRate = a.pspRate || a.rate;
+        return sum + (a.actualHours + a.etcHours) * pspRate;
+      }, 0);
 
       return (
         <div className="space-y-4 fade-in">
@@ -1290,14 +1909,16 @@
                   <td className="px-4 py-2 text-navy-300">Revenue</td>
                   <td className="px-4 py-2 text-right text-white tabular-nums">{formatCurrency(targetFee)}</td>
                   <td className="px-4 py-2 text-right text-navy-500">—</td>
-                  <td className="px-4 py-2 text-right text-white font-medium tabular-nums">{formatCurrency(targetFee)}</td>
-                  <td className="px-4 py-2 text-right text-navy-500">—</td>
+                  <td className="px-4 py-2 text-right text-white font-medium tabular-nums">{formatCurrency(totalProjectedRevenue)}</td>
+                  <td className={`px-4 py-2 text-right font-medium tabular-nums ${totalChangeOrders >= 0 ? "text-profit-light" : "text-loss-light"}`}>
+                    {totalChangeOrders > 0 ? `+${formatCurrency(totalChangeOrders)}` : "—"}
+                  </td>
                 </tr>
               </tbody>
             </table>
           </div>
 
-          {/* ETC Table */}
+          {/* ETC Table with PSP Rate and Projected Revenue */}
           <div className="bg-navy-900 border border-navy-800">
             <div className="px-4 py-2 border-b border-navy-800 bg-navy-800/50 flex items-center justify-between">
               <span className="text-xs font-medium text-navy-300 uppercase tracking-wider">ETC by Resource</span>
@@ -1306,12 +1927,14 @@
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-[10px] text-navy-500 uppercase tracking-wider border-b border-navy-800">
-                  <th className="text-left px-4 py-2 font-medium">Resource</th>
-                  <th className="text-right px-4 py-2 font-medium">Budget</th>
-                  <th className="text-right px-4 py-2 font-medium">Charged</th>
-                  <th className="text-right px-4 py-2 font-medium">ETC</th>
-                  <th className="text-right px-4 py-2 font-medium">Projected</th>
-                  <th className="text-right px-4 py-2 font-medium">Var</th>
+                  <th className="text-left px-3 py-2 font-medium">Resource</th>
+                  <th className="text-right px-2 py-2 font-medium">Budget</th>
+                  <th className="text-right px-2 py-2 font-medium">Charged</th>
+                  <th className="text-right px-2 py-2 font-medium">ETC</th>
+                  <th className="text-right px-2 py-2 font-medium">Proj Hrs</th>
+                  <th className="text-right px-2 py-2 font-medium">PSP Rate</th>
+                  <th className="text-right px-2 py-2 font-medium">Proj Rev</th>
+                  <th className="text-right px-2 py-2 font-medium">Var</th>
                 </tr>
               </thead>
               <tbody>
@@ -1320,9 +1943,11 @@
                   const isUnbudgeted = resource.budgetHours === 0 && resource.actualHours > 0;
                   const projected = resource.actualHours + resource.etcHours;
                   const variance = resource.budgetHours > 0 ? projected - resource.budgetHours : null;
+                  const pspRate = resource.pspRate || resource.rate;
+                  const projectedRev = projected * pspRate;
                   return (
                     <tr key={resource.id} className={`border-b border-navy-800/50 ${isHighlighted ? "bg-warning/10" : "hover:bg-navy-800/30"}`}>
-                      <td className="px-4 py-2">
+                      <td className="px-3 py-2">
                         <div className="flex items-center gap-2">
                           {isUnbudgeted && <span className="w-1.5 h-1.5 bg-warning status-pulse" />}
                           <div>
@@ -1331,21 +1956,33 @@
                           </div>
                         </div>
                       </td>
-                      <td className="px-4 py-2 text-right text-white tabular-nums">{resource.budgetHours || "—"}</td>
-                      <td className="px-4 py-2 text-right text-white tabular-nums">{resource.actualHours}</td>
-                      <td className="px-4 py-2 text-right">
+                      <td className="px-2 py-2 text-right text-white tabular-nums">{resource.budgetHours || "—"}</td>
+                      <td className="px-2 py-2 text-right text-white tabular-nums">{resource.actualHours}</td>
+                      <td className="px-2 py-2 text-right">
                         <input
                           ref={isHighlighted ? etcInputRef : null}
                           type="number"
                           value={resource.etcHours}
                           onChange={(e) => updateEtc(resource.id, e.target.value)}
-                          className={`w-16 px-2 py-1 text-right text-sm font-medium tabular-nums bg-navy-950 border focus:ring-1 focus:ring-navy-500 ${
+                          className={`w-14 px-1 py-1 text-right text-sm font-medium tabular-nums bg-navy-950 border focus:ring-1 focus:ring-navy-500 ${
                             isHighlighted ? "border-warning ring-1 ring-warning/30" : "border-navy-700"
                           } text-white`}
                         />
                       </td>
-                      <td className="px-4 py-2 text-right text-white font-medium tabular-nums">{projected}</td>
-                      <td className={`px-4 py-2 text-right font-medium tabular-nums ${
+                      <td className="px-2 py-2 text-right text-white font-medium tabular-nums">{projected}</td>
+                      <td className="px-2 py-2 text-right">
+                        <div className="flex items-center justify-end gap-1">
+                          <span className="text-navy-500 text-xs">$</span>
+                          <input
+                            type="number"
+                            value={pspRate}
+                            onChange={(e) => updatePspRate(resource.id, e.target.value)}
+                            className="w-14 px-1 py-1 text-right text-sm font-medium tabular-nums bg-navy-950 border border-navy-700 text-white focus:ring-1 focus:ring-navy-500"
+                          />
+                        </div>
+                      </td>
+                      <td className="px-2 py-2 text-right text-profit-light font-medium tabular-nums">{formatCurrency(projectedRev)}</td>
+                      <td className={`px-2 py-2 text-right font-medium tabular-nums ${
                         variance === null ? "text-navy-500" : variance <= 0 ? "text-profit-light" : "text-loss-light"
                       }`}>
                         {variance === null ? "—" : `${variance >= 0 ? "+" : ""}${variance}`}
@@ -1356,17 +1993,100 @@
               </tbody>
               <tfoot>
                 <tr className="border-t border-navy-700 bg-navy-800/30">
-                  <td className="px-4 py-2 text-navy-400 font-medium">Total</td>
-                  <td className="px-4 py-2 text-right text-navy-400 tabular-nums">{totalBudgetHours}</td>
-                  <td className="px-4 py-2 text-right text-navy-400 tabular-nums">{totalActualHours}</td>
-                  <td className="px-4 py-2 text-right text-navy-400 tabular-nums">{actuals.reduce((s, a) => s + a.etcHours, 0)}</td>
-                  <td className="px-4 py-2 text-right text-white font-semibold tabular-nums">{totalProjectedHours}</td>
-                  <td className={`px-4 py-2 text-right font-semibold tabular-nums ${hoursVariance <= 0 ? "text-profit-light" : "text-loss-light"}`}>
+                  <td className="px-3 py-2 text-navy-400 font-medium">Total</td>
+                  <td className="px-2 py-2 text-right text-navy-400 tabular-nums">{totalBudgetHours}</td>
+                  <td className="px-2 py-2 text-right text-navy-400 tabular-nums">{totalActualHours}</td>
+                  <td className="px-2 py-2 text-right text-navy-400 tabular-nums">{actuals.reduce((s, a) => s + a.etcHours, 0)}</td>
+                  <td className="px-2 py-2 text-right text-white font-semibold tabular-nums">{totalProjectedHours}</td>
+                  <td className="px-2 py-2"></td>
+                  <td className="px-2 py-2 text-right text-profit-light font-semibold tabular-nums">{formatCurrency(totalProjectedRevenueFromResources)}</td>
+                  <td className={`px-2 py-2 text-right font-semibold tabular-nums ${hoursVariance <= 0 ? "text-profit-light" : "text-loss-light"}`}>
                     {hoursVariance >= 0 ? "+" : ""}{hoursVariance}
                   </td>
                 </tr>
               </tfoot>
             </table>
+          </div>
+
+          {/* Change Orders Section */}
+          <div className="bg-navy-900 border border-navy-800">
+            <div className="px-4 py-2 border-b border-navy-800 bg-navy-800/50 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Icons.DollarSign size={14} className="text-navy-400" />
+                <span className="text-xs font-medium text-navy-300 uppercase tracking-wider">Change Orders</span>
+              </div>
+              <span className="text-xs text-navy-500">{changeOrders.length} items</span>
+            </div>
+            <div className="p-3">
+              {changeOrders.length === 0 ? (
+                <div className="text-center text-navy-500 text-xs py-3">
+                  No change orders. <button onClick={addChangeOrder} className="text-profit hover:text-profit-light">Add change order</button>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {changeOrders.map(co => (
+                    <div
+                      key={co.id}
+                      onMouseEnter={() => setHoveredChangeOrder(co.id)}
+                      onMouseLeave={() => setHoveredChangeOrder(null)}
+                      className="flex items-center gap-3 py-1"
+                    >
+                      <div className="w-6 text-center">
+                        {hoveredChangeOrder === co.id && (
+                          <button onClick={() => deleteChangeOrder(co.id)} className="text-navy-600 hover:text-loss-light">
+                            <Icons.Trash size={12} />
+                          </button>
+                        )}
+                      </div>
+                      <input
+                        type="text"
+                        value={co.description}
+                        onChange={(e) => updateChangeOrder(co.id, "description", e.target.value)}
+                        placeholder="Description..."
+                        className="flex-1 px-2 py-1 bg-navy-950 border border-navy-700 text-sm text-white placeholder-navy-500 focus:border-navy-500"
+                      />
+                      <div className="flex items-center gap-1">
+                        <span className="text-navy-500 text-xs">$</span>
+                        <input
+                          type="number"
+                          value={co.amount || ""}
+                          onChange={(e) => updateChangeOrder(co.id, "amount", parseInt(e.target.value) || 0)}
+                          placeholder="0"
+                          className="w-24 px-2 py-1 text-right bg-navy-950 border border-navy-700 text-sm text-white tabular-nums focus:border-navy-500"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <div className="flex items-center justify-between mt-3 pt-3 border-t border-navy-700">
+                <button onClick={addChangeOrder} className="flex items-center gap-1 text-xs text-profit hover:text-profit-light">
+                  <Icons.Plus size={12} /> Add Change Order
+                </button>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs text-navy-500">Total:</span>
+                  <span className={`text-sm font-semibold tabular-nums ${totalChangeOrders >= 0 ? "text-profit-light" : "text-loss-light"}`}>
+                    {totalChangeOrders >= 0 ? "+" : ""}{formatCurrency(totalChangeOrders)}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Updated Revenue Summary */}
+          <div className="bg-profit/10 border border-profit/30 p-4 flex items-center justify-between">
+            <div>
+              <div className="text-xs text-navy-400 uppercase tracking-wider mb-1">Total Projected Revenue</div>
+              <div className="text-sm text-navy-300">
+                Base Fee ({formatCurrency(targetFee)}) + Change Orders ({formatCurrency(totalChangeOrders)})
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="text-2xl font-bold text-profit-light tabular-nums">{formatCurrency(totalProjectedRevenue)}</div>
+              <div className={`text-xs ${projectedMargin >= TARGET_MARGIN ? "text-profit" : "text-loss"}`}>
+                {formatPercent(projectedMargin)} margin
+              </div>
+            </div>
           </div>
         </div>
       );
