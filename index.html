@@ -497,26 +497,6 @@
         }
       }, [staffing]);
 
-      // Opportunity lookup
-      useEffect(() => {
-        if (opportunityId.length >= 3) {
-          setIsSearching(true);
-          const timer = setTimeout(() => {
-            if (opportunityId.toUpperCase() === "OPP-1024") {
-              setDealLoaded(true);
-              setDealDetails({ client: "Acme Corp", product: "Tax Compliance", stage: "Interact" });
-            } else {
-              setDealLoaded(false);
-            }
-            setIsSearching(false);
-          }, 600);
-          return () => clearTimeout(timer);
-        } else {
-          setDealLoaded(false);
-          setIsSearching(false);
-        }
-      }, [opportunityId]);
-
       // Handlers
       const updateStaffRow = (id, field, value) => {
         setStaffing(prev => prev.map(row => {
