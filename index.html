@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Flex Forecast</title>
+  <title>PwC Plan powered by Aiwyn</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
@@ -264,7 +264,7 @@
     // ============================================
     // MAIN APP
     // ============================================
-    function FlexForecastApp() {
+    function PwCPlanApp() {
       // Navigation
       const [activeView, setActiveView] = useState("initiation");
       const [toast, setToast] = useState(null);
@@ -468,7 +468,7 @@
 
       const navItems = [
         { id: "initiation", label: "Code Create", num: "1" },
-        { id: "budgeting", label: "Flex Plan", num: "2" },
+        { id: "budgeting", label: "Budget", num: "2" },
         { id: "scheduling", label: "Schedule", num: "3" },
         { id: "forecasting", label: "Forecast", num: "4" },
       ];
@@ -482,8 +482,8 @@
           <aside className="w-48 bg-navy-900 border-r border-navy-800 flex flex-col">
             {/* Header */}
             <div className="px-4 py-3 border-b border-navy-800">
-              <div className="text-base font-semibold text-white">Flex Forecast</div>
-              <div className="text-[10px] text-navy-500 uppercase tracking-wider">Practice Management</div>
+              <div className="text-base font-semibold text-white">PwC Plan</div>
+              <div className="text-[10px] text-navy-500 uppercase tracking-wider">powered by Aiwyn</div>
             </div>
 
             {/* Nav */}
@@ -1071,7 +1071,7 @@
           <div className="flex flex-col items-center justify-center h-64 text-center">
             <div className="text-navy-500 mb-4">No staffing plan to schedule</div>
             <button onClick={onNavigate} className="text-sm text-profit hover:text-profit-light">
-              ← Go to Flex Plan
+              ← Go to Budget
             </button>
           </div>
         );
@@ -1372,7 +1372,7 @@
       );
     }
 
-    ReactDOM.render(<FlexForecastApp />, document.getElementById('root'));
+    ReactDOM.render(<PwCPlanApp />, document.getElementById('root'));
   </script>
 </body>
 </html>
