@@ -45,7 +45,7 @@ const formatPercent = (value) => {
   return `${value.toFixed(1)}%`;
 };
 
-export default function PracticeManagementApp() {
+export default function FlexForecastApp() {
   // ============================================
   // CENTRALIZED STATE
   // ============================================
