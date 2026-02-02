@@ -8,124 +8,256 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script type="module">
-    import { createIcons, icons } from 'https://cdn.jsdelivr.net/npm/lucide@0.263.1/+esm';
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#fdf4ff',
+              100: '#fae8ff',
+              200: '#f5d0fe',
+              300: '#f0abfc',
+              400: '#e879f9',
+              500: '#d946ef',
+              600: '#c026d3',
+              700: '#a21caf',
+              800: '#86198f',
+              900: '#701a75',
+            }
+          },
+          animation: {
+            'slide-up': 'slideUp 0.3s ease-out',
+            'slide-down': 'slideDown 0.3s ease-out',
+            'fade-in': 'fadeIn 0.3s ease-out',
+            'pulse-once': 'pulseOnce 0.6s ease-out',
+            'celebrate': 'celebrate 0.5s ease-out',
+            'glow': 'glow 2s ease-in-out infinite',
+          },
+          keyframes: {
+            slideUp: {
+              '0%': { transform: 'translateY(10px)', opacity: '0' },
+              '100%': { transform: 'translateY(0)', opacity: '1' },
+            },
+            slideDown: {
+              '0%': { transform: 'translateY(-10px)', opacity: '0' },
+              '100%': { transform: 'translateY(0)', opacity: '1' },
+            },
+            fadeIn: {
+              '0%': { opacity: '0' },
+              '100%': { opacity: '1' },
+            },
+            pulseOnce: {
+              '0%, 100%': { transform: 'scale(1)' },
+              '50%': { transform: 'scale(1.02)' },
+            },
+            celebrate: {
+              '0%': { transform: 'scale(0.95)', opacity: '0' },
+              '50%': { transform: 'scale(1.02)' },
+              '100%': { transform: 'scale(1)', opacity: '1' },
+            },
+            glow: {
+              '0%, 100%': { boxShadow: '0 0 20px rgba(217, 70, 239, 0.2)' },
+              '50%': { boxShadow: '0 0 30px rgba(217, 70, 239, 0.4)' },
+            },
+          }
+        }
+      }
+    }
   </script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
     body { font-family: 'Inter', system-ui, sans-serif; }
+
     /* Custom scrollbar */
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-track { background: #1e293b; }
-    ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
     ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+
     /* Remove number input spinners */
     input[type="number"]::-webkit-inner-spin-button,
     input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
     input[type="number"] { -moz-appearance: textfield; }
+
+    /* Smooth transitions */
+    * { transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
+
+    /* Focus styles */
+    input:focus, select:focus, button:focus { outline: none; }
+
+    /* Glass effect */
+    .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); }
+
+    /* Gradient text */
+    .gradient-text { background: linear-gradient(135deg, #d946ef 0%, #8b5cf6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+    /* Subtle grid pattern */
+    .grid-pattern { background-image: radial-gradient(rgba(148, 163, 184, 0.1) 1px, transparent 1px); background-size: 20px 20px; }
+
+    /* Row highlight animation */
+    @keyframes rowHighlight {
+      0% { background-color: rgba(217, 70, 239, 0.2); }
+      100% { background-color: transparent; }
+    }
+    .row-highlight { animation: rowHighlight 1s ease-out; }
+
+    /* Toast animation */
+    .toast-enter { animation: slideUp 0.3s ease-out; }
+
+    /* Tooltip */
+    .tooltip { position: relative; }
+    .tooltip::after { content: attr(data-tooltip); position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%) translateY(-4px); padding: 6px 10px; background: #1e293b; color: #e2e8f0; font-size: 12px; border-radius: 6px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s; z-index: 50; }
+    .tooltip:hover::after { opacity: 1; transform: translateX(-50%) translateY(-8px); }
   </style>
 </head>
-<body class="bg-slate-900">
+<body class="bg-slate-950 grid-pattern">
   <div id="root"></div>
 
   <script type="text/babel">
-    const { useState, useEffect, useRef } = React;
+    const { useState, useEffect, useRef, useCallback } = React;
 
-    // Icons as simple SVG components
+    // ============================================
+    // ICONS
+    // ============================================
     const Icons = {
-      LayoutDashboard: () => (
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/>
+      Logo: () => (
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+          <rect width="28" height="28" rx="8" fill="url(#logoGrad)"/>
+          <path d="M8 10h12M8 14h8M8 18h10" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+          <defs>
+            <linearGradient id="logoGrad" x1="0" y1="0" x2="28" y2="28">
+              <stop stopColor="#d946ef"/>
+              <stop offset="1" stopColor="#8b5cf6"/>
+            </linearGradient>
+          </defs>
         </svg>
       ),
       FileText: () => (
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/>
         </svg>
       ),
       Calculator: () => (
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M16 10h.01M12 10h.01M8 10h.01M12 14h.01M8 14h.01M12 18h.01M8 18h.01"/>
+        </svg>
+      ),
+      Calendar: () => (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/>
         </svg>
       ),
       TrendingUp: () => (
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>
         </svg>
       ),
       Search: () => (
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
         </svg>
       ),
       Plus: () => (
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M5 12h14"/><path d="M12 5v14"/>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M5 12h14M12 5v14"/>
         </svg>
       ),
       Trash2: () => (
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
         </svg>
       ),
       Lock: () => (
-        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
         </svg>
       ),
       AlertTriangle: () => (
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/>
         </svg>
       ),
       X: () => (
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M18 6 6 18M6 6l12 12"/>
         </svg>
       ),
       Check: () => (
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           <polyline points="20 6 9 17 4 12"/>
         </svg>
       ),
+      CheckCircle: () => (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>
+        </svg>
+      ),
       Building2: () => (
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/>
         </svg>
       ),
       Users: () => (
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
         </svg>
       ),
       DollarSign: () => (
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <line x1="12" x2="12" y1="2" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
         </svg>
       ),
-      Clock: () => (
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-        </svg>
-      ),
       Target: () => (
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>
         </svg>
       ),
-      Calendar: () => (
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/>
+      Sparkles: () => (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
         </svg>
       ),
-      ChevronDown: () => (
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="m6 9 6 6 6-6"/>
+      Zap: () => (
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+        </svg>
+      ),
+      ArrowRight: () => (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      ),
+      Globe: () => (
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        </svg>
+      ),
+      ChevronRight: () => (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="m9 18 6-6-6-6"/>
+        </svg>
+      ),
+      Command: () => (
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M18 3a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3H6a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3V6a3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3h12a3 3 0 0 0 3-3 3 3 0 0 0-3-3z"/>
+        </svg>
+      ),
+      Loader: () => (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="animate-spin">
+          <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+        </svg>
+      ),
+      RefreshCw: () => (
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>
         </svg>
       ),
     };
 
-    // Rate card lookup
+    // ============================================
+    // CONSTANTS
+    // ============================================
     const RATE_CARD = {
       Partner: 450,
       "Senior Manager": 350,
@@ -133,10 +265,14 @@
       "Senior Associate": 250,
       Associate: 175,
     };
-
     const LEVELS = Object.keys(RATE_CARD);
+    const REGIONS = ["Northeast", "Southeast", "Midwest", "West", "International"];
+    const LINE_OF_SERVICE = ["Tax", "Audit", "Advisory", "Consulting"];
+    const TARGET_MARGIN = 42;
 
-    // Format currency
+    // ============================================
+    // UTILITIES
+    // ============================================
     const formatCurrency = (amount) => {
       return new Intl.NumberFormat("en-US", {
         style: "currency",
@@ -146,25 +282,181 @@
       }).format(amount);
     };
 
-    // Format percentage
-    const formatPercent = (value) => {
-      return `${value.toFixed(1)}%`;
+    const formatPercent = (value) => `${value.toFixed(1)}%`;
+
+    const getWeekDates = (startOffset = 0) => {
+      const today = new Date();
+      const weeks = [];
+      for (let i = 0; i < 4; i++) {
+        const weekStart = new Date(today);
+        weekStart.setDate(today.getDate() + (i + startOffset) * 7);
+        const month = weekStart.toLocaleString('default', { month: 'short' });
+        const day = weekStart.getDate();
+        weeks.push(`${month} ${day}`);
+      }
+      return weeks;
     };
 
+    // ============================================
+    // COMPONENTS: Toast Notification
+    // ============================================
+    function Toast({ message, type = "success", onClose }) {
+      useEffect(() => {
+        const timer = setTimeout(onClose, 3000);
+        return () => clearTimeout(timer);
+      }, [onClose]);
+
+      const colors = {
+        success: "bg-emerald-500/20 border-emerald-500/30 text-emerald-300",
+        warning: "bg-amber-500/20 border-amber-500/30 text-amber-300",
+        info: "bg-brand-500/20 border-brand-500/30 text-brand-300",
+      };
+
+      return (
+        <div className={`fixed bottom-6 right-6 z-50 toast-enter ${colors[type]} border rounded-lg px-4 py-3 flex items-center gap-3 shadow-xl`}>
+          {type === "success" && <Icons.CheckCircle />}
+          {type === "warning" && <Icons.AlertTriangle />}
+          {type === "info" && <Icons.Sparkles />}
+          <span className="text-sm font-medium">{message}</span>
+        </div>
+      );
+    }
+
+    // ============================================
+    // COMPONENTS: Step Progress
+    // ============================================
+    function StepProgress({ steps, currentStep, onStepClick, completedSteps }) {
+      return (
+        <div className="flex items-center gap-1">
+          {steps.map((step, idx) => {
+            const isActive = currentStep === step.id;
+            const isCompleted = completedSteps.includes(step.id);
+            const isClickable = isCompleted || idx === 0 || completedSteps.includes(steps[idx - 1]?.id);
+
+            return (
+              <React.Fragment key={step.id}>
+                <button
+                  onClick={() => isClickable && onStepClick(step.id)}
+                  disabled={!isClickable}
+                  className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all ${
+                    isActive
+                      ? "bg-brand-500/20 text-brand-300 ring-1 ring-brand-500/50"
+                      : isCompleted
+                      ? "bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20"
+                      : isClickable
+                      ? "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"
+                      : "text-slate-600 cursor-not-allowed"
+                  }`}
+                >
+                  <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                    isActive
+                      ? "bg-brand-500 text-white"
+                      : isCompleted
+                      ? "bg-emerald-500 text-white"
+                      : "bg-slate-700 text-slate-400"
+                  }`}>
+                    {isCompleted ? <Icons.Check /> : idx + 1}
+                  </span>
+                  <span className="text-sm font-medium hidden lg:block">{step.label}</span>
+                </button>
+                {idx < steps.length - 1 && (
+                  <div className={`w-8 h-0.5 ${isCompleted ? "bg-emerald-500/50" : "bg-slate-700"}`} />
+                )}
+              </React.Fragment>
+            );
+          })}
+        </div>
+      );
+    }
+
+    // ============================================
+    // COMPONENTS: Metric Card
+    // ============================================
+    function MetricCard({ icon, label, value, subtext, variant = "default", size = "normal", action, actionLabel, pulse }) {
+      const variants = {
+        default: "bg-slate-800/50 border-slate-700/50",
+        success: "bg-emerald-500/10 border-emerald-500/30",
+        danger: "bg-red-500/10 border-red-500/30",
+        brand: "bg-brand-500/10 border-brand-500/30",
+        highlight: "bg-gradient-to-br from-brand-500/20 to-violet-500/20 border-brand-500/30",
+      };
+
+      const textColors = {
+        default: "text-slate-100",
+        success: "text-emerald-400",
+        danger: "text-red-400",
+        brand: "text-brand-400",
+        highlight: "text-white",
+      };
+
+      return (
+        <div className={`rounded-xl border p-4 ${variants[variant]} ${pulse ? "animate-pulse-once" : ""}`}>
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <span className={textColors[variant]}>{icon}</span>
+              <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">{label}</span>
+            </div>
+            {action && (
+              <button
+                onClick={action}
+                className="text-xs text-brand-400 hover:text-brand-300 font-medium flex items-center gap-1"
+              >
+                {actionLabel} <Icons.ArrowRight />
+              </button>
+            )}
+          </div>
+          <div className={`${size === "large" ? "text-4xl" : "text-2xl"} font-bold ${textColors[variant]}`}>
+            {value}
+          </div>
+          {subtext && <div className="text-xs text-slate-500 mt-1">{subtext}</div>}
+        </div>
+      );
+    }
+
+    // ============================================
+    // COMPONENTS: Empty State
+    // ============================================
+    function EmptyState({ icon, title, description, action, actionLabel }) {
+      return (
+        <div className="flex flex-col items-center justify-center py-16 px-8 text-center">
+          <div className="w-16 h-16 rounded-2xl bg-slate-800/50 flex items-center justify-center mb-4 text-slate-500">
+            {icon}
+          </div>
+          <h3 className="text-lg font-semibold text-slate-200 mb-2">{title}</h3>
+          <p className="text-sm text-slate-400 max-w-md mb-6">{description}</p>
+          {action && (
+            <button
+              onClick={action}
+              className="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white rounded-lg text-sm font-medium flex items-center gap-2 transition-colors"
+            >
+              {actionLabel} <Icons.ArrowRight />
+            </button>
+          )}
+        </div>
+      );
+    }
+
+    // ============================================
+    // COMPONENTS: Loading Skeleton
+    // ============================================
+    function Skeleton({ className }) {
+      return <div className={`animate-pulse bg-slate-700/50 rounded ${className}`} />;
+    }
+
+    // ============================================
+    // MAIN APP
+    // ============================================
     function FlexForecastApp() {
-      // ============================================
-      // CENTRALIZED STATE
-      // ============================================
+      // Navigation State
       const [activeView, setActiveView] = useState("initiation");
+      const [completedSteps, setCompletedSteps] = useState([]);
+      const [toast, setToast] = useState(null);
 
       // View 1 - Engagement Initiation State
       const [opportunityId, setOpportunityId] = useState("");
+      const [isSearching, setIsSearching] = useState(false);
       const [dealLoaded, setDealLoaded] = useState(false);
-      const [dealDetails, setDealDetails] = useState({
-        client: "",
-        product: "",
-        stage: "",
-      });
+      const [dealDetails, setDealDetails] = useState({ client: "", product: "", stage: "" });
       const [interTerritory, setInterTerritory] = useState(false);
       const [approver, setApprover] = useState("");
       const [workLocation, setWorkLocation] = useState("US");
@@ -173,27 +465,18 @@
       // View 2 - Budgeting State
       const [pricingStructure, setPricingStructure] = useState("Fixed Fee");
       const [useRateCard, setUseRateCard] = useState(false);
-      const [targetFee, setTargetFee] = useState(125000);
-      const [staffing, setStaffing] = useState([
-        { id: 1, name: "J. Smith", level: "Partner", rate: 450, hours: 40, region: "Northeast", los: "Tax" },
-        { id: 2, name: "A. Lee", level: "Senior Associate", rate: 250, hours: 120, region: "Northeast", los: "Tax" },
-      ]);
-      const [nextStaffId, setNextStaffId] = useState(3);
-
-      // Region and Line of Service options
-      const REGIONS = ["Northeast", "Southeast", "Midwest", "West", "International"];
-      const LINE_OF_SERVICE = ["Tax", "Audit", "Advisory", "Consulting"];
+      const [targetFee, setTargetFee] = useState(0);
+      const [staffing, setStaffing] = useState([]);
+      const [nextStaffId, setNextStaffId] = useState(1);
+      const [newRowId, setNewRowId] = useState(null);
 
       // View 2.5 - Scheduling State
-      const [scheduleData, setScheduleData] = useState([
-        { id: 1, name: "J. Smith", level: "Partner", totalHours: 40, spreadType: "even", weeks: [10, 10, 10, 10] },
-        { id: 2, name: "A. Lee", level: "Senior Associate", totalHours: 120, spreadType: "frontLoaded", weeks: [40, 35, 25, 20] },
-      ]);
+      const [scheduleData, setScheduleData] = useState([]);
       const SPREAD_TYPES = [
-        { id: "even", label: "Even", description: "Distribute hours evenly" },
-        { id: "frontLoaded", label: "Front Loaded", description: "80% in first half" },
-        { id: "backLoaded", label: "Back Loaded", description: "80% in second half" },
-        { id: "custom", label: "Custom", description: "Manual weekly entry" },
+        { id: "even", label: "Even", icon: "═" },
+        { id: "frontLoaded", label: "Front Loaded", icon: "▓░" },
+        { id: "backLoaded", label: "Back Loaded", icon: "░▓" },
+        { id: "custom", label: "Custom", icon: "✎" },
       ];
 
       // View 3 - Forecasting State
@@ -207,213 +490,222 @@
 
       const etcInputRef = useRef(null);
 
-      // ============================================
-      // DERIVED CALCULATIONS
-      // ============================================
-
-      // View 2 Calculations
+      // Derived Calculations
       const totalBudgetCost = staffing.reduce((sum, s) => sum + s.rate * s.hours, 0);
       const totalBudgetHours = staffing.reduce((sum, s) => sum + s.hours, 0);
+      const recommendedFee = Math.ceil(totalBudgetCost / (1 - TARGET_MARGIN / 100));
       const projectedMargin = targetFee > 0 ? ((targetFee - totalBudgetCost) / targetFee) * 100 : 0;
-      const marginIsHealthy = projectedMargin >= 40;
+      const marginIsHealthy = projectedMargin >= TARGET_MARGIN;
 
-      // View 3 Calculations
       const totalActualCost = actuals.reduce((sum, a) => sum + a.rate * a.actualHours, 0);
       const totalActualHours = actuals.reduce((sum, a) => sum + a.actualHours, 0);
       const totalProjectedCost = actuals.reduce((sum, a) => sum + a.rate * (a.actualHours + a.etcHours), 0);
       const totalProjectedHours = actuals.reduce((sum, a) => sum + a.actualHours + a.etcHours, 0);
       const projectedProfit = targetFee - totalProjectedCost;
       const profitIsPositive = projectedProfit >= 0;
-
-      // Sync budget hours from View 2 to View 3
-      useEffect(() => {
-        setActuals((prev) =>
-          prev.map((a) => {
-            const budgetRow = staffing.find((s) => s.id === a.id);
-            if (budgetRow) {
-              return { ...a, budgetHours: budgetRow.hours, rate: budgetRow.rate };
-            }
-            return a;
-          })
-        );
-      }, [staffing]);
-
-      // Unbudgeted resources
       const unbudgetedResources = actuals.filter((a) => a.budgetHours === 0 && a.actualHours > 0);
 
-      // ============================================
-      // HANDLERS
-      // ============================================
-
-      // Opportunity lookup with debounce simulation
+      // Sync budget to schedule
       useEffect(() => {
-        if (opportunityId.toUpperCase() === "OPP-1024") {
-          const timer = setTimeout(() => {
-            setDealLoaded(true);
-            setDealDetails({
-              client: "Acme Corp",
-              product: "Tax Compliance",
-              stage: "Interact",
-            });
-          }, 500);
-          return () => clearTimeout(timer);
-        } else {
-          setDealLoaded(false);
-          setDealDetails({ client: "", product: "", stage: "" });
+        if (staffing.length > 0) {
+          setScheduleData(staffing.map(s => ({
+            id: s.id,
+            name: s.name,
+            level: s.level,
+            totalHours: s.hours,
+            spreadType: "even",
+            weeks: Array(4).fill(Math.floor(s.hours / 4)),
+          })));
         }
-      }, [opportunityId]);
+      }, [staffing]);
 
-      // Staffing handlers
-      const updateStaffRow = (id, field, value) => {
-        setStaffing((prev) =>
-          prev.map((row) => {
-            if (row.id !== id) return row;
-            const updated = { ...row, [field]: value };
-            // Auto-populate rate when level changes (if rate card is off)
-            if (field === "level" && !useRateCard) {
-              updated.rate = RATE_CARD[value] || 0;
-            }
-            return updated;
-          })
-        );
-      };
-
-      const addStaffRow = () => {
-        setStaffing((prev) => [
-          ...prev,
-          { id: nextStaffId, name: "TBD", level: "Associate", rate: RATE_CARD["Associate"], hours: 0, region: "Northeast", los: "Tax" },
-        ]);
-        setNextStaffId((prev) => prev + 1);
-      };
-
-      const deleteStaffRow = (id) => {
-        setStaffing((prev) => prev.filter((row) => row.id !== id));
-      };
-
-      // Rate card toggle handler
-      const handleRateCardToggle = () => {
-        if (!useRateCard) {
-          // Turning ON - reset rates to defaults
-          setStaffing((prev) =>
-            prev.map((row) => ({
-              ...row,
-              rate: RATE_CARD[row.level] || 0,
-            }))
-          );
-        }
-        setUseRateCard(!useRateCard);
-      };
-
-      // Schedule handlers
-      const updateScheduleSpread = (id, spreadType) => {
-        setScheduleData((prev) =>
-          prev.map((row) => {
-            if (row.id !== id) return row;
-            const total = row.totalHours;
-            let weeks;
-            switch (spreadType) {
-              case "frontLoaded":
-                weeks = [Math.round(total * 0.4), Math.round(total * 0.3), Math.round(total * 0.2), Math.round(total * 0.1)];
-                break;
-              case "backLoaded":
-                weeks = [Math.round(total * 0.1), Math.round(total * 0.2), Math.round(total * 0.3), Math.round(total * 0.4)];
-                break;
-              case "even":
-              default:
-                const perWeek = Math.floor(total / 4);
-                weeks = [perWeek, perWeek, perWeek, total - 3 * perWeek];
-                break;
-            }
-            return { ...row, spreadType, weeks };
-          })
-        );
-      };
-
-      const updateWeekHours = (id, weekIndex, value) => {
-        setScheduleData((prev) =>
-          prev.map((row) => {
-            if (row.id !== id) return row;
-            const newWeeks = [...row.weeks];
-            newWeeks[weekIndex] = parseInt(value) || 0;
-            return { ...row, weeks: newWeeks, spreadType: "custom" };
-          })
-        );
-      };
-
-      // ETC handlers
-      const updateEtc = (id, value) => {
-        const numValue = parseInt(value) || 0;
-        setActuals((prev) =>
-          prev.map((a) => (a.id === id ? { ...a, etcHours: numValue } : a))
-        );
-        // Auto-dismiss alert if unbudgeted resource gets ETC assigned
-        const resource = actuals.find((a) => a.id === id);
-        if (resource && resource.budgetHours === 0 && numValue > 0) {
-          setAlertVisible(false);
-          setHighlightedResource(null);
-        }
-      };
-
-      const handleAssignEtc = () => {
-        const unbudgeted = actuals.find((a) => a.budgetHours === 0 && a.actualHours > 0);
-        if (unbudgeted) {
-          setHighlightedResource(unbudgeted.id);
-          // Focus the input after a brief delay for render
-          setTimeout(() => {
-            if (etcInputRef.current) {
-              etcInputRef.current.focus();
-            }
-          }, 100);
-        }
-      };
-
-      const handleDismissAlert = () => {
-        setAlertVisible(false);
-        setHighlightedResource(null);
-      };
-
-      // ============================================
-      // NAVIGATION ITEMS
-      // ============================================
-      const navItems = [
+      // Navigation steps
+      const steps = [
         { id: "initiation", label: "Code Create", icon: Icons.FileText },
         { id: "budgeting", label: "Flex Plan", icon: Icons.Calculator },
         { id: "scheduling", label: "Schedule", icon: Icons.Calendar },
         { id: "forecasting", label: "Forecasting", icon: Icons.TrendingUp },
       ];
 
-      // ============================================
-      // RENDER
-      // ============================================
+      // Opportunity lookup
+      useEffect(() => {
+        if (opportunityId.length >= 3) {
+          setIsSearching(true);
+          const timer = setTimeout(() => {
+            if (opportunityId.toUpperCase() === "OPP-1024") {
+              setDealLoaded(true);
+              setDealDetails({ client: "Acme Corp", product: "Tax Compliance", stage: "Interact" });
+              setToast({ message: "Opportunity loaded successfully", type: "success" });
+            } else {
+              setDealLoaded(false);
+              setDealDetails({ client: "", product: "", stage: "" });
+            }
+            setIsSearching(false);
+          }, 800);
+          return () => clearTimeout(timer);
+        } else {
+          setDealLoaded(false);
+          setIsSearching(false);
+        }
+      }, [opportunityId]);
+
+      // Mark step complete when conditions met
+      useEffect(() => {
+        if (dealLoaded && riskApproved && !completedSteps.includes("initiation")) {
+          setCompletedSteps(prev => [...prev, "initiation"]);
+        }
+      }, [dealLoaded, riskApproved]);
+
+      useEffect(() => {
+        if (staffing.length > 0 && targetFee > 0 && !completedSteps.includes("budgeting")) {
+          setCompletedSteps(prev => [...prev, "budgeting"]);
+        }
+      }, [staffing, targetFee]);
+
+      // Handlers
+      const updateStaffRow = (id, field, value) => {
+        setStaffing(prev => prev.map(row => {
+          if (row.id !== id) return row;
+          const updated = { ...row, [field]: value };
+          if (field === "level" && !useRateCard) {
+            updated.rate = RATE_CARD[value] || 0;
+          }
+          return updated;
+        }));
+      };
+
+      const addStaffRow = () => {
+        const newId = nextStaffId;
+        setStaffing(prev => [
+          ...prev,
+          { id: newId, name: "TBD", level: "Associate", rate: RATE_CARD["Associate"], hours: 0, region: "Northeast", los: "Tax" },
+        ]);
+        setNextStaffId(prev => prev + 1);
+        setNewRowId(newId);
+        setTimeout(() => setNewRowId(null), 1000);
+      };
+
+      const deleteStaffRow = (id) => {
+        setStaffing(prev => prev.filter(row => row.id !== id));
+      };
+
+      const handleRateCardToggle = () => {
+        if (!useRateCard) {
+          setStaffing(prev => prev.map(row => ({ ...row, rate: RATE_CARD[row.level] || 0 })));
+        }
+        setUseRateCard(!useRateCard);
+      };
+
+      const applyRecommendedFee = () => {
+        setTargetFee(recommendedFee);
+        setToast({ message: `Target fee set to ${formatCurrency(recommendedFee)}`, type: "success" });
+      };
+
+      const updateScheduleSpread = (id, spreadType) => {
+        setScheduleData(prev => prev.map(row => {
+          if (row.id !== id) return row;
+          const total = row.totalHours;
+          let weeks;
+          switch (spreadType) {
+            case "frontLoaded":
+              weeks = [Math.round(total * 0.4), Math.round(total * 0.3), Math.round(total * 0.2), Math.round(total * 0.1)];
+              break;
+            case "backLoaded":
+              weeks = [Math.round(total * 0.1), Math.round(total * 0.2), Math.round(total * 0.3), Math.round(total * 0.4)];
+              break;
+            default:
+              const perWeek = Math.floor(total / 4);
+              weeks = [perWeek, perWeek, perWeek, total - 3 * perWeek];
+          }
+          return { ...row, spreadType, weeks };
+        }));
+      };
+
+      const updateWeekHours = (id, weekIndex, value) => {
+        setScheduleData(prev => prev.map(row => {
+          if (row.id !== id) return row;
+          const newWeeks = [...row.weeks];
+          newWeeks[weekIndex] = parseInt(value) || 0;
+          return { ...row, weeks: newWeeks, spreadType: "custom" };
+        }));
+      };
+
+      const updateEtc = (id, value) => {
+        const numValue = parseInt(value) || 0;
+        setActuals(prev => prev.map(a => (a.id === id ? { ...a, etcHours: numValue } : a)));
+        const resource = actuals.find(a => a.id === id);
+        if (resource?.budgetHours === 0 && numValue >= 0) {
+          setAlertVisible(false);
+          setHighlightedResource(null);
+        }
+      };
+
+      const handleAssignEtc = () => {
+        const unbudgeted = actuals.find(a => a.budgetHours === 0 && a.actualHours > 0);
+        if (unbudgeted) {
+          setHighlightedResource(unbudgeted.id);
+          setTimeout(() => etcInputRef.current?.focus(), 100);
+        }
+      };
+
+      // Keyboard shortcuts
+      useEffect(() => {
+        const handleKeyDown = (e) => {
+          if (e.metaKey || e.ctrlKey) {
+            if (e.key === "1") { e.preventDefault(); setActiveView("initiation"); }
+            if (e.key === "2") { e.preventDefault(); setActiveView("budgeting"); }
+            if (e.key === "3") { e.preventDefault(); setActiveView("scheduling"); }
+            if (e.key === "4") { e.preventDefault(); setActiveView("forecasting"); }
+            if (e.key === "n" && activeView === "budgeting") { e.preventDefault(); addStaffRow(); }
+          }
+        };
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
+      }, [activeView]);
+
       return (
-        <div className="flex h-screen bg-slate-900 text-slate-100 text-sm">
+        <div className="flex h-screen bg-slate-950 text-slate-100 text-sm overflow-hidden">
           {/* Sidebar */}
-          <aside className="w-56 bg-slate-950 border-r border-slate-800 flex flex-col">
-            {/* Logo/Brand */}
-            <div className="p-4 border-b border-slate-800">
-              <div className="flex items-center gap-2">
-                <span className="text-blue-500"><Icons.LayoutDashboard /></span>
-                <span className="font-semibold text-slate-100">Practice Mgmt</span>
+          <aside className="w-64 bg-slate-900/50 border-r border-slate-800/50 flex flex-col">
+            {/* Logo */}
+            <div className="p-5 border-b border-slate-800/50">
+              <div className="flex items-center gap-3">
+                <Icons.Logo />
+                <div>
+                  <div className="font-bold text-lg gradient-text">Flex Forecast</div>
+                  <div className="text-[10px] text-slate-500 uppercase tracking-widest">by PwC</div>
+                </div>
               </div>
             </div>
 
             {/* Navigation */}
-            <nav className="flex-1 p-2">
-              {navItems.map((item) => {
+            <nav className="flex-1 p-3 space-y-1">
+              {steps.map((item, idx) => {
                 const Icon = item.icon;
                 const isActive = activeView === item.id;
+                const isCompleted = completedSteps.includes(item.id);
                 return (
                   <button
                     key={item.id}
                     onClick={() => setActiveView(item.id)}
-                    className={`w-full flex items-center gap-2 px-3 py-2 rounded-md text-left transition-colors ${
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all group ${
                       isActive
-                        ? "bg-slate-800 text-slate-100"
+                        ? "bg-brand-500/20 text-brand-300 shadow-lg shadow-brand-500/10"
                         : "text-slate-400 hover:bg-slate-800/50 hover:text-slate-200"
                     }`}
                   >
-                    <Icon />
-                    <span>{item.label}</span>
+                    <span className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                      isActive ? "bg-brand-500 text-white" : isCompleted ? "bg-emerald-500/20 text-emerald-400" : "bg-slate-800 text-slate-500"
+                    }`}>
+                      {isCompleted && !isActive ? <Icons.Check /> : <Icon />}
+                    </span>
+                    <div className="flex-1">
+                      <span className="font-medium">{item.label}</span>
+                      <div className="text-[10px] text-slate-500 flex items-center gap-1">
+                        <Icons.Command /> + {idx + 1}
+                      </div>
+                    </div>
+                    {isActive && <Icons.ChevronRight />}
                   </button>
                 );
               })}
@@ -421,41 +713,65 @@
 
             {/* Context Footer */}
             {dealLoaded && (
-              <div className="p-3 border-t border-slate-800 bg-slate-900/50">
-                <div className="text-xs text-slate-500 mb-1">Active Engagement</div>
-                <div className="text-sm font-medium text-slate-200">{dealDetails.client}</div>
+              <div className="p-4 border-t border-slate-800/50 bg-slate-900/30">
+                <div className="text-[10px] text-slate-500 uppercase tracking-wider mb-2">Active Engagement</div>
+                <div className="text-sm font-semibold text-slate-200">{dealDetails.client}</div>
                 <div className="text-xs text-slate-400">{dealDetails.product}</div>
+                <div className="mt-3 flex items-center gap-2">
+                  <span className="px-2 py-1 bg-emerald-500/20 text-emerald-400 rounded text-[10px] font-medium">
+                    {dealDetails.stage}
+                  </span>
+                  {riskApproved && (
+                    <span className="px-2 py-1 bg-blue-500/20 text-blue-400 rounded text-[10px] font-medium">
+                      Risk ✓
+                    </span>
+                  )}
+                </div>
               </div>
             )}
+
+            {/* Keyboard hint */}
+            <div className="p-4 border-t border-slate-800/50">
+              <div className="text-[10px] text-slate-600 flex items-center gap-2">
+                <span className="px-1.5 py-0.5 bg-slate-800 rounded text-slate-400">⌘K</span>
+                <span>Command palette</span>
+              </div>
+            </div>
           </aside>
 
           {/* Main Content */}
-          <main className="flex-1 overflow-auto">
+          <main className="flex-1 flex flex-col overflow-hidden">
             {/* Header */}
-            <header className="sticky top-0 z-10 bg-slate-900/95 backdrop-blur border-b border-slate-800 px-6 py-3">
+            <header className="glass border-b border-slate-800/50 px-6 py-4">
               <div className="flex items-center justify-between">
-                <div>
-                  <h1 className="text-lg font-semibold text-slate-100">
-                    {navItems.find((n) => n.id === activeView)?.label}
-                  </h1>
-                  {dealLoaded && (
-                    <p className="text-xs text-slate-400">
-                      {dealDetails.client} • {dealDetails.product}
-                    </p>
-                  )}
+                <div className="flex items-center gap-6">
+                  <div>
+                    <h1 className="text-xl font-bold text-slate-100">
+                      {steps.find(n => n.id === activeView)?.label}
+                    </h1>
+                    {dealLoaded && (
+                      <p className="text-xs text-slate-500 mt-0.5">
+                        {dealDetails.client} • {dealDetails.product}
+                      </p>
+                    )}
+                  </div>
                 </div>
-                <div className="flex items-center gap-2 text-xs text-slate-400">
-                  <span className="px-2 py-1 bg-slate-800 rounded">Target: 42%</span>
-                </div>
+                <StepProgress
+                  steps={steps}
+                  currentStep={activeView}
+                  onStepClick={setActiveView}
+                  completedSteps={completedSteps}
+                />
               </div>
             </header>
 
             {/* View Content */}
-            <div className="p-6">
+            <div className="flex-1 overflow-auto p-6">
               {activeView === "initiation" && (
                 <ViewInitiation
                   opportunityId={opportunityId}
                   setOpportunityId={setOpportunityId}
+                  isSearching={isSearching}
                   dealLoaded={dealLoaded}
                   dealDetails={dealDetails}
                   interTerritory={interTerritory}
@@ -466,10 +782,15 @@
                   setWorkLocation={setWorkLocation}
                   riskApproved={riskApproved}
                   setRiskApproved={setRiskApproved}
+                  onComplete={() => {
+                    setActiveView("budgeting");
+                    setToast({ message: "SAP codes created successfully!", type: "success" });
+                  }}
                 />
               )}
               {activeView === "budgeting" && (
                 <ViewBudgeting
+                  dealLoaded={dealLoaded}
                   pricingStructure={pricingStructure}
                   setPricingStructure={setPricingStructure}
                   useRateCard={useRateCard}
@@ -482,26 +803,31 @@
                   setTargetFee={setTargetFee}
                   totalBudgetCost={totalBudgetCost}
                   totalBudgetHours={totalBudgetHours}
+                  recommendedFee={recommendedFee}
+                  applyRecommendedFee={applyRecommendedFee}
                   projectedMargin={projectedMargin}
                   marginIsHealthy={marginIsHealthy}
-                  regions={REGIONS}
-                  lineOfServiceOptions={LINE_OF_SERVICE}
+                  newRowId={newRowId}
+                  onNavigateToInitiation={() => setActiveView("initiation")}
                 />
               )}
               {activeView === "scheduling" && (
                 <ViewScheduling
+                  dealLoaded={dealLoaded}
                   scheduleData={scheduleData}
                   spreadTypes={SPREAD_TYPES}
                   updateScheduleSpread={updateScheduleSpread}
                   updateWeekHours={updateWeekHours}
+                  setToast={setToast}
+                  onNavigateToBudgeting={() => setActiveView("budgeting")}
                 />
               )}
               {activeView === "forecasting" && (
                 <ViewForecasting
                   alertVisible={alertVisible}
+                  setAlertVisible={setAlertVisible}
                   unbudgetedResources={unbudgetedResources}
                   handleAssignEtc={handleAssignEtc}
-                  handleDismissAlert={handleDismissAlert}
                   highlightedResource={highlightedResource}
                   actuals={actuals}
                   updateEtc={updateEtc}
@@ -519,6 +845,9 @@
               )}
             </div>
           </main>
+
+          {/* Toast */}
+          {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
         </div>
       );
     }
@@ -527,72 +856,86 @@
     // VIEW 1: ENGAGEMENT INITIATION
     // ============================================
     function ViewInitiation({
-      opportunityId,
-      setOpportunityId,
-      dealLoaded,
-      dealDetails,
-      interTerritory,
-      setInterTerritory,
-      approver,
-      setApprover,
-      workLocation,
-      setWorkLocation,
-      riskApproved,
-      setRiskApproved,
+      opportunityId, setOpportunityId, isSearching, dealLoaded, dealDetails,
+      interTerritory, setInterTerritory, approver, setApprover,
+      workLocation, setWorkLocation, riskApproved, setRiskApproved, onComplete,
     }) {
       const sapCodes = [
-        { type: "Master Contract", count: 1, status: "Required" },
-        { type: "WBS Element", count: 2, status: "Required" },
-        { type: "Cost Center Link", count: 1, status: interTerritory ? "Required" : "Optional" },
-      ];
+        { type: "Master Contract", code: "MC-2024-001", status: "ready" },
+        { type: "WBS Element - Labor", code: "WBS-L-001", status: "ready" },
+        { type: "WBS Element - Expenses", code: "WBS-E-001", status: "ready" },
+        { type: "Cost Center Link", code: interTerritory ? "CC-INT-001" : null, status: interTerritory ? "ready" : "optional" },
+      ].filter(c => c.code || c.status === "optional");
+
+      const canProceed = dealLoaded && riskApproved;
 
       return (
-        <div className="max-w-3xl space-y-6">
+        <div className="max-w-4xl mx-auto space-y-6 animate-fade-in">
           {/* Salesforce Lookup */}
-          <section className="bg-slate-800 rounded-lg border border-slate-700">
-            <div className="px-4 py-3 border-b border-slate-700">
-              <h2 className="text-sm font-medium text-slate-200">Salesforce Lookup</h2>
+          <section className="bg-slate-800/30 rounded-2xl border border-slate-700/50 overflow-hidden">
+            <div className="px-6 py-4 border-b border-slate-700/50 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400">
+                  <Icons.Search />
+                </div>
+                <div>
+                  <h2 className="font-semibold text-slate-200">Salesforce Lookup</h2>
+                  <p className="text-xs text-slate-500">Enter opportunity ID to auto-populate details</p>
+                </div>
+              </div>
+              {dealLoaded && (
+                <span className="flex items-center gap-2 text-emerald-400 text-sm font-medium animate-fade-in">
+                  <Icons.CheckCircle /> Connected
+                </span>
+              )}
             </div>
-            <div className="p-4">
+            <div className="p-6">
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"><Icons.Search /></span>
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">
+                  {isSearching ? <Icons.Loader /> : <Icons.Search />}
+                </span>
                 <input
                   type="text"
                   value={opportunityId}
                   onChange={(e) => setOpportunityId(e.target.value)}
-                  placeholder="Enter Opportunity ID (e.g., OPP-1024)"
-                  className="w-full pl-10 pr-4 py-2 bg-slate-900 border border-slate-600 rounded-md text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Enter Opportunity ID (try OPP-1024)"
+                  className="w-full pl-12 pr-4 py-4 bg-slate-900/50 border border-slate-700 rounded-xl text-base text-slate-100 placeholder-slate-500 focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500"
                 />
               </div>
-              {opportunityId && !dealLoaded && (
-                <p className="mt-2 text-xs text-slate-500">Searching...</p>
+              {opportunityId && !dealLoaded && !isSearching && (
+                <p className="mt-3 text-sm text-slate-500">No opportunity found. Try "OPP-1024"</p>
               )}
             </div>
           </section>
 
-          {/* Deal Details Card */}
+          {/* Deal Details */}
           {dealLoaded && (
-            <section className="bg-slate-800 rounded-lg border border-slate-700">
-              <div className="px-4 py-3 border-b border-slate-700 flex items-center gap-2">
-                <span className="text-emerald-500"><Icons.Check /></span>
-                <h2 className="text-sm font-medium text-slate-200">Deal Details</h2>
-              </div>
-              <div className="p-4 grid grid-cols-3 gap-4">
+            <section className="bg-slate-800/30 rounded-2xl border border-emerald-500/30 overflow-hidden animate-slide-up">
+              <div className="px-6 py-4 border-b border-slate-700/50 flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400">
+                  <Icons.CheckCircle />
+                </div>
                 <div>
-                  <div className="text-xs text-slate-500 mb-1">Client</div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-slate-400"><Icons.Building2 /></span>
-                    <span className="text-slate-100">{dealDetails.client}</span>
+                  <h2 className="font-semibold text-slate-200">Deal Details</h2>
+                  <p className="text-xs text-slate-500">Retrieved from Salesforce</p>
+                </div>
+              </div>
+              <div className="p-6 grid grid-cols-3 gap-6">
+                <div className="space-y-1">
+                  <div className="text-xs text-slate-500 uppercase tracking-wider">Client</div>
+                  <div className="flex items-center gap-2 text-lg font-semibold text-slate-100">
+                    <Icons.Building2 />
+                    {dealDetails.client}
                   </div>
                 </div>
-                <div>
-                  <div className="text-xs text-slate-500 mb-1">Product</div>
-                  <div className="text-slate-100">{dealDetails.product}</div>
+                <div className="space-y-1">
+                  <div className="text-xs text-slate-500 uppercase tracking-wider">Product</div>
+                  <div className="text-lg font-semibold text-slate-100">{dealDetails.product}</div>
                 </div>
-                <div>
-                  <div className="text-xs text-slate-500 mb-1">Stage</div>
-                  <span className="px-2 py-0.5 bg-blue-500/20 text-blue-400 rounded text-xs">
-                    {dealDetails.stage}
+                <div className="space-y-1">
+                  <div className="text-xs text-slate-500 uppercase tracking-wider">Stage</div>
+                  <span className="inline-flex items-center gap-1 px-3 py-1 bg-emerald-500/20 text-emerald-400 rounded-lg text-sm font-medium">
+                    <Icons.CheckCircle /> {dealDetails.stage}
                   </span>
                 </div>
               </div>
@@ -600,32 +943,35 @@
           )}
 
           {/* Smart Questionnaire */}
-          <section className="bg-slate-800 rounded-lg border border-slate-700">
-            <div className="px-4 py-3 border-b border-slate-700">
-              <h2 className="text-sm font-medium text-slate-200">Smart Questionnaire</h2>
+          <section className="bg-slate-800/30 rounded-2xl border border-slate-700/50 overflow-hidden">
+            <div className="px-6 py-4 border-b border-slate-700/50 flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-brand-500/20 flex items-center justify-center text-brand-400">
+                <Icons.Sparkles />
+              </div>
+              <div>
+                <h2 className="font-semibold text-slate-200">Smart Questionnaire</h2>
+                <p className="text-xs text-slate-500">Configure code requirements</p>
+              </div>
             </div>
-            <div className="p-4 space-y-4">
-              {/* Inter-territory Toggle */}
-              <div className="flex items-center justify-between">
-                <label className="text-sm text-slate-300">Inter-territory?</label>
-                <div className="flex items-center gap-3">
+            <div className="p-6 space-y-6">
+              {/* Inter-territory */}
+              <div className="flex items-center justify-between p-4 bg-slate-900/30 rounded-xl">
+                <div>
+                  <div className="font-medium text-slate-200">Inter-territory work?</div>
+                  <div className="text-xs text-slate-500 mt-0.5">Requires additional approver for cross-territory engagements</div>
+                </div>
+                <div className="flex items-center gap-4">
                   <button
                     onClick={() => setInterTerritory(!interTerritory)}
-                    className={`relative w-10 h-5 rounded-full transition-colors ${
-                      interTerritory ? "bg-blue-500" : "bg-slate-600"
-                    }`}
+                    className={`relative w-12 h-6 rounded-full transition-colors ${interTerritory ? "bg-brand-500" : "bg-slate-600"}`}
                   >
-                    <span
-                      className={`absolute top-0.5 w-4 h-4 bg-white rounded-full transition-transform ${
-                        interTerritory ? "translate-x-5" : "translate-x-0.5"
-                      }`}
-                    />
+                    <span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform shadow-lg ${interTerritory ? "translate-x-7" : "translate-x-1"}`} />
                   </button>
                   {interTerritory && (
                     <select
                       value={approver}
                       onChange={(e) => setApprover(e.target.value)}
-                      className="px-3 py-1.5 bg-slate-900 border border-slate-600 rounded-md text-sm text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      className="px-4 py-2 bg-slate-800 border border-slate-600 rounded-lg text-sm text-slate-100 focus:ring-2 focus:ring-brand-500/50"
                     >
                       <option value="">Select Approver</option>
                       <option value="R. Johnson">R. Johnson (EMEA)</option>
@@ -637,91 +983,98 @@
               </div>
 
               {/* Work Location */}
-              <div className="flex items-center justify-between">
-                <label className="text-sm text-slate-300">Work Location</label>
+              <div className="flex items-center justify-between p-4 bg-slate-900/30 rounded-xl">
+                <div>
+                  <div className="font-medium text-slate-200">Work Location</div>
+                  <div className="text-xs text-slate-500 mt-0.5">Primary jurisdiction for tax purposes</div>
+                </div>
                 <div className="flex items-center gap-3">
                   <select
                     value={workLocation}
                     onChange={(e) => setWorkLocation(e.target.value)}
-                    className="px-3 py-1.5 bg-slate-900 border border-slate-600 rounded-md text-sm text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="px-4 py-2 bg-slate-800 border border-slate-600 rounded-lg text-sm text-slate-100 focus:ring-2 focus:ring-brand-500/50"
                   >
                     <option value="US">United States</option>
                     <option value="UK">United Kingdom</option>
                     <option value="CA">Canada</option>
                   </select>
                   {workLocation !== "US" && (
-                    <span className="flex items-center gap-1 px-2 py-1 bg-purple-500/20 text-purple-400 rounded text-xs">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-                      </svg>
-                      Int'l Tax Required
+                    <span className="flex items-center gap-1.5 px-3 py-2 bg-purple-500/20 text-purple-400 rounded-lg text-xs font-medium animate-fade-in">
+                      <Icons.Globe /> Int'l Tax Required
                     </span>
                   )}
                 </div>
               </div>
 
-              {/* Risk Profile Approval */}
-              <div className="flex items-center justify-between pt-2 border-t border-slate-700">
-                <label className="text-sm text-slate-300">Risk Profile Approved?</label>
-                <label className="flex items-center gap-2 cursor-pointer">
+              {/* Risk Approval */}
+              <div className={`flex items-center justify-between p-4 rounded-xl transition-colors ${riskApproved ? "bg-emerald-500/10 border border-emerald-500/30" : "bg-slate-900/30"}`}>
+                <div>
+                  <div className="font-medium text-slate-200">Risk Profile Approved</div>
+                  <div className="text-xs text-slate-500 mt-0.5">Required before code creation</div>
+                </div>
+                <label className="flex items-center gap-3 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={riskApproved}
                     onChange={(e) => setRiskApproved(e.target.checked)}
-                    className="w-4 h-4 rounded border-slate-600 bg-slate-900 text-blue-500 focus:ring-blue-500 focus:ring-offset-slate-800"
+                    className="w-5 h-5 rounded border-slate-600 bg-slate-800 text-brand-500 focus:ring-brand-500/50"
                   />
-                  <span className="text-xs text-slate-400">Confirmed</span>
+                  <span className={`text-sm font-medium ${riskApproved ? "text-emerald-400" : "text-slate-400"}`}>
+                    {riskApproved ? "Approved" : "Pending"}
+                  </span>
                 </label>
               </div>
             </div>
           </section>
 
-          {/* SAP Codes Table */}
-          <section className="bg-slate-800 rounded-lg border border-slate-700">
-            <div className="px-4 py-3 border-b border-slate-700">
-              <h2 className="text-sm font-medium text-slate-200">Required SAP Codes</h2>
+          {/* SAP Codes Preview */}
+          <section className="bg-slate-800/30 rounded-2xl border border-slate-700/50 overflow-hidden">
+            <div className="px-6 py-4 border-b border-slate-700/50 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-400">
+                  <Icons.FileText />
+                </div>
+                <div>
+                  <h2 className="font-semibold text-slate-200">SAP Codes to Create</h2>
+                  <p className="text-xs text-slate-500">{sapCodes.filter(c => c.status === "ready").length} codes will be generated</p>
+                </div>
+              </div>
             </div>
-            <table className="w-full">
-              <thead>
-                <tr className="text-xs text-slate-400 border-b border-slate-700">
-                  <th className="text-left px-4 py-2 font-medium">Code Type</th>
-                  <th className="text-center px-4 py-2 font-medium">Count</th>
-                  <th className="text-right px-4 py-2 font-medium">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {sapCodes.map((code, idx) => (
-                  <tr key={idx} className="border-b border-slate-700/50 last:border-0">
-                    <td className="px-4 py-2 text-slate-200">{code.type}</td>
-                    <td className="px-4 py-2 text-center text-slate-300">{code.count}</td>
-                    <td className="px-4 py-2 text-right">
-                      <span
-                        className={`px-2 py-0.5 rounded text-xs ${
-                          code.status === "Required"
-                            ? "bg-amber-500/20 text-amber-400"
-                            : "bg-slate-600/50 text-slate-400"
-                        }`}
-                      >
-                        {code.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <div className="divide-y divide-slate-700/50">
+              {sapCodes.map((code, idx) => (
+                <div key={idx} className="px-6 py-4 flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <span className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold ${code.status === "ready" ? "bg-emerald-500/20 text-emerald-400" : "bg-slate-700/50 text-slate-500"}`}>
+                      {code.status === "ready" ? <Icons.Check /> : "—"}
+                    </span>
+                    <div>
+                      <div className="font-medium text-slate-200">{code.type}</div>
+                      {code.code && <div className="text-xs text-slate-500 font-mono">{code.code}</div>}
+                    </div>
+                  </div>
+                  <span className={`px-2 py-1 rounded text-xs font-medium ${code.status === "ready" ? "bg-emerald-500/20 text-emerald-400" : "bg-slate-700/50 text-slate-500"}`}>
+                    {code.status === "ready" ? "Ready" : "Optional"}
+                  </span>
+                </div>
+              ))}
+            </div>
           </section>
 
           {/* Action Button */}
-          <div className="flex justify-end">
+          <div className="flex justify-end gap-4">
             <button
-              disabled={!riskApproved || !dealLoaded}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                riskApproved && dealLoaded
-                  ? "bg-blue-500 text-white hover:bg-blue-600"
-                  : "bg-slate-700 text-slate-500 cursor-not-allowed"
+              onClick={onComplete}
+              disabled={!canProceed}
+              className={`group px-6 py-3 rounded-xl text-sm font-semibold flex items-center gap-2 transition-all ${
+                canProceed
+                  ? "bg-gradient-to-r from-brand-500 to-violet-500 text-white hover:shadow-lg hover:shadow-brand-500/25 hover:-translate-y-0.5"
+                  : "bg-slate-800 text-slate-500 cursor-not-allowed"
               }`}
+              data-tooltip={!canProceed ? "Load opportunity and approve risk profile first" : ""}
             >
+              <Icons.Zap />
               Create SAP Codes
+              <Icons.ArrowRight className="group-hover:translate-x-1 transition-transform" />
             </button>
           </div>
         </div>
@@ -732,293 +1085,258 @@
     // VIEW 2: BUDGETING
     // ============================================
     function ViewBudgeting({
-      pricingStructure,
-      setPricingStructure,
-      useRateCard,
-      handleRateCardToggle,
-      staffing,
-      updateStaffRow,
-      addStaffRow,
-      deleteStaffRow,
-      targetFee,
-      setTargetFee,
-      totalBudgetCost,
-      totalBudgetHours,
-      projectedMargin,
-      marginIsHealthy,
-      regions,
-      lineOfServiceOptions,
+      dealLoaded, pricingStructure, setPricingStructure, useRateCard, handleRateCardToggle,
+      staffing, updateStaffRow, addStaffRow, deleteStaffRow,
+      targetFee, setTargetFee, totalBudgetCost, totalBudgetHours,
+      recommendedFee, applyRecommendedFee, projectedMargin, marginIsHealthy, newRowId,
+      onNavigateToInitiation,
     }) {
       const [hoveredRow, setHoveredRow] = useState(null);
 
+      if (!dealLoaded) {
+        return (
+          <EmptyState
+            icon={<Icons.FileText />}
+            title="No Active Engagement"
+            description="Start by loading an opportunity from Salesforce in the Code Create step."
+            action={onNavigateToInitiation}
+            actionLabel="Go to Code Create"
+          />
+        );
+      }
+
       return (
-        <div className="flex gap-6">
+        <div className="flex gap-6 animate-fade-in">
           {/* Left: Staffing Grid */}
-          <div className="flex-1">
+          <div className="flex-1 space-y-4">
             {/* Controls */}
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
-                  <label className="text-xs text-slate-400">Pricing:</label>
+                  <span className="text-xs text-slate-500">Pricing:</span>
                   <select
                     value={pricingStructure}
                     onChange={(e) => setPricingStructure(e.target.value)}
-                    className="px-3 py-1.5 bg-slate-800 border border-slate-600 rounded-md text-sm text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="px-3 py-2 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-slate-100 focus:ring-2 focus:ring-brand-500/50"
                   >
                     <option>Fixed Fee</option>
                     <option>T&M</option>
                     <option>Capped Fee</option>
                     <option>Contingent</option>
                     <option>Expense Only</option>
-                    <option>Alternative</option>
                   </select>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <label className="text-xs text-slate-400">Use Rate Card</label>
+              <div className="flex items-center gap-3">
+                <span className="text-xs text-slate-500">Lock to Rate Card</span>
                 <button
                   onClick={handleRateCardToggle}
-                  className={`relative w-10 h-5 rounded-full transition-colors ${
-                    useRateCard ? "bg-blue-500" : "bg-slate-600"
-                  }`}
+                  className={`relative w-12 h-6 rounded-full transition-colors ${useRateCard ? "bg-brand-500" : "bg-slate-600"}`}
                 >
-                  <span
-                    className={`absolute top-0.5 w-4 h-4 bg-white rounded-full transition-transform ${
-                      useRateCard ? "translate-x-5" : "translate-x-0.5"
-                    }`}
-                  />
+                  <span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform shadow-lg ${useRateCard ? "translate-x-7" : "translate-x-1"}`} />
                 </button>
               </div>
             </div>
 
-            {/* Staffing Grid */}
-            <div className="bg-slate-800 rounded-lg border border-slate-700 overflow-hidden">
-              <table className="w-full">
-                <thead>
-                  <tr className="text-xs text-slate-400 bg-slate-900/50">
-                    <th className="text-left px-3 py-2 font-medium w-8"></th>
-                    <th className="text-left px-3 py-2 font-medium">Name</th>
-                    <th className="text-left px-3 py-2 font-medium">Level</th>
-                    <th className="text-left px-3 py-2 font-medium">Region</th>
-                    <th className="text-left px-3 py-2 font-medium">LoS</th>
-                    <th className="text-right px-3 py-2 font-medium">Rate</th>
-                    <th className="text-right px-3 py-2 font-medium">Hours</th>
-                    <th className="text-right px-3 py-2 font-medium">Total</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {staffing.map((row) => {
-                    const isTBD = row.name === "TBD" || row.name.startsWith("TBD");
-                    return (
-                    <tr
-                      key={row.id}
-                      onMouseEnter={() => setHoveredRow(row.id)}
-                      onMouseLeave={() => setHoveredRow(null)}
-                      className="border-t border-slate-700/50 hover:bg-slate-700/30"
-                    >
-                      <td className="px-3 py-1.5 w-8">
-                        {hoveredRow === row.id && (
-                          <button
-                            onClick={() => deleteStaffRow(row.id)}
-                            className="text-slate-500 hover:text-red-400 transition-colors"
-                          >
-                            <Icons.Trash2 />
-                          </button>
-                        )}
-                      </td>
-                      <td className="px-3 py-1.5">
-                        <input
-                          type="text"
-                          value={row.name}
-                          onChange={(e) => updateStaffRow(row.id, "name", e.target.value)}
-                          className={`w-full px-2 py-1 bg-transparent border-0 focus:outline-none focus:ring-1 focus:ring-blue-500 rounded ${isTBD ? "text-amber-400 italic" : "text-slate-100"}`}
-                        />
-                      </td>
-                      <td className="px-3 py-1.5">
-                        <select
-                          value={row.level}
-                          onChange={(e) => updateStaffRow(row.id, "level", e.target.value)}
-                          className="w-full px-2 py-1 bg-transparent border-0 text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500 rounded appearance-none cursor-pointer"
-                        >
-                          {LEVELS.map((level) => (
-                            <option key={level} value={level} className="bg-slate-800">
-                              {level}
-                            </option>
-                          ))}
-                        </select>
-                      </td>
-                      <td className="px-3 py-1.5">
-                        <select
-                          value={row.region || "Northeast"}
-                          onChange={(e) => updateStaffRow(row.id, "region", e.target.value)}
-                          className={`w-full px-2 py-1 bg-transparent border-0 focus:outline-none focus:ring-1 focus:ring-blue-500 rounded appearance-none cursor-pointer ${isTBD ? "text-amber-400" : "text-slate-100"}`}
-                        >
-                          {regions.map((region) => (
-                            <option key={region} value={region} className="bg-slate-800">
-                              {region}
-                            </option>
-                          ))}
-                        </select>
-                      </td>
-                      <td className="px-3 py-1.5">
-                        <select
-                          value={row.los || "Tax"}
-                          onChange={(e) => updateStaffRow(row.id, "los", e.target.value)}
-                          className={`w-full px-2 py-1 bg-transparent border-0 focus:outline-none focus:ring-1 focus:ring-blue-500 rounded appearance-none cursor-pointer ${isTBD ? "text-amber-400" : "text-slate-100"}`}
-                        >
-                          {lineOfServiceOptions.map((los) => (
-                            <option key={los} value={los} className="bg-slate-800">
-                              {los}
-                            </option>
-                          ))}
-                        </select>
-                      </td>
-                      <td className="px-3 py-1.5 text-right">
-                        <div className="flex items-center justify-end gap-1">
-                          {useRateCard && <Icons.Lock />}
-                          <input
-                            type="number"
-                            value={row.rate}
-                            onChange={(e) => updateStaffRow(row.id, "rate", parseInt(e.target.value) || 0)}
-                            disabled={useRateCard}
-                            className={`w-20 px-2 py-1 text-right border-0 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 ${
-                              useRateCard
-                                ? "bg-slate-700/50 text-slate-400 cursor-not-allowed"
-                                : "bg-transparent text-slate-100"
-                            }`}
-                          />
-                        </div>
-                      </td>
-                      <td className="px-3 py-1.5 text-right">
-                        <input
-                          type="number"
-                          value={row.hours}
-                          onChange={(e) => updateStaffRow(row.id, "hours", parseInt(e.target.value) || 0)}
-                          className="w-16 px-2 py-1 bg-transparent border-0 text-slate-100 text-right focus:outline-none focus:ring-1 focus:ring-blue-500 rounded"
-                        />
-                      </td>
-                      <td className="px-3 py-1.5 text-right font-medium text-slate-200">
-                        {formatCurrency(row.rate * row.hours)}
-                      </td>
+            {/* Staffing Table */}
+            <div className="bg-slate-800/30 rounded-2xl border border-slate-700/50 overflow-hidden">
+              {staffing.length === 0 ? (
+                <div className="p-12 text-center">
+                  <div className="w-16 h-16 rounded-2xl bg-slate-800/50 flex items-center justify-center mx-auto mb-4 text-slate-500">
+                    <Icons.Users />
+                  </div>
+                  <h3 className="text-lg font-semibold text-slate-200 mb-2">Build Your Team</h3>
+                  <p className="text-sm text-slate-400 mb-6">Add resources to see costs and recommended pricing</p>
+                  <button
+                    onClick={addStaffRow}
+                    className="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white rounded-lg text-sm font-medium inline-flex items-center gap-2"
+                  >
+                    <Icons.Plus /> Add First Resource
+                  </button>
+                </div>
+              ) : (
+                <table className="w-full">
+                  <thead>
+                    <tr className="text-xs text-slate-500 uppercase tracking-wider bg-slate-900/30">
+                      <th className="w-10"></th>
+                      <th className="text-left px-4 py-3 font-medium">Name</th>
+                      <th className="text-left px-4 py-3 font-medium">Level</th>
+                      <th className="text-left px-4 py-3 font-medium">Region</th>
+                      <th className="text-left px-4 py-3 font-medium">LoS</th>
+                      <th className="text-right px-4 py-3 font-medium">Rate</th>
+                      <th className="text-right px-4 py-3 font-medium">Hours</th>
+                      <th className="text-right px-4 py-3 font-medium">Total</th>
                     </tr>
-                  )})}
-                </tbody>
-                <tfoot>
-                  <tr className="border-t border-slate-600 bg-slate-900/30">
-                    <td colSpan={6} className="px-3 py-2">
-                      <button
-                        onClick={addStaffRow}
-                        className="flex items-center gap-1 text-xs text-blue-400 hover:text-blue-300 transition-colors"
-                      >
-                        <Icons.Plus />
-                        Add Resource
-                      </button>
-                    </td>
-                    <td className="px-3 py-2 text-right text-xs text-slate-400">
-                      {totalBudgetHours} hrs
-                    </td>
-                    <td className="px-3 py-2 text-right font-semibold text-slate-100">
-                      {formatCurrency(totalBudgetCost)}
-                    </td>
-                  </tr>
-                </tfoot>
-              </table>
+                  </thead>
+                  <tbody>
+                    {staffing.map((row) => {
+                      const isTBD = row.name === "TBD" || row.name.startsWith("TBD");
+                      const isNew = row.id === newRowId;
+                      return (
+                        <tr
+                          key={row.id}
+                          onMouseEnter={() => setHoveredRow(row.id)}
+                          onMouseLeave={() => setHoveredRow(null)}
+                          className={`border-t border-slate-700/30 hover:bg-slate-700/20 ${isNew ? "row-highlight" : ""}`}
+                        >
+                          <td className="px-2 py-2">
+                            {hoveredRow === row.id && (
+                              <button onClick={() => deleteStaffRow(row.id)} className="p-1 text-slate-500 hover:text-red-400 rounded">
+                                <Icons.Trash2 />
+                              </button>
+                            )}
+                          </td>
+                          <td className="px-4 py-2">
+                            <input
+                              type="text"
+                              value={row.name}
+                              onChange={(e) => updateStaffRow(row.id, "name", e.target.value)}
+                              className={`w-full px-2 py-1.5 bg-transparent border-0 rounded focus:ring-2 focus:ring-brand-500/50 ${isTBD ? "text-amber-400 italic" : "text-slate-100"}`}
+                            />
+                          </td>
+                          <td className="px-4 py-2">
+                            <select
+                              value={row.level}
+                              onChange={(e) => updateStaffRow(row.id, "level", e.target.value)}
+                              className="w-full px-2 py-1.5 bg-transparent border-0 text-slate-100 rounded focus:ring-2 focus:ring-brand-500/50"
+                            >
+                              {LEVELS.map(level => <option key={level} value={level} className="bg-slate-800">{level}</option>)}
+                            </select>
+                          </td>
+                          <td className="px-4 py-2">
+                            <select
+                              value={row.region || "Northeast"}
+                              onChange={(e) => updateStaffRow(row.id, "region", e.target.value)}
+                              className={`w-full px-2 py-1.5 bg-transparent border-0 rounded focus:ring-2 focus:ring-brand-500/50 ${isTBD ? "text-amber-400" : "text-slate-100"}`}
+                            >
+                              {REGIONS.map(r => <option key={r} value={r} className="bg-slate-800">{r}</option>)}
+                            </select>
+                          </td>
+                          <td className="px-4 py-2">
+                            <select
+                              value={row.los || "Tax"}
+                              onChange={(e) => updateStaffRow(row.id, "los", e.target.value)}
+                              className={`w-full px-2 py-1.5 bg-transparent border-0 rounded focus:ring-2 focus:ring-brand-500/50 ${isTBD ? "text-amber-400" : "text-slate-100"}`}
+                            >
+                              {LINE_OF_SERVICE.map(l => <option key={l} value={l} className="bg-slate-800">{l}</option>)}
+                            </select>
+                          </td>
+                          <td className="px-4 py-2 text-right">
+                            <div className="flex items-center justify-end gap-1">
+                              {useRateCard && <Icons.Lock />}
+                              <span className="text-slate-500">$</span>
+                              <input
+                                type="number"
+                                value={row.rate}
+                                onChange={(e) => updateStaffRow(row.id, "rate", parseInt(e.target.value) || 0)}
+                                disabled={useRateCard}
+                                className={`w-16 px-2 py-1.5 text-right border-0 rounded focus:ring-2 focus:ring-brand-500/50 ${useRateCard ? "bg-slate-700/30 text-slate-500" : "bg-transparent text-slate-100"}`}
+                              />
+                            </div>
+                          </td>
+                          <td className="px-4 py-2 text-right">
+                            <input
+                              type="number"
+                              value={row.hours}
+                              onChange={(e) => updateStaffRow(row.id, "hours", parseInt(e.target.value) || 0)}
+                              className="w-16 px-2 py-1.5 bg-transparent border-0 text-slate-100 text-right rounded focus:ring-2 focus:ring-brand-500/50"
+                            />
+                          </td>
+                          <td className="px-4 py-2 text-right font-semibold text-slate-100">
+                            {formatCurrency(row.rate * row.hours)}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                  <tfoot>
+                    <tr className="border-t border-slate-600 bg-slate-900/30">
+                      <td colSpan={6} className="px-4 py-3">
+                        <button
+                          onClick={addStaffRow}
+                          className="flex items-center gap-2 px-3 py-1.5 text-sm text-brand-400 hover:text-brand-300 hover:bg-brand-500/10 rounded-lg transition-colors"
+                        >
+                          <Icons.Plus /> Add Resource
+                          <span className="text-xs text-slate-600 ml-2">⌘N</span>
+                        </button>
+                      </td>
+                      <td className="px-4 py-3 text-right text-sm text-slate-400">{totalBudgetHours} hrs</td>
+                      <td className="px-4 py-3 text-right font-bold text-lg text-slate-100">{formatCurrency(totalBudgetCost)}</td>
+                    </tr>
+                  </tfoot>
+                </table>
+              )}
             </div>
           </div>
 
           {/* Right: Financial Sidebar */}
-          <div className="w-72 space-y-4">
-            {/* Target Fee */}
-            <div className="bg-slate-800 rounded-lg border border-slate-700 p-4">
-              <div className="flex items-center gap-2 mb-3">
-                <span className="text-slate-400"><Icons.Target /></span>
-                <h3 className="text-xs font-medium text-slate-400 uppercase tracking-wide">
-                  Target Fee
-                </h3>
+          <div className="w-80 space-y-4">
+            {/* Target Fee Input */}
+            <div className="bg-slate-800/30 rounded-2xl border border-slate-700/50 p-5">
+              <div className="flex items-center gap-2 mb-4">
+                <Icons.Target />
+                <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">Target Fee</span>
               </div>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"><Icons.DollarSign /></span>
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-lg">$</span>
                 <input
                   type="number"
-                  value={targetFee}
+                  value={targetFee || ""}
                   onChange={(e) => setTargetFee(parseInt(e.target.value) || 0)}
-                  className="w-full pl-9 pr-4 py-2 bg-slate-900 border border-slate-600 rounded-md text-lg font-semibold text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  placeholder="Enter fee"
+                  className="w-full pl-8 pr-4 py-3 bg-slate-900/50 border border-slate-700 rounded-xl text-2xl font-bold text-slate-100 focus:ring-2 focus:ring-brand-500/50"
                 />
               </div>
             </div>
 
-            {/* Total Cost */}
-            <div className="bg-slate-800 rounded-lg border border-slate-700 p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-slate-400"><Icons.Users /></span>
-                <h3 className="text-xs font-medium text-slate-400 uppercase tracking-wide">
-                  Total Cost
-                </h3>
-              </div>
-              <div className="text-2xl font-bold text-slate-100">
-                {formatCurrency(totalBudgetCost)}
-              </div>
-              <div className="text-xs text-slate-500 mt-1">
-                {staffing.length} resources • {totalBudgetHours} hours
-              </div>
-            </div>
-
             {/* Recommended Fee */}
-            <div className="bg-blue-500/10 rounded-lg border border-blue-500/30 p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-blue-400"><Icons.DollarSign /></span>
-                <h3 className="text-xs font-medium text-blue-400 uppercase tracking-wide">
-                  Recommended Fee
-                </h3>
+            {totalBudgetCost > 0 && (
+              <div className="bg-brand-500/10 rounded-2xl border border-brand-500/30 p-5 animate-fade-in">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <Icons.Sparkles />
+                    <span className="text-xs font-medium text-brand-400 uppercase tracking-wider">Recommended Fee</span>
+                  </div>
+                </div>
+                <div className="text-3xl font-bold text-brand-300">{formatCurrency(recommendedFee)}</div>
+                <p className="text-xs text-slate-500 mt-1">To achieve {TARGET_MARGIN}% target margin</p>
+                <button
+                  onClick={applyRecommendedFee}
+                  className="mt-4 w-full px-4 py-2 bg-brand-500/20 hover:bg-brand-500/30 text-brand-300 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-colors"
+                >
+                  <Icons.Zap /> Apply This Fee
+                </button>
               </div>
-              <div className="text-2xl font-bold text-blue-400">
-                {formatCurrency(Math.ceil(totalBudgetCost / 0.58))}
-              </div>
-              <div className="text-xs text-slate-500 mt-1">
-                To achieve 42% target margin
-              </div>
-            </div>
+            )}
+
+            {/* Total Cost */}
+            <MetricCard
+              icon={<Icons.Users />}
+              label="Total Cost"
+              value={formatCurrency(totalBudgetCost)}
+              subtext={`${staffing.length} resources • ${totalBudgetHours} hours`}
+            />
 
             {/* Target Margin */}
-            <div className="bg-slate-800 rounded-lg border border-slate-700 p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-slate-400"><Icons.Clock /></span>
-                <h3 className="text-xs font-medium text-slate-400 uppercase tracking-wide">
-                  Target Margin
-                </h3>
-              </div>
-              <div className="text-2xl font-bold text-slate-400">42%</div>
-            </div>
+            <MetricCard
+              icon={<Icons.Target />}
+              label="Target Margin"
+              value={`${TARGET_MARGIN}%`}
+              subtext="Firm standard for this product"
+            />
 
             {/* Projected Margin */}
-            <div
-              className={`rounded-lg border p-4 ${
-                marginIsHealthy
-                  ? "bg-emerald-500/10 border-emerald-500/30"
-                  : "bg-red-500/10 border-red-500/30"
-              }`}
-            >
-              <div className="flex items-center gap-2 mb-2">
-                <span className={marginIsHealthy ? "text-emerald-400" : "text-red-400"}><Icons.TrendingUp /></span>
-                <h3
-                  className={`text-xs font-medium uppercase tracking-wide ${
-                    marginIsHealthy ? "text-emerald-400" : "text-red-400"
-                  }`}
-                >
-                  Projected Margin
-                </h3>
-              </div>
-              <div
-                className={`text-3xl font-bold ${
-                  marginIsHealthy ? "text-emerald-400" : "text-red-400"
-                }`}
-              >
-                {formatPercent(projectedMargin)}
-              </div>
-              <div className="text-xs text-slate-500 mt-1">
-                {marginIsHealthy ? "Above target" : "Below 40% target"}
-              </div>
-            </div>
+            {targetFee > 0 && (
+              <MetricCard
+                icon={<Icons.TrendingUp />}
+                label="Projected Margin"
+                value={formatPercent(projectedMargin)}
+                subtext={marginIsHealthy ? "Above target ✓" : `${(TARGET_MARGIN - projectedMargin).toFixed(1)}% below target`}
+                variant={marginIsHealthy ? "success" : "danger"}
+                size="large"
+                pulse
+              />
+            )}
           </div>
         </div>
       );
@@ -1027,127 +1345,155 @@
     // ============================================
     // VIEW 2.5: SCHEDULING
     // ============================================
-    function ViewScheduling({
-      scheduleData,
-      spreadTypes,
-      updateScheduleSpread,
-      updateWeekHours,
-    }) {
-      const weeks = ["Week 1", "Week 2", "Week 3", "Week 4"];
+    function ViewScheduling({ dealLoaded, scheduleData, spreadTypes, updateScheduleSpread, updateWeekHours, setToast, onNavigateToBudgeting }) {
+      const weekDates = getWeekDates();
+      const [syncing, setSyncing] = useState(false);
+
+      if (!dealLoaded || scheduleData.length === 0) {
+        return (
+          <EmptyState
+            icon={<Icons.Calendar />}
+            title="No Resources to Schedule"
+            description="Add resources to your staffing plan first, then come back to spread their hours."
+            action={onNavigateToBudgeting}
+            actionLabel="Go to Flex Plan"
+          />
+        );
+      }
+
+      const handleSync = () => {
+        setSyncing(true);
+        setTimeout(() => {
+          setSyncing(false);
+          setToast({ message: "Schedule synced to Team Builder", type: "success" });
+        }, 1500);
+      };
+
+      const maxWeeklyHours = 40;
 
       return (
-        <div className="space-y-6">
+        <div className="space-y-6 animate-fade-in">
           {/* Header */}
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-semibold text-slate-100">Resource Schedule</h2>
-              <p className="text-xs text-slate-400 mt-1">Spread budgeted hours across the engagement timeline</p>
+              <h2 className="text-xl font-bold text-slate-100">Resource Schedule</h2>
+              <p className="text-sm text-slate-400 mt-1">Spread hours across the engagement timeline</p>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="px-3 py-1.5 bg-slate-800 text-slate-300 rounded-md text-xs">
-                4-Week View
+            <div className="flex items-center gap-3">
+              <span className="px-3 py-1.5 bg-slate-800/50 text-slate-400 rounded-lg text-xs">
+                {weekDates[0]} — {weekDates[3]}
               </span>
             </div>
           </div>
 
           {/* Schedule Grid */}
-          <div className="bg-slate-800 rounded-lg border border-slate-700 overflow-hidden">
+          <div className="bg-slate-800/30 rounded-2xl border border-slate-700/50 overflow-hidden">
             <table className="w-full">
               <thead>
-                <tr className="text-xs text-slate-400 bg-slate-900/50">
-                  <th className="text-left px-4 py-3 font-medium">Resource</th>
-                  <th className="text-left px-4 py-3 font-medium">Level</th>
-                  <th className="text-center px-4 py-3 font-medium">Total</th>
-                  <th className="text-left px-4 py-3 font-medium">Spread Type</th>
-                  {weeks.map((week) => (
-                    <th key={week} className="text-center px-4 py-3 font-medium w-20">{week}</th>
+                <tr className="text-xs text-slate-500 uppercase tracking-wider bg-slate-900/30">
+                  <th className="text-left px-5 py-4 font-medium">Resource</th>
+                  <th className="text-center px-4 py-4 font-medium">Total</th>
+                  <th className="text-left px-4 py-4 font-medium">Distribution</th>
+                  {weekDates.map((date, idx) => (
+                    <th key={idx} className="text-center px-3 py-4 font-medium w-24">
+                      <div>{date}</div>
+                      <div className="text-[10px] text-slate-600 normal-case">Week {idx + 1}</div>
+                    </th>
                   ))}
                 </tr>
               </thead>
               <tbody>
-                {scheduleData.map((resource) => (
-                  <tr key={resource.id} className="border-t border-slate-700/50 hover:bg-slate-700/30">
-                    <td className="px-4 py-3">
-                      <span className="text-slate-100 font-medium">{resource.name}</span>
-                    </td>
-                    <td className="px-4 py-3 text-slate-400">{resource.level}</td>
-                    <td className="px-4 py-3 text-center">
-                      <span className="px-2 py-1 bg-slate-700 rounded text-slate-200 font-medium">
-                        {resource.totalHours} hrs
-                      </span>
-                    </td>
-                    <td className="px-4 py-3">
-                      <select
-                        value={resource.spreadType}
-                        onChange={(e) => updateScheduleSpread(resource.id, e.target.value)}
-                        className="px-3 py-1.5 bg-slate-900 border border-slate-600 rounded-md text-sm text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                      >
-                        {spreadTypes.map((type) => (
-                          <option key={type.id} value={type.id} className="bg-slate-800">
-                            {type.label}
-                          </option>
-                        ))}
-                      </select>
-                    </td>
-                    {resource.weeks.map((hours, idx) => (
-                      <td key={idx} className="px-4 py-3 text-center">
-                        <input
-                          type="number"
-                          value={hours}
-                          onChange={(e) => updateWeekHours(resource.id, idx, e.target.value)}
-                          className="w-16 px-2 py-1 bg-slate-900 border border-slate-600 rounded text-center text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                        />
+                {scheduleData.map((resource) => {
+                  const weeklyMax = Math.max(...resource.weeks);
+                  return (
+                    <tr key={resource.id} className="border-t border-slate-700/30 hover:bg-slate-700/20">
+                      <td className="px-5 py-4">
+                        <div className="font-medium text-slate-100">{resource.name}</div>
+                        <div className="text-xs text-slate-500">{resource.level}</div>
                       </td>
-                    ))}
-                  </tr>
-                ))}
+                      <td className="px-4 py-4 text-center">
+                        <span className="px-3 py-1.5 bg-slate-700/50 rounded-lg text-slate-200 font-semibold">
+                          {resource.totalHours}h
+                        </span>
+                      </td>
+                      <td className="px-4 py-4">
+                        <div className="flex gap-1">
+                          {spreadTypes.map((type) => (
+                            <button
+                              key={type.id}
+                              onClick={() => updateScheduleSpread(resource.id, type.id)}
+                              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                                resource.spreadType === type.id
+                                  ? "bg-brand-500/20 text-brand-300 ring-1 ring-brand-500/50"
+                                  : "bg-slate-800/50 text-slate-400 hover:bg-slate-700/50"
+                              }`}
+                            >
+                              {type.label}
+                            </button>
+                          ))}
+                        </div>
+                      </td>
+                      {resource.weeks.map((hours, idx) => {
+                        const isOverCapacity = hours > maxWeeklyHours;
+                        return (
+                          <td key={idx} className="px-3 py-4 text-center">
+                            <div className="relative">
+                              <input
+                                type="number"
+                                value={hours}
+                                onChange={(e) => updateWeekHours(resource.id, idx, e.target.value)}
+                                className={`w-16 px-2 py-2 bg-slate-900/50 border rounded-lg text-center text-slate-100 font-medium focus:ring-2 focus:ring-brand-500/50 ${
+                                  isOverCapacity ? "border-red-500/50 text-red-400" : "border-slate-700"
+                                }`}
+                              />
+                              {/* Mini bar chart */}
+                              <div className="mt-2 h-1 bg-slate-700 rounded-full overflow-hidden">
+                                <div
+                                  className={`h-full rounded-full transition-all ${isOverCapacity ? "bg-red-500" : "bg-brand-500"}`}
+                                  style={{ width: `${Math.min((hours / maxWeeklyHours) * 100, 100)}%` }}
+                                />
+                              </div>
+                            </div>
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
 
-          {/* Visual Timeline */}
-          <div className="bg-slate-800 rounded-lg border border-slate-700 p-4">
-            <h3 className="text-sm font-medium text-slate-200 mb-4">Hours Distribution</h3>
-            <div className="space-y-4">
-              {scheduleData.map((resource) => {
-                const maxHours = Math.max(...resource.weeks);
-                return (
-                  <div key={resource.id} className="space-y-2">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="text-slate-300">{resource.name}</span>
-                      <span className="text-slate-500">{resource.totalHours} hrs total</span>
-                    </div>
-                    <div className="flex gap-1">
-                      {resource.weeks.map((hours, idx) => (
-                        <div key={idx} className="flex-1">
-                          <div
-                            className="bg-blue-500/30 rounded-t transition-all"
-                            style={{ height: `${maxHours > 0 ? (hours / maxHours) * 60 : 0}px` }}
-                          />
-                          <div className="bg-blue-500 rounded-b h-1" />
-                          <div className="text-center text-xs text-slate-500 mt-1">{hours}</div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                );
-              })}
+          {/* Capacity Legend */}
+          <div className="flex items-center gap-6 text-xs text-slate-500">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded bg-brand-500" />
+              <span>Within capacity (≤40h/week)</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded bg-red-500" />
+              <span>Over capacity (&gt;40h/week)</span>
             </div>
           </div>
 
           {/* Sync Status */}
-          <div className="flex items-center justify-between p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-lg">
-            <div className="flex items-center gap-3">
-              <span className="text-emerald-400">
-                <Icons.Check />
-              </span>
+          <div className="flex items-center justify-between p-5 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400">
+                {syncing ? <Icons.Loader /> : <Icons.CheckCircle />}
+              </div>
               <div>
-                <div className="text-sm font-medium text-emerald-300">Team Builder Sync Ready</div>
-                <div className="text-xs text-emerald-400/70">Schedule will sync to Resource Management tools</div>
+                <div className="font-semibold text-emerald-300">Team Builder Integration</div>
+                <div className="text-sm text-emerald-400/70">Push schedule to Resource Management</div>
               </div>
             </div>
-            <button className="px-4 py-2 bg-emerald-500 text-white rounded-md text-sm font-medium hover:bg-emerald-600 transition-colors">
-              Sync Now
+            <button
+              onClick={handleSync}
+              disabled={syncing}
+              className="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-500/50 text-white rounded-xl font-medium flex items-center gap-2 transition-colors"
+            >
+              {syncing ? <Icons.Loader /> : <Icons.RefreshCw />}
+              {syncing ? "Syncing..." : "Sync Now"}
             </button>
           </div>
         </div>
@@ -1158,52 +1504,44 @@
     // VIEW 3: FORECASTING
     // ============================================
     function ViewForecasting({
-      alertVisible,
-      unbudgetedResources,
-      handleAssignEtc,
-      handleDismissAlert,
-      highlightedResource,
-      actuals,
-      updateEtc,
-      etcInputRef,
-      targetFee,
-      totalBudgetCost,
-      totalBudgetHours,
-      totalActualCost,
-      totalActualHours,
-      totalProjectedCost,
-      totalProjectedHours,
-      projectedProfit,
-      profitIsPositive,
+      alertVisible, setAlertVisible, unbudgetedResources, handleAssignEtc, highlightedResource,
+      actuals, updateEtc, etcInputRef,
+      targetFee, totalBudgetCost, totalBudgetHours,
+      totalActualCost, totalActualHours, totalProjectedCost, totalProjectedHours,
+      projectedProfit, profitIsPositive,
     }) {
+      const projectedMargin = targetFee > 0 ? ((targetFee - totalProjectedCost) / targetFee) * 100 : 0;
+
       return (
-        <div className="space-y-6">
-          {/* Unbudgeted Alert */}
+        <div className="space-y-6 animate-fade-in">
+          {/* Alert Banner */}
           {alertVisible && unbudgetedResources.length > 0 && (
-            <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4">
+            <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-5 animate-slide-down">
               <div className="flex items-start justify-between">
-                <div className="flex items-start gap-3">
-                  <span className="text-amber-400 mt-0.5"><Icons.AlertTriangle /></span>
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-400 flex-shrink-0">
+                    <Icons.AlertTriangle />
+                  </div>
                   <div>
-                    <h3 className="text-sm font-medium text-amber-300">
-                      {unbudgetedResources.length} resource charging time not on budget
+                    <h3 className="font-semibold text-amber-300">
+                      Unbudgeted Time Detected
                     </h3>
-                    <p className="text-xs text-amber-400/70 mt-1">
-                      {unbudgetedResources[0].name} ({unbudgetedResources[0].level}) has logged{" "}
-                      {unbudgetedResources[0].actualHours} hours with no budget allocation.
+                    <p className="text-sm text-amber-400/70 mt-1">
+                      <strong>{unbudgetedResources[0].name}</strong> ({unbudgetedResources[0].level}) has logged{" "}
+                      <strong>{unbudgetedResources[0].actualHours} hours</strong> without a budget allocation.
                     </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={handleAssignEtc}
-                    className="px-3 py-1.5 bg-amber-500/20 text-amber-300 text-xs font-medium rounded hover:bg-amber-500/30 transition-colors"
+                    className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-sm font-medium transition-colors"
                   >
                     Assign ETC
                   </button>
                   <button
-                    onClick={handleDismissAlert}
-                    className="p-1.5 text-amber-400/70 hover:text-amber-300 transition-colors"
+                    onClick={() => setAlertVisible(false)}
+                    className="p-2 text-amber-400/70 hover:text-amber-300 hover:bg-amber-500/10 rounded-lg transition-colors"
                   >
                     <Icons.X />
                   </button>
@@ -1212,155 +1550,134 @@
             </div>
           )}
 
-          {/* Projected Profit Card */}
-          <div
-            className={`rounded-lg border p-6 ${
-              profitIsPositive
-                ? "bg-emerald-500/10 border-emerald-500/30"
-                : "bg-red-500/10 border-red-500/30"
-            }`}
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <h3
-                  className={`text-xs font-medium uppercase tracking-wide ${
-                    profitIsPositive ? "text-emerald-400" : "text-red-400"
-                  }`}
-                >
-                  Projected Profit
-                </h3>
-                <div
-                  className={`text-4xl font-bold mt-1 ${
-                    profitIsPositive ? "text-emerald-400" : "text-red-400"
-                  }`}
-                >
-                  {profitIsPositive ? "+" : ""}
-                  {formatCurrency(projectedProfit)}
-                </div>
-              </div>
-              <div className="text-right text-xs text-slate-400">
-                <div>Fee: {formatCurrency(targetFee)}</div>
-                <div>Projected Cost: {formatCurrency(totalProjectedCost)}</div>
-              </div>
-            </div>
+          {/* Hero Metrics */}
+          <div className="grid grid-cols-3 gap-4">
+            <MetricCard
+              icon={<Icons.DollarSign />}
+              label="Projected Profit"
+              value={`${profitIsPositive ? "+" : ""}${formatCurrency(projectedProfit)}`}
+              subtext={`Fee: ${formatCurrency(targetFee)} • Cost: ${formatCurrency(totalProjectedCost)}`}
+              variant={profitIsPositive ? "success" : "danger"}
+              size="large"
+            />
+            <MetricCard
+              icon={<Icons.TrendingUp />}
+              label="Projected Margin"
+              value={formatPercent(projectedMargin)}
+              subtext={projectedMargin >= TARGET_MARGIN ? "On target" : `${(TARGET_MARGIN - projectedMargin).toFixed(1)}% below target`}
+              variant={projectedMargin >= TARGET_MARGIN ? "success" : "danger"}
+              size="large"
+            />
+            <MetricCard
+              icon={<Icons.Users />}
+              label="Hours Variance"
+              value={`${totalProjectedHours - totalBudgetHours >= 0 ? "+" : ""}${totalProjectedHours - totalBudgetHours}h`}
+              subtext={`Budget: ${totalBudgetHours}h • Projected: ${totalProjectedHours}h`}
+              variant={totalProjectedHours <= totalBudgetHours ? "success" : "danger"}
+              size="large"
+            />
           </div>
 
           {/* Comparison Table */}
-          <div className="bg-slate-800 rounded-lg border border-slate-700 overflow-hidden">
-            <div className="px-4 py-3 border-b border-slate-700">
-              <h2 className="text-sm font-medium text-slate-200">Budget vs Actuals vs Projected</h2>
+          <div className="bg-slate-800/30 rounded-2xl border border-slate-700/50 overflow-hidden">
+            <div className="px-6 py-4 border-b border-slate-700/50">
+              <h2 className="font-semibold text-slate-200">Budget vs Actuals vs Projected</h2>
             </div>
             <table className="w-full">
               <thead>
-                <tr className="text-xs text-slate-400 bg-slate-900/50">
-                  <th className="text-left px-4 py-2 font-medium">Metric</th>
-                  <th className="text-right px-4 py-2 font-medium">Budget</th>
-                  <th className="text-right px-4 py-2 font-medium">Actuals</th>
-                  <th className="text-right px-4 py-2 font-medium">Projected</th>
-                  <th className="text-right px-4 py-2 font-medium">Variance</th>
+                <tr className="text-xs text-slate-500 uppercase tracking-wider bg-slate-900/30">
+                  <th className="text-left px-6 py-3 font-medium">Metric</th>
+                  <th className="text-right px-6 py-3 font-medium">Budget</th>
+                  <th className="text-right px-6 py-3 font-medium">Actuals</th>
+                  <th className="text-right px-6 py-3 font-medium">Projected</th>
+                  <th className="text-right px-6 py-3 font-medium">Variance</th>
                 </tr>
               </thead>
               <tbody>
-                <tr className="border-t border-slate-700/50">
-                  <td className="px-4 py-2.5 text-slate-300">Hours</td>
-                  <td className="px-4 py-2.5 text-right text-slate-200">{totalBudgetHours}</td>
-                  <td className="px-4 py-2.5 text-right text-slate-200">{totalActualHours}</td>
-                  <td className="px-4 py-2.5 text-right font-medium text-slate-100">
-                    {totalProjectedHours}
-                  </td>
-                  <td
-                    className={`px-4 py-2.5 text-right text-sm ${
-                      totalProjectedHours <= totalBudgetHours ? "text-emerald-400" : "text-red-400"
-                    }`}
-                  >
-                    {totalProjectedHours - totalBudgetHours >= 0 ? "+" : ""}
-                    {totalProjectedHours - totalBudgetHours}
+                <tr className="border-t border-slate-700/30">
+                  <td className="px-6 py-4 text-slate-300 font-medium">Hours</td>
+                  <td className="px-6 py-4 text-right text-slate-200">{totalBudgetHours}</td>
+                  <td className="px-6 py-4 text-right text-slate-200">{totalActualHours}</td>
+                  <td className="px-6 py-4 text-right font-semibold text-slate-100">{totalProjectedHours}</td>
+                  <td className={`px-6 py-4 text-right font-semibold ${totalProjectedHours <= totalBudgetHours ? "text-emerald-400" : "text-red-400"}`}>
+                    {totalProjectedHours - totalBudgetHours >= 0 ? "+" : ""}{totalProjectedHours - totalBudgetHours}
                   </td>
                 </tr>
-                <tr className="border-t border-slate-700/50">
-                  <td className="px-4 py-2.5 text-slate-300">Cost</td>
-                  <td className="px-4 py-2.5 text-right text-slate-200">
-                    {formatCurrency(totalBudgetCost)}
-                  </td>
-                  <td className="px-4 py-2.5 text-right text-slate-200">
-                    {formatCurrency(totalActualCost)}
-                  </td>
-                  <td className="px-4 py-2.5 text-right font-medium text-slate-100">
-                    {formatCurrency(totalProjectedCost)}
-                  </td>
-                  <td
-                    className={`px-4 py-2.5 text-right text-sm ${
-                      totalProjectedCost <= totalBudgetCost ? "text-emerald-400" : "text-red-400"
-                    }`}
-                  >
-                    {totalProjectedCost - totalBudgetCost >= 0 ? "+" : ""}
-                    {formatCurrency(totalProjectedCost - totalBudgetCost)}
+                <tr className="border-t border-slate-700/30">
+                  <td className="px-6 py-4 text-slate-300 font-medium">Cost</td>
+                  <td className="px-6 py-4 text-right text-slate-200">{formatCurrency(totalBudgetCost)}</td>
+                  <td className="px-6 py-4 text-right text-slate-200">{formatCurrency(totalActualCost)}</td>
+                  <td className="px-6 py-4 text-right font-semibold text-slate-100">{formatCurrency(totalProjectedCost)}</td>
+                  <td className={`px-6 py-4 text-right font-semibold ${totalProjectedCost <= totalBudgetCost ? "text-emerald-400" : "text-red-400"}`}>
+                    {totalProjectedCost - totalBudgetCost >= 0 ? "+" : ""}{formatCurrency(totalProjectedCost - totalBudgetCost)}
                   </td>
                 </tr>
-                <tr className="border-t border-slate-700/50">
-                  <td className="px-4 py-2.5 text-slate-300">Revenue</td>
-                  <td className="px-4 py-2.5 text-right text-slate-200">{formatCurrency(targetFee)}</td>
-                  <td className="px-4 py-2.5 text-right text-slate-400">—</td>
-                  <td className="px-4 py-2.5 text-right font-medium text-slate-100">
-                    {formatCurrency(targetFee)}
-                  </td>
-                  <td className="px-4 py-2.5 text-right text-slate-400">—</td>
+                <tr className="border-t border-slate-700/30 bg-slate-900/20">
+                  <td className="px-6 py-4 text-slate-300 font-medium">Revenue</td>
+                  <td className="px-6 py-4 text-right text-slate-200">{formatCurrency(targetFee)}</td>
+                  <td className="px-6 py-4 text-right text-slate-500">—</td>
+                  <td className="px-6 py-4 text-right font-semibold text-slate-100">{formatCurrency(targetFee)}</td>
+                  <td className="px-6 py-4 text-right text-slate-500">—</td>
                 </tr>
               </tbody>
             </table>
           </div>
 
           {/* ETC by Resource */}
-          <div className="bg-slate-800 rounded-lg border border-slate-700 overflow-hidden">
-            <div className="px-4 py-3 border-b border-slate-700">
-              <h2 className="text-sm font-medium text-slate-200">ETC by Resource</h2>
+          <div className="bg-slate-800/30 rounded-2xl border border-slate-700/50 overflow-hidden">
+            <div className="px-6 py-4 border-b border-slate-700/50 flex items-center justify-between">
+              <h2 className="font-semibold text-slate-200">Estimate to Complete (ETC)</h2>
+              <span className="text-xs text-slate-500">{actuals.length} resources</span>
             </div>
             <table className="w-full">
               <thead>
-                <tr className="text-xs text-slate-400 bg-slate-900/50">
-                  <th className="text-left px-4 py-2 font-medium">Name</th>
-                  <th className="text-left px-4 py-2 font-medium">Level</th>
-                  <th className="text-right px-4 py-2 font-medium">Budget</th>
-                  <th className="text-right px-4 py-2 font-medium">Charged</th>
-                  <th className="text-right px-4 py-2 font-medium">ETC Hours</th>
-                  <th className="text-right px-4 py-2 font-medium">Projected</th>
+                <tr className="text-xs text-slate-500 uppercase tracking-wider bg-slate-900/30">
+                  <th className="text-left px-6 py-3 font-medium">Resource</th>
+                  <th className="text-right px-6 py-3 font-medium">Budget</th>
+                  <th className="text-right px-6 py-3 font-medium">Charged</th>
+                  <th className="text-right px-6 py-3 font-medium">ETC</th>
+                  <th className="text-right px-6 py-3 font-medium">Projected</th>
+                  <th className="text-right px-6 py-3 font-medium">Variance</th>
                 </tr>
               </thead>
               <tbody>
                 {actuals.map((resource) => {
                   const isHighlighted = highlightedResource === resource.id;
                   const isUnbudgeted = resource.budgetHours === 0 && resource.actualHours > 0;
+                  const projected = resource.actualHours + resource.etcHours;
+                  const variance = projected - resource.budgetHours;
                   return (
                     <tr
                       key={resource.id}
-                      className={`border-t border-slate-700/50 transition-colors ${
-                        isHighlighted ? "ring-2 ring-amber-500 ring-inset bg-amber-500/10" : ""
-                      }`}
+                      className={`border-t border-slate-700/30 transition-all ${isHighlighted ? "bg-amber-500/10 ring-2 ring-inset ring-amber-500/50" : "hover:bg-slate-700/20"}`}
                     >
-                      <td className="px-4 py-2.5">
-                        <div className="flex items-center gap-2">
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-3">
                           {isUnbudgeted && (
-                            <span className="w-2 h-2 rounded-full bg-amber-400" title="Unbudgeted" />
+                            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
                           )}
-                          <span className="text-slate-200">{resource.name}</span>
+                          <div>
+                            <div className="font-medium text-slate-200">{resource.name}</div>
+                            <div className="text-xs text-slate-500">{resource.level}</div>
+                          </div>
                         </div>
                       </td>
-                      <td className="px-4 py-2.5 text-slate-400">{resource.level}</td>
-                      <td className="px-4 py-2.5 text-right text-slate-200">
-                        {resource.budgetHours || "—"}
+                      <td className="px-6 py-4 text-right text-slate-200">
+                        {resource.budgetHours || <span className="text-slate-500">—</span>}
                       </td>
-                      <td className="px-4 py-2.5 text-right text-slate-200">{resource.actualHours}</td>
-                      <td className="px-4 py-2.5 text-right">
+                      <td className="px-6 py-4 text-right text-slate-200">{resource.actualHours}</td>
+                      <td className="px-6 py-4 text-right">
                         <input
                           ref={isHighlighted ? etcInputRef : null}
                           type="number"
                           value={resource.etcHours}
                           onChange={(e) => updateEtc(resource.id, e.target.value)}
-                          className="w-16 px-2 py-1 bg-slate-900 border border-slate-600 rounded text-right text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          className={`w-20 px-3 py-2 bg-slate-900/50 border rounded-lg text-right text-slate-100 font-medium focus:ring-2 focus:ring-brand-500/50 ${isHighlighted ? "border-amber-500 ring-2 ring-amber-500/30" : "border-slate-700"}`}
                         />
                       </td>
-                      <td className="px-4 py-2.5 text-right font-medium text-slate-100">
-                        {resource.actualHours + resource.etcHours}
+                      <td className="px-6 py-4 text-right font-semibold text-slate-100">{projected}</td>
+                      <td className={`px-6 py-4 text-right font-semibold ${resource.budgetHours === 0 ? "text-slate-500" : variance <= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                        {resource.budgetHours === 0 ? "—" : `${variance >= 0 ? "+" : ""}${variance}`}
                       </td>
                     </tr>
                   );
@@ -1368,16 +1685,13 @@
               </tbody>
               <tfoot>
                 <tr className="border-t border-slate-600 bg-slate-900/30">
-                  <td colSpan={2} className="px-4 py-2 text-xs text-slate-500">
-                    Total
-                  </td>
-                  <td className="px-4 py-2 text-right text-xs text-slate-400">{totalBudgetHours}</td>
-                  <td className="px-4 py-2 text-right text-xs text-slate-400">{totalActualHours}</td>
-                  <td className="px-4 py-2 text-right text-xs text-slate-400">
-                    {actuals.reduce((sum, a) => sum + a.etcHours, 0)}
-                  </td>
-                  <td className="px-4 py-2 text-right text-sm font-semibold text-slate-100">
-                    {totalProjectedHours}
+                  <td className="px-6 py-4 font-medium text-slate-400">Total</td>
+                  <td className="px-6 py-4 text-right text-slate-400">{totalBudgetHours}</td>
+                  <td className="px-6 py-4 text-right text-slate-400">{totalActualHours}</td>
+                  <td className="px-6 py-4 text-right text-slate-400">{actuals.reduce((sum, a) => sum + a.etcHours, 0)}</td>
+                  <td className="px-6 py-4 text-right font-bold text-slate-100">{totalProjectedHours}</td>
+                  <td className={`px-6 py-4 text-right font-bold ${totalProjectedHours <= totalBudgetHours ? "text-emerald-400" : "text-red-400"}`}>
+                    {totalProjectedHours - totalBudgetHours >= 0 ? "+" : ""}{totalProjectedHours - totalBudgetHours}
                   </td>
                 </tr>
               </tfoot>
