@@ -284,7 +284,6 @@
       const [useRateCard, setUseRateCard] = useState(false);
       const [targetFee, setTargetFee] = useState(0);
       const [staffing, setStaffing] = useState([]);
-      const [nextStaffId, setNextStaffId] = useState(1);
       const [newRowId, setNewRowId] = useState(null);
 
       // View 3 - Scheduling
@@ -321,17 +320,29 @@
       const projectedProfit = targetFee - totalProjectedCost;
       const unbudgetedResources = actuals.filter(a => a.budgetHours === 0 && a.actualHours > 0);
 
-      // Sync staffing to schedule
+      // Sync staffing to schedule (preserve existing week allocations where possible)
       useEffect(() => {
         if (staffing.length > 0) {
-          setScheduleData(staffing.map(s => ({
-            id: s.id,
-            name: s.name,
-            level: s.level,
-            totalHours: s.hours,
-            spreadType: "even",
-            weeks: Array(4).fill(Math.floor(s.hours / 4)),
-          })));
+          setScheduleData(prev => {
+            const existingMap = new Map(prev.map(s => [s.id, s]));
+            return staffing.map(s => {
+              const existing = existingMap.get(s.id);
+              // Keep existing weekly allocation if hours haven't changed
+              if (existing && existing.totalHours === s.hours) {
+                return { ...existing, name: s.name, level: s.level };
+              }
+              // Otherwise create new even spread
+              const perWeek = Math.floor(s.hours / 4);
+              return {
+                id: s.id,
+                name: s.name,
+                level: s.level,
+                totalHours: s.hours,
+                spreadType: "even",
+                weeks: [perWeek, perWeek, perWeek, s.hours - 3 * perWeek],
+              };
+            });
+          });
         }
       }, [staffing]);
 
@@ -367,25 +378,28 @@
         }));
       };
 
-      const addStaffRow = () => {
-        const newId = nextStaffId;
-        setStaffing(prev => [...prev, {
-          id: newId, name: "TBD", level: "Associate",
-          rate: RATE_CARD["Associate"], hours: 0,
-          region: "Northeast", los: "Tax"
-        }]);
-        setNextStaffId(prev => prev + 1);
-        setNewRowId(newId);
-        setTimeout(() => setNewRowId(null), 1000);
-      };
+      const addStaffRow = useCallback(() => {
+        setStaffing(prev => {
+          const newId = prev.length > 0 ? Math.max(...prev.map(s => s.id)) + 1 : 1;
+          setNewRowId(newId);
+          setTimeout(() => setNewRowId(null), 1000);
+          return [...prev, {
+            id: newId, name: "TBD", level: "Associate",
+            rate: RATE_CARD["Associate"], hours: 0,
+            region: "Northeast", los: "Tax"
+          }];
+        });
+      }, []);
 
       const deleteStaffRow = (id) => setStaffing(prev => prev.filter(row => row.id !== id));
 
       const handleRateCardToggle = () => {
-        if (!useRateCard) {
+        const newValue = !useRateCard;
+        if (newValue) {
+          // When enabling rate card lock, reset rates to standard
           setStaffing(prev => prev.map(row => ({ ...row, rate: RATE_CARD[row.level] || 0 })));
         }
-        setUseRateCard(!useRateCard);
+        setUseRateCard(newValue);
       };
 
       const applyRecommendedFee = () => {
@@ -419,7 +433,8 @@
       const updateEtc = (id, value) => {
         const numValue = parseInt(value) || 0;
         setActuals(prev => prev.map(a => (a.id === id ? { ...a, etcHours: numValue } : a)));
-        if (actuals.find(a => a.id === id)?.budgetHours === 0 && numValue >= 0) {
+        // Only dismiss alert if this is the highlighted (unbudgeted) resource
+        if (highlightedResource === id) {
           setAlertVisible(false);
           setHighlightedResource(null);
         }
@@ -433,7 +448,10 @@
         }
       };
 
-      // Keyboard shortcuts
+      // Keyboard shortcuts - use ref for stable callback
+      const addStaffRowRef = useRef(addStaffRow);
+      addStaffRowRef.current = addStaffRow;
+
       useEffect(() => {
         const handleKeyDown = (e) => {
           if ((e.metaKey || e.ctrlKey) && !e.shiftKey) {
@@ -441,7 +459,7 @@
             if (e.key === "2") { e.preventDefault(); setActiveView("budgeting"); }
             if (e.key === "3") { e.preventDefault(); setActiveView("scheduling"); }
             if (e.key === "4") { e.preventDefault(); setActiveView("forecasting"); }
-            if (e.key === "n" && activeView === "budgeting") { e.preventDefault(); addStaffRow(); }
+            if (e.key === "n" && activeView === "budgeting") { e.preventDefault(); addStaffRowRef.current(); }
           }
         };
         window.addEventListener("keydown", handleKeyDown);
@@ -455,7 +473,7 @@
         { id: "forecasting", label: "Forecast", num: "4" },
       ];
 
-      const canProceedFromInitiation = dealLoaded && riskApproved;
+      const canProceedFromInitiation = dealLoaded && riskApproved && (!interTerritory || approver !== "");
       const hasBudget = staffing.length > 0 && targetFee > 0;
 
       return (
@@ -919,7 +937,7 @@
                           </td>
                           <td className="px-3 py-1.5">
                             <select
-                              value={row.region}
+                              value={row.region || "Northeast"}
                               onChange={(e) => updateStaffRow(row.id, "region", e.target.value)}
                               className={`w-full px-1 py-0.5 bg-transparent border-0 focus:ring-1 focus:ring-navy-500 ${isTBD ? "text-warning-light" : "text-white"}`}
                             >
@@ -928,7 +946,7 @@
                           </td>
                           <td className="px-3 py-1.5">
                             <select
-                              value={row.los}
+                              value={row.los || "Tax"}
                               onChange={(e) => updateStaffRow(row.id, "los", e.target.value)}
                               className={`w-full px-1 py-0.5 bg-transparent border-0 focus:ring-1 focus:ring-navy-500 ${isTBD ? "text-warning-light" : "text-white"}`}
                             >
